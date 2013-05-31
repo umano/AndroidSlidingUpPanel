@@ -38,7 +38,7 @@ You can change the panel height by using the `setPanelheight` method.
 You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
 Implementation
 -----------
-This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) compenent from the r13 of the Android Support Library. Thanks Android team!
+This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
 Requrements
 -----------
 Tested on Android 2.2+
