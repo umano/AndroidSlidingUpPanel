@@ -23,8 +23,8 @@ To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanel
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:gravity="center|bottom"
+            android:layout_height="match_parent"
+            android:gravity="center|top"
             android:text="The Awesome Sliding Up Panel"
             android:textSize="16sp" />
     </com.sothree.slidinguppaneldemo.SlidingUpPanelLayout>
