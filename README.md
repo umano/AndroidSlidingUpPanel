@@ -1,13 +1,15 @@
-Android Sliding Up Panel Demo
+Android Sliding Up Panel
 =========================
 
 The 2.2 version of the [Umano](http://umanoapp.com) [Android app](https://play.google.com/store/apps/details?id=com.sothree.umano) features a sexy sliding up draggable panel for the currently playing article. This type of a panel is a common pattern also used in the Google Music app and the Rdio app. This is an open source implementation of this component that you are free to take advantage of in your apps. Umano Team <3 Open Source.
+
+As seen in Umano ([http://umanoapp.com](http://umanoapp.com)):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
 Usage
 -----------
-To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanelLayout` as the Root element in your activity Layout. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. Both children should have width and height set of `match_parent`. For more information, please refer to the sample code.
+To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanelLayout` as the Root element in your activity Layout. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. Both children should have width and height set to `match_parent`. For more information, please refer to the sample code.
 ```xml
     <com.sothree.slidinguppaneldemo.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
@@ -33,7 +35,7 @@ Additional Features
 -----------
 You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method.
 
-You can change the panel height by using the `setPanelheight` method.
+You can change the panel height by using the `setPanelHeight` method.
 
 You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
 Implementation
