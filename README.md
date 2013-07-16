@@ -31,9 +31,15 @@ To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanel
             android:textSize="16sp" />
     </com.sothree.slidinguppaneldemo.SlidingUpPanelLayout>
 ```
+For smooth interaction with the ActionBar, make sure that `windowActionBarOverlay` is set to `true` in your styles:
+```xml
+<style name="AppTheme">
+    <item name="android:windowActionBarOverlay">true</item>
+</style>
+```
 Additional Features
 -----------
-You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method.
+You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method. Otherwise, the whole panel will be slideable and it will intercept all clicks.
 
 You can change the panel height by using the `setPanelHeight` method.
 
