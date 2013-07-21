@@ -1,6 +1,7 @@
-package com.sothree.slidinguppaneldemo;
+package com.sothree.slidinguppanel.demo;
 
-import com.sothree.slidinguppaneldemo.SlidingUpPanelLayout.PanelSlideListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
 import android.os.Bundle;
 import android.app.Activity;
