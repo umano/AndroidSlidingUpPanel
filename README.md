@@ -7,8 +7,8 @@ As seen in Umano ([http://umanoapp.com](http://umanoapp.com)):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
-Usage
------------
+### Usage
+
 To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanelLayout` as the Root element in your activity Layout. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. Both children should have width and height set to `match_parent`. For more information, please refer to the sample code.
 ```xml
     <com.sothree.slidinguppaneldemo.SlidingUpPanelLayout
@@ -37,21 +37,24 @@ For smooth interaction with the ActionBar, make sure that `windowActionBarOverla
     <item name="android:windowActionBarOverlay">true</item>
 </style>
 ```
-Additional Features
------------
+### Additional Features
+
 You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method. Otherwise, the whole panel will be slideable and it will intercept all clicks.
 
 You can change the panel height by using the `setPanelHeight` method.
 
 You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
-Implementation
------------
+
+### Implementation
+
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
-Requrements
------------
+
+### Requrements
+
 Tested on Android 2.2+
-Licence
------------
+
+### Licence
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this work except in compliance with the License.
 You may obtain a copy of the License in the LICENSE file, or at:
