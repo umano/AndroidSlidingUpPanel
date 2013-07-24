@@ -11,7 +11,7 @@ As seen in Umano ([http://umanoapp.com](http://umanoapp.com)):
 
 To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanelLayout` as the Root element in your activity Layout. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. Both children should have width and height set to `match_parent`. For more information, please refer to the sample code.
 ```xml
-    <com.sothree.slidinguppaneldemo.SlidingUpPanelLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -29,7 +29,7 @@ To use the layout, simply include `com.sothree.slidinguppaneldemo.SlidingUpPanel
             android:gravity="center|top"
             android:text="The Awesome Sliding Up Panel"
             android:textSize="16sp" />
-    </com.sothree.slidinguppaneldemo.SlidingUpPanelLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 ```
 For smooth interaction with the ActionBar, make sure that `windowActionBarOverlay` is set to `true` in your styles:
 ```xml
