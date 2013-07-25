@@ -1,4 +1,4 @@
-package com.sothree.slidinguppaneldemo;
+package com.sothree.slidinguppanel;
 
 import android.content.Context;
 import android.content.res.TypedArray;

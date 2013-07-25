@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>com.sothree.slidinguppanel</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Android Sliding Up Panel</name>
+    <url>https://github.com/umano/AndroidSlidingUpPanel/</url>
+    <inceptionYear>2013</inceptionYear>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <modules>
+        <module>library</module>
+        <module>demo</module>
+    </modules>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/umano/AndroidSlidingUpPanel/issues</url>
+    </issueManagement>
+
+    <properties>
+        <!-- Project Properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.6</java.version>
+        <android.sdk.platform>16</android.sdk.platform>
+
+        <!-- Dependency Versions -->
+        <android.version>4.1.1.4</android.version>
+        <android-support.version>13.0.0</android-support.version>
+        <junit.version>4.10</junit.version>
+
+        <!-- Plugin Versions -->
+        <android-maven-plugin.version>3.6.0</android-maven-plugin.version>
+        <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
+        <maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Android -->
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>${android.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.android.support</groupId>
+                <artifactId>support-v4</artifactId>
+                <version>${android-support.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>${android-maven-plugin.version}</version>
+                    <configuration>
+                        <sdk>
+                            <platform>${android.sdk.platform}</platform>
+                        </sdk>
+                        <lintEnableLibraries>true</lintEnableLibraries>
+                        <lintFailOnError>false</lintFailOnError>
+                        <lintEnableHtml>true</lintEnableHtml>
+                        <lintConfig>${project.basedir}/lint.xml</lintConfig>
+                        <lintSkip>false</lintSkip>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
