@@ -53,6 +53,12 @@ This code is heavily based on the opened-sourced [SlidingPaneLayout](http://deve
 
 Tested on Android 2.2+
 
+### Other Contributors 
+
+Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
+
+If you have an awesome pull request, send it over!
+
 ### Licence
 
 Licensed under the Apache License, Version 2.0 (the "License");
