@@ -95,12 +95,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private int mSlideRange;
 
-    /**
-     * A panel view is locked into internal scrolling or another condition that
-     * is preventing a drag.
-     */
-    private boolean mIsUnableToDrag;
-
     private float mInitialMotionX;
     private float mInitialMotionY;
     private boolean mDragViewHit;
@@ -475,51 +469,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
-
-
-        if (!mCanSlide || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
+        if (!mCanSlide) {
             mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
         }
 
-        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
-            mDragHelper.cancel();
-            return false;
-        }
-
-        final float x = ev.getX();
-        final float y = ev.getY();
-        boolean interceptTap = false;
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-                mIsUnableToDrag = false;
-                mInitialMotionX = x;
-                mInitialMotionY = y;
-                mDragViewHit = isDragViewHit((int) x, (int) y);
-
-                if (mDragViewHit) {
-                    interceptTap = true;
-                }
-                break;
-            }
-
-            case MotionEvent.ACTION_MOVE: {
-                final float adx = Math.abs(x - mInitialMotionX);
-                final float ady = Math.abs(y - mInitialMotionY);
-                final int slop = mDragHelper.getTouchSlop();
-                if (ady > slop && adx > ady) {
-                    mDragHelper.cancel();
-                    mIsUnableToDrag = true;
-                    return false;
-                }
-            }
-        }
-
-        final boolean interceptForDrag = mDragViewHit && mDragHelper.shouldInterceptTouchEvent(ev);
-
-        return interceptForDrag || interceptTap;
+        return mDragHelper.shouldInterceptTouchEvent(ev);
     }
 
     @Override
@@ -824,10 +779,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            if (mIsUnableToDrag) {
-                return false;
-            }
-
             return ((LayoutParams) child.getLayoutParams()).slideable;
         }
 
