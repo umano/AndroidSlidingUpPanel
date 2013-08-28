@@ -611,7 +611,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if sliding panels are completely expanded
      */
     public boolean isExpanded() {
-        return mCanSlide && mSlideOffset == 0;
+        return mFirstLayout && mPreservedExpandedState
+                || !mFirstLayout && mCanSlide && mSlideOffset == 0;
     }
 
     /**
