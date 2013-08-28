@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
+import java.util.Arrays;
+
 public class SlidingUpPanelLayout extends ViewGroup {
     private static final String TAG = "SlidingPaneLayout";
 
@@ -98,6 +100,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionX;
     private float mInitialMotionY;
     private boolean mDragViewHit;
+    private float[] mLastMotionX;
+    private float[] mLastMotionY;
 
     private PanelSlideListener mPanelSlideListener;
 
@@ -467,6 +471,83 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    private void ensureMotionHistorySize(int pointerId) {
+        if (mLastMotionX == null || mLastMotionX.length <= pointerId) {
+            float[] lmx = new float[pointerId + 1];
+            float[] lmy = new float[pointerId + 1];
+
+            if (mLastMotionX != null) {
+                System.arraycopy(mLastMotionX, 0, lmx, 0, mLastMotionX.length);
+                System.arraycopy(mLastMotionY, 0, lmy, 0, mLastMotionY.length);
+            }
+
+            mLastMotionX = lmx;
+            mLastMotionY = lmy;
+        }
+    }
+
+    private void saveInitialMotion(int pointerId, float x, float y) {
+        ensureMotionHistorySize(pointerId);
+        mLastMotionX[pointerId] = x;
+        mLastMotionY[pointerId] = y;
+    }
+
+    private void saveMotion(MotionEvent ev) {
+        final int pointerCount = MotionEventCompat.getPointerCount(ev);
+        for (int i = 0; i < pointerCount; i++) {
+            final int pointerId = MotionEventCompat.getPointerId(ev, i);
+            final float x = MotionEventCompat.getX(ev, i);
+            final float y = MotionEventCompat.getY(ev, i);
+            mLastMotionX[pointerId] = x;
+            mLastMotionY[pointerId] = y;
+        }
+    }
+
+    private void clearMotionHistory(int pointerId) {
+        mLastMotionX[pointerId] = 0;
+        mLastMotionY[pointerId] = 0;
+    }
+
+    private void clearMotionHistory() {
+        Arrays.fill(mLastMotionX, 0);
+        Arrays.fill(mLastMotionY, 0);
+    }
+
+    /**
+     * Save the current positions of all the pointers.
+     *
+     * Since there is no way to get current pointer positions from ViewDragHelper,
+     * we save them ourselves here.
+     */
+    private void processTouchEvent(MotionEvent ev) {
+        final int action = MotionEventCompat.getActionMasked(ev);
+        final int actionIndex = MotionEventCompat.getActionIndex(ev);
+
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                int pointerId = MotionEventCompat.getPointerId(ev, actionIndex);
+                saveInitialMotion(pointerId, MotionEventCompat.getX(ev, actionIndex),
+                        MotionEventCompat.getY(ev, actionIndex));
+                break;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                saveMotion(ev);
+                break;
+            }
+            case MotionEvent.ACTION_POINTER_UP: {
+                int pointerId = MotionEventCompat.getPointerId(ev, actionIndex);
+                clearMotionHistory(pointerId);
+                break;
+            }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL: {
+                clearMotionHistory();
+                break;
+            }
+        }
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!mCanSlide) {
@@ -474,6 +555,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return super.onInterceptTouchEvent(ev);
         }
 
+        processTouchEvent(ev);
         return mDragHelper.shouldInterceptTouchEvent(ev);
     }
 
@@ -483,6 +565,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return super.onTouchEvent(ev);
         }
 
+        processTouchEvent(ev);
         mDragHelper.processTouchEvent(ev);
 
         final int action = ev.getAction();
@@ -779,7 +862,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return ((LayoutParams) child.getLayoutParams()).slideable;
+            return ((LayoutParams) child.getLayoutParams()).slideable &&
+                    mDragView == null || isDragViewHit((int) mLastMotionX[pointerId], (int) mLastMotionY[pointerId]);
         }
 
         @Override
