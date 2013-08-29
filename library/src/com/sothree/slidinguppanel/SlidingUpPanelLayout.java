@@ -128,6 +128,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mPreservedExpandedState;
     private boolean mFirstLayout = true;
+    private Runnable mPostLayoutRunnable;
 
     private final Rect mTmpRect = new Rect();
 
@@ -458,6 +459,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         mFirstLayout = false;
+
+        if (mPostLayoutRunnable != null) {
+            post(mPostLayoutRunnable);
+            mPostLayoutRunnable = null;
+        }
     }
 
     @Override
@@ -657,7 +663,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public boolean expandPane() {
         if (!isPaneVisible()) {
-            return showPane(true);
+            showPane(true);
+            return true;
         } else {
             return expandPane(mSlideableView, 0);
         }
@@ -695,18 +702,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
         showPane(false);
     }
 
-    private boolean showPane(boolean expanded) {
+    private void showPane(final boolean expanded) {
         if (!mPanelHidden) {
-            return false;
+            return;
         }
 
         mPanelHidden = false;
         if (!mFirstLayout) {
-            requestLayout();
-            return smoothSlideTo(expanded ? 0.f : mCollapsedOffset, 0);
+            runAfterLayout(new Runnable() {
+                @Override
+                public void run() {
+                    smoothSlideTo(expanded ? 0.f : mCollapsedOffset, 0);
+                }
+            });
         }
-
-        return true;
     }
 
     public void hidePane() {
@@ -716,9 +725,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mPanelHidden = true;
         if (!mFirstLayout && mSlideableView != null) {
-            smoothSlideTo(1.f, 0);
-            requestLayout();
+            runAfterLayout(new Runnable() {
+                @Override
+                public void run() {
+                    smoothSlideTo(1.f, 0);
+                }
+            });
         }
+    }
+
+    private void runAfterLayout(Runnable runnable) {
+        mPostLayoutRunnable = runnable;
+        requestLayout();
     }
 
     private void onPanelDragged(int newTop) {
