@@ -101,7 +101,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsUnableToDrag;
 
-    private boolean mIsSlidingEnabled = true;
+    /**
+     * Flag indicating that sliding feature is enabled\disabled
+     */
+    private boolean mIsSlidingEnabled;
 
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -183,6 +186,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mDragHelper.setMinVelocity(MIN_FLING_VELOCITY * density);
 
         mCanSlide = true;
+        mIsSlidingEnabled = true;
 
         setCoveredFadeColor(DEFAULT_FADE_COLOR);
     }
@@ -454,13 +458,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    /**
+     * Set sliding enabled flag
+     * @param enabled flag value
+     */
     public void setSlidingEnabled(boolean enabled) {
         mIsSlidingEnabled = enabled;
     }
 
     private boolean isDragViewHit(int x, int y) {
         View v = mDragView != null ? mDragView : mSlideableView;
-        if (v == null || !mIsSlidingEnabled) return false;
+        if (v == null) return false;
         int[] viewLocation = new int[2];
         v.getLocationOnScreen(viewLocation);
         int[] parentLocation = new int[2];
@@ -484,7 +492,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int action = MotionEventCompat.getActionMasked(ev);
 
 
-        if (!mCanSlide || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
+        if (!mCanSlide || !mIsSlidingEnabled || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
         }
@@ -530,7 +538,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!mCanSlide) {
+        if (!mCanSlide || !mIsSlidingEnabled) {
             return super.onTouchEvent(ev);
         }
 
