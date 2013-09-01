@@ -45,7 +45,7 @@ You can change the panel height by using the `setPanelHeight` method.
 
 You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
 
-You can disable sliding by using 'setSlidingEnabled' method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
+You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
 
 ### Implementation
 
