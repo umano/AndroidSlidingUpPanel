@@ -101,6 +101,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsUnableToDrag;
 
+    private boolean mIsSlidingEnabled = true;
+
     private float mInitialMotionX;
     private float mInitialMotionY;
     private boolean mDragViewHit;
@@ -452,9 +454,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    public void setSlidingEnabled(boolean enabled) {
+        mIsSlidingEnabled = enabled;
+    }
+
     private boolean isDragViewHit(int x, int y) {
         View v = mDragView != null ? mDragView : mSlideableView;
-        if (v == null) return false;
+        if (v == null || !mIsSlidingEnabled) return false;
         int[] viewLocation = new int[2];
         v.getLocationOnScreen(viewLocation);
         int[] parentLocation = new int[2];
