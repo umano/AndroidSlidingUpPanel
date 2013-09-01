@@ -45,6 +45,8 @@ You can change the panel height by using the `setPanelHeight` method.
 
 You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
 
+You can disable sliding by using 'setSlidingEnabled' method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
+
 ### Implementation
 
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
