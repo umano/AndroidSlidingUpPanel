@@ -630,7 +630,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean expandPane(View pane, int initialVelocity) {
-        if (mFirstLayout || smoothSlideTo(0.f, initialVelocity)) {
+        if (!mPanelHidden && (mFirstLayout || smoothSlideTo(0.f, initialVelocity))) {
             mPreservedExpandedState = true;
             return true;
         }
@@ -638,7 +638,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean collapsePane(View pane, int initialVelocity) {
-        if (mFirstLayout || smoothSlideTo(mCollapsedOffset, initialVelocity)) {
+        if (!mPanelHidden && (mFirstLayout || smoothSlideTo(mCollapsedOffset, initialVelocity))) {
             mPreservedExpandedState = false;
             return true;
         }
