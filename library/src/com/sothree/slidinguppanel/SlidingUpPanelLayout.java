@@ -17,11 +17,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
 public class SlidingUpPanelLayout extends ViewGroup {
-    private static final String TAG = "SlidingPaneLayout";
+    
+    private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
 
     /**
      * Default peeking out panel height
@@ -105,6 +107,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Flag indicating that sliding feature is enabled\disabled
      */
     private boolean mIsSlidingEnabled;
+    
+    /**
+     * Flag indicating if a drag view can have its own touch events.  If set
+     * to true, a drag view can scroll horizontally and have its own click listener.
+     * 
+     * Default is set to false.
+     */
+    private boolean mIsUsingDragViewTouchEvents;
+
+    /**
+     * Threshold to tell if there was a scroll touch event.
+     */
+    private int mScrollTouchSlop;
 
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -189,6 +204,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mIsSlidingEnabled = true;
 
         setCoveredFadeColor(DEFAULT_FADE_COLOR);
+        
+        ViewConfiguration vc = ViewConfiguration.get(context);
+        mScrollTouchSlop = vc.getScaledTouchSlop();
     }
 
     /**
@@ -465,6 +483,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setSlidingEnabled(boolean enabled) {
         mIsSlidingEnabled = enabled;
     }
+    
+    /**
+     * Set if the drag view can have its own touch events.  If set
+     * to true, a drag view can scroll horizontally and have its own click listener.
+     * 
+     * Default is set to false.
+     */
+    public void setEnableDragViewTouchEvents(boolean enabled) {
+        mIsUsingDragViewTouchEvents = enabled;
+    }
 
     private boolean isDragViewHit(int x, int y) {
         View v = mDragView != null ? mDragView : mSlideableView;
@@ -512,8 +540,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mInitialMotionX = x;
                 mInitialMotionY = y;
                 mDragViewHit = isDragViewHit((int) x, (int) y);
-
-                if (mDragViewHit) {
+                
+                if (mDragViewHit && !mIsUsingDragViewTouchEvents) {
                     interceptTap = true;
                 }
                 break;
@@ -522,12 +550,25 @@ public class SlidingUpPanelLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE: {
                 final float adx = Math.abs(x - mInitialMotionX);
                 final float ady = Math.abs(y - mInitialMotionY);
-                final int slop = mDragHelper.getTouchSlop();
-                if (ady > slop && adx > ady) {
+                final int dragSlop = mDragHelper.getTouchSlop();
+                
+                // Handle any horizontal scrolling on the drag view.
+                if (mIsUsingDragViewTouchEvents) {
+                    if (adx > mScrollTouchSlop && ady < mScrollTouchSlop) {
+                        return super.onInterceptTouchEvent(ev);
+                    }
+                    // Intercept the touch if the drag view is scrolling vertically.
+                    else if (ady > mScrollTouchSlop) {
+                        interceptTap = mDragViewHit;
+                    }
+                }
+                
+                if (ady > dragSlop && adx > ady) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
                 }
+                break;
             }
         }
 
@@ -976,4 +1017,3 @@ public class SlidingUpPanelLayout extends ViewGroup {
         };
     }
 }
-
