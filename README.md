@@ -58,6 +58,7 @@ Tested on Android 2.2+
 ### Other Contributors 
 
 Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
+
 July 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
 
 If you have an awesome pull request, send it over!
