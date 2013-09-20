@@ -557,7 +557,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     if (adx > mScrollTouchSlop && ady < mScrollTouchSlop) {
                         return super.onInterceptTouchEvent(ev);
                     }
-                    // Intercept the touch if the drag view is scrolling vertically.
+                    // Intercept the touch if the drag view has any vertical scroll.
+	            // onTouchEvent will determine if the view should drag vertically.
                     else if (ady > mScrollTouchSlop) {
                         interceptTap = mDragViewHit;
                     }
