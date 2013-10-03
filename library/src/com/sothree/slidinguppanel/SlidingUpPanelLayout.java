@@ -216,6 +216,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setPanelHeight(int val) {
         mPanelHeight = val;
+        requestLayout();
     }
 
     /**
