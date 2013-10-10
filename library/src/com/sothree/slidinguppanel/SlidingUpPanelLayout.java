@@ -106,6 +106,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsSlidingEnabled;
 
+    /*
+     * Flag is Transparent
+     */
+    private boolean mIsTransparent = false;
+    
     private float mInitialMotionX;
     private float mInitialMotionY;
     private boolean mDragViewHit;
@@ -247,6 +252,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mShadowDrawable = drawable;
     }
 
+    /**
+     * Set transparent flag
+     *
+     */
+    public void setIsTransparent(boolean mIsTransparent)
+    {
+       this.mIsTransparent = mIsTransparent;
+    }
+    
     void dispatchOnPanelSlide(View panel) {
         if (mPanelSlideListener != null) {
             mPanelSlideListener.onPanelSlide(panel, mSlideOffset);
@@ -683,7 +697,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // Clip against the slider; no sense drawing what will immediately be covered.
             canvas.getClipBounds(mTmpRect);
             mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
-            canvas.clipRect(mTmpRect);
+            if(!mIsTransparent) {
+               canvas.clipRect(mTmpRect);
+            }
             if (mSlideOffset < 1) {
                 drawScrim = true;
             }
