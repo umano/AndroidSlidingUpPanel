@@ -9,16 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitStart"
-            android:src="@drawable/graphic" />
+            android:gravity="center"
+            android:text="Main Content"
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#BDFFFFFF"
+            android:background="#eee"
             android:orientation="vertical" >
 
             <TextView
@@ -32,16 +33,19 @@
                 android:id="@+id/brought_by"
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
-                android:autoLink="web"
                 android:gravity="center|top"
                 android:text="Brought to you by http://umanoapp.com"
-                android:textSize="14sp" />
-
-            <TextView
+                android:textSize="14sp" 
+                android:autoLink="web"/>
+            
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Content" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/graphic"
+                android:scaleType="fitStart" >
+                
+            </ImageView>           
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
