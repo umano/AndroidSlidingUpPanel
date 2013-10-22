@@ -28,7 +28,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Default peeking out panel height
      */
-    private static final int DEFAULT_PANEL_HEIGHT = 27; // dp;
+    private static final int DEFAULT_PANEL_HEIGHT = 68; // dp;
 
     /**
      * Default height of the shadow above the peeking out panel
@@ -520,7 +520,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 
                 // Just set this now may be used or may not be used
                 // easier to calculate it now
-                mHardAnchorPoint = 1.f - ((float)childHeight / (float) b);
+                int hardTop = b - (childHeight + paddingBottom);
+                mHardAnchorPoint = ((float)hardTop / (float) mSlideRange);
 //                Log.i(TAG, "mHardAnchorPoint = " + mHardAnchorPoint);
             } else {
                 yStart = nextYStart;
