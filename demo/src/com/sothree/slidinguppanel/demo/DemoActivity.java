@@ -16,25 +16,26 @@ public class DemoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_demo);
 
         SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         layout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
-        layout.setAnchorPoint(0.3f);
+//        layout.setAnchorPoint(0.148f);
+        layout.setHardAnchorPoint(true);
         layout.setPanelSlideListener(new PanelSlideListener() {
 
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                if (slideOffset < 0.2) {
-                    if (getActionBar().isShowing()) {
-                        getActionBar().hide();
-                    }
-                } else {
-                    if (!getActionBar().isShowing()) {
-                        getActionBar().show();
-                    }
-                }
+//                if (slideOffset < 0.2) {
+//                    if (getActionBar().isShowing()) {
+//                        getActionBar().hide();
+//                    }
+//                } else {
+//                    if (!getActionBar().isShowing()) {
+//                        getActionBar().show();
+//                    }
+//                }
             }
 
             @Override
