@@ -130,6 +130,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Flag is Transparent
      */
     private boolean mIsTransparent = false;
+    private int mTransparentColor = DEFAULT_PANEL_COLOR_TRANSPARENT;
     
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -280,8 +281,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
      *                    starting from the top of the layout.
      */
     public void setAnchorPoint(float anchorPoint) {
-        if (anchorPoint > 0 && anchorPoint < 1)
+        if (anchorPoint > 0 && anchorPoint < 1) {
             mAnchorPoint = anchorPoint;
+        }
+    }
+
+    /**
+     * Set a transparent color
+     *
+     * @param color transparent color
+     */
+    public void setTransparentColor(int transparentColor) {
+        mTransparentColor = transparentColor;
     }
 
     /**
@@ -296,8 +307,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Set transparent flag
      *
      */
-    public void setIsTransparent(boolean mIsTransparent)
-    {
+    public void setIsTransparent(boolean mIsTransparent) {
        this.mIsTransparent = mIsTransparent;
     }
     
@@ -485,7 +495,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             final View child = getChildAt(i);
 
             if (mIsTransparent && i==1) {
-            	child.setBackgroundColor(DEFAULT_PANEL_COLOR_TRANSPARENT);
+            	child.setBackgroundColor(mTransparentColor);
             }
             
             if (child.getVisibility() == GONE) {
