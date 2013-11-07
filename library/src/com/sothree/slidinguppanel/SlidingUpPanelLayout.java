@@ -289,7 +289,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Set a transparent color
      *
-     * @param color transparent color
+     * @param transparentColor transparent color
      */
     public void setTransparentColor(int transparentColor) {
         mTransparentColor = transparentColor;
