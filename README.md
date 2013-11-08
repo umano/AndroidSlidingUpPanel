@@ -47,6 +47,8 @@ You can change the panel shadow by using the `setShadowDrawable` method. No shad
 
 You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
 
+You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
+
 ### Implementation
 
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
@@ -59,7 +61,9 @@ Tested on Android 2.2+
 
 Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
 
-July 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
+Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
+
+Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
 
 If you have an awesome pull request, send it over!
 
