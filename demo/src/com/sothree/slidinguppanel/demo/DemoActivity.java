@@ -20,7 +20,6 @@ public class DemoActivity extends Activity {
         setContentView(R.layout.activity_demo);
 
         SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        layout.setIsTransparent(true);
         layout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
         layout.setAnchorPoint(0.3f);
         layout.setPanelSlideListener(new PanelSlideListener() {
