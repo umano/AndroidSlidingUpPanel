@@ -21,6 +21,7 @@ public class DemoActivity extends Activity {
 
         SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         layout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
+        layout.setAnchorPoint(0.3f);
         layout.setPanelSlideListener(new PanelSlideListener() {
 
             @Override
@@ -44,6 +45,12 @@ public class DemoActivity extends Activity {
 
             @Override
             public void onPanelCollapsed(View panel) {
+
+
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
 
 
             }
