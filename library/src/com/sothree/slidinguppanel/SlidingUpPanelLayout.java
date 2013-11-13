@@ -120,6 +120,29 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Threshold to tell if there was a scroll touch event.
      */
     private int mScrollTouchSlop;
+    
+    /**
+     * The density of the screen 
+     */
+    private final float mDensity;
+    
+    /**
+     * The top of the slide up panel when fully open.
+     * Used to stop at child height not top of screen
+     */
+    private float mHardAnchorPoint = 0.f;
+    
+    /**
+     * Used to turn off the gray cover on the main panel
+     * if you want
+     */
+    private boolean isCoveredFadeColorEnabled = true;
+    
+    /**
+     * Set when the user want to use the anchor point as
+     * the top of the sliding panel all the time.
+     */
+    private boolean mIsHardAnchorPoint = false;
 
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -197,14 +220,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        final float density = context.getResources().getDisplayMetrics().density;
-        mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
-        mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
+        mDensity = context.getResources().getDisplayMetrics().density;
+        mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * mDensity + 0.5f);
+        mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * mDensity + 0.5f);
 
         setWillNotDraw(false);
 
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
-        mDragHelper.setMinVelocity(MIN_FLING_VELOCITY * density);
+        mDragHelper.setMinVelocity(MIN_FLING_VELOCITY * mDensity);
 
         mCanSlide = true;
         mIsSlidingEnabled = true;
@@ -272,6 +295,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setAnchorPoint(float anchorPoint) {
         if (anchorPoint > 0 && anchorPoint < 1)
             mAnchorPoint = anchorPoint;
+    }
+    
+    /**
+     * Set this to true will over ride any anchor point set with 
+     * {@link #setAnchorPoint(float)}</br> Default is false;
+     */
+    public void setHardAnchorPoint(boolean isHardAnchorPoint) {
+    	mIsHardAnchorPoint = isHardAnchorPoint;
+    }
+    
+    /**
+     * This will be used to diable the main panel cover color. 
+     * The color drawn on the main panel when the sliding panel is expanded</br>
+     * Default is true, false will disable the cover color
+     * @param isEnabled
+     */
+    public void setCoveredFadeColorEnabled(boolean isEnabled) {
+    	isCoveredFadeColorEnabled = isEnabled;
     }
 
     /**
@@ -447,8 +488,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    	final int height = b - t;
         final int paddingLeft = getPaddingLeft();
         final int paddingTop = getPaddingTop();
+        final int paddingBottom = getPaddingBottom();
 
         final int childCount = getChildCount();
         int yStart = paddingTop;
@@ -467,11 +510,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
-            int childHeight = child.getMeasuredHeight();
+            final int childHeight = child.getMeasuredHeight();
 
             if (lp.slideable) {
-                mSlideRange = childHeight - mPanelHeight;
+            	final int margin = lp.topMargin + lp.bottomMargin;
+            	final int range = Math.min(nextYStart, height - paddingBottom - mPanelHeight) - yStart - margin;
+                mSlideRange = range;
                 yStart += (int) (mSlideRange * mSlideOffset);
+                
+                // Just set this now may be used or may not be used
+                // easier to calculate it now
+                int hardTop = b - (childHeight + paddingBottom);
+                mHardAnchorPoint = ((float)hardTop / (float) mSlideRange);
+//                Log.i(TAG, "mHardAnchorPoint = " + mHardAnchorPoint);
             } else {
                 yStart = nextYStart;
             }
@@ -634,7 +685,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     View v = mDragView != null ? mDragView : mSlideableView;
                     v.playSoundEffect(SoundEffectConstants.CLICK);
                     if (!isExpanded() && !isAnchored()) {
-                        expandPane(mSlideableView, 0, mAnchorPoint);
+                        expandPane(mSlideableView, 0, mIsHardAnchorPoint ? mHardAnchorPoint : mAnchorPoint);
                     } else {
                         collapsePane();
                     }
@@ -712,7 +763,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if sliding panels are anchored
      */
     public boolean isAnchored() {
-        int anchoredTop = (int)(mAnchorPoint*mSlideRange);
+        int anchoredTop = (int)((mIsHardAnchorPoint ? mHardAnchorPoint : mAnchorPoint)*mSlideRange);
         return !mFirstLayout && mCanSlide
                 && mSlideOffset == (float)anchoredTop/(float)mSlideRange;
     }
@@ -753,7 +804,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private void onPanelDragged(int newTop) {
-        final int topBound = getPaddingTop();
+        final LayoutParams lp = (LayoutParams) mSlideableView.getLayoutParams();
+        final int topBound = getPaddingTop() + lp.topMargin;
+        
         mSlideOffset = (float) (newTop - topBound) / mSlideRange;
         dispatchOnPanelSlide(mSlideableView);
     }
@@ -779,7 +832,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         result = super.drawChild(canvas, child, drawingTime);
         canvas.restoreToCount(save);
 
-        if (drawScrim) {
+        if (drawScrim && isCoveredFadeColorEnabled) {
             final int baseAlpha = (mCoveredFadeColor & 0xff000000) >>> 24;
             final int imag = (int) (baseAlpha * (1 - mSlideOffset));
             final int color = imag << 24 | (mCoveredFadeColor & 0xffffff);
@@ -791,7 +844,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Smoothly animate mDraggingPane to the target X position within its range.
+     * Smoothly animate mDraggingPane to the target Y position within its range.
      *
      * @param slideOffset position to animate to
      * @param velocity initial velocity in case of fling, or 0.
@@ -801,8 +854,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // Nothing to do.
             return false;
         }
+        
+        final LayoutParams lp = (LayoutParams) mSlideableView.getLayoutParams();
 
-        final int topBound = getPaddingTop();
+        final int topBound = getPaddingTop() + lp.topMargin;
         int y = (int) (topBound + slideOffset * mSlideRange);
 
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), y)) {
@@ -965,21 +1020,36 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int top = getPaddingTop();
+            final LayoutParams lp = (LayoutParams) releasedChild.getLayoutParams();
+            int top = getPaddingTop() + lp.topMargin;
+            
+            float anchorPoint = mIsHardAnchorPoint ? mHardAnchorPoint : mAnchorPoint;
 
-            if (mAnchorPoint != 0) {
-                int anchoredTop = (int)(mAnchorPoint*mSlideRange);
+            if (anchorPoint != 0) {
+                int anchoredTop = (int)(anchorPoint*mSlideRange);
                 float anchorOffset = (float)anchoredTop/(float)mSlideRange;
 
                 if (yvel > 0 || (yvel == 0 && mSlideOffset >= (1f+anchorOffset)/2)) {
+                    // Close the panel
                     top += mSlideRange;
+//                    Log.i(TAG, "Close");
                 } else if (yvel == 0 && mSlideOffset < (1f+anchorOffset)/2
                                     && mSlideOffset >= anchorOffset/2) {
-                    top += mSlideRange * mAnchorPoint;
+                	// Open the panel
+                    top += mSlideRange * anchorPoint;
+//                    Log.i(TAG, "Open");
+                } else {
+                	if (mIsHardAnchorPoint) {
+                		if (isExpanded()) { // Then Close
+                			top += mSlideRange;
+                		} else { // Then Open
+                			top += mSlideRange * anchorPoint;
+                		}
+                	}
                 }
-
             } else if (yvel > 0 || (yvel == 0 && mSlideOffset > 0.5f)) {
                 top += mSlideRange;
+                Log.i(TAG, "No Anchor");
             }
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top);
@@ -990,15 +1060,27 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public int getViewVerticalDragRange(View child) {
             return mSlideRange;
         }
-
+		
         @Override
         public int clampViewPositionVertical(View child, int top, int dy) {
-            final int topBound = getPaddingTop();
-            final int bottomBound = topBound + mSlideRange;
+        	if (mIsHardAnchorPoint) {
+        		float anchorPoint = mIsHardAnchorPoint ? mHardAnchorPoint : mAnchorPoint;
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                
+                final int topBound = (int) (mSlideRange * anchorPoint);
+                final int bottomBound = topBound + (int) (mSlideRange * anchorPoint);
 
-            final int newLeft = Math.min(Math.max(top, topBound), bottomBound);
+                final int newTop = Math.min(Math.max(top, topBound), mSlideRange);
 
-            return newLeft;
+                return newTop;
+        	} else {
+        		final LayoutParams lp = (LayoutParams) child.getLayoutParams();              
+				final int topBound = getPaddingTop() + lp.topMargin;
+				final int bottomBound = topBound + mSlideRange;
+				final int newTop = Math.min(Math.max(top, topBound), bottomBound);				  
+				return newTop;
+        	}
+        	
         }
 
     }
