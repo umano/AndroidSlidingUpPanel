@@ -242,6 +242,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mPanelHeight = val;
         requestLayout();
     }
+    
+    /**
+     * Set the collapsed panel height in density-independent pixels
+     *
+     * @param val A height in density-independent pixels
+     */
+    public void setPanelDIHeight(Context context, int val){
+    	final float density = context.getResources().getDisplayMetrics().density;
+        mPanelHeight = (int) (val * density + 0.5f);
+        requestLayout();
+    }
 
     /**
      * @return The current collapsed panel height
