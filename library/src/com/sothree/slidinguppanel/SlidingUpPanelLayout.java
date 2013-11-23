@@ -449,10 +449,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int paddingLeft = getPaddingLeft();
         final int paddingTop = getPaddingTop();
+        final int slidingTop = getSlidingTop();
 
         final int childCount = getChildCount();
-        int yStart = paddingTop;
-        int nextYStart = yStart;
 
         if (mFirstLayout) {
             mSlideOffset = mCanSlide && mPreservedExpandedState ? 0.f : 1.f;
@@ -466,23 +465,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
-            int childHeight = child.getMeasuredHeight();
+            final int childHeight = child.getMeasuredHeight();
 
             if (lp.slideable) {
                 mSlideRange = childHeight - mPanelHeight;
-                yStart += (int) (mSlideRange * mSlideOffset);
-            } else {
-                yStart = nextYStart;
             }
 
-            final int childTop = yStart;
+            final int childTop = lp.slideable ? slidingTop + (int) (mSlideRange * mSlideOffset) : paddingTop;
             final int childBottom = childTop + childHeight;
             final int childLeft = paddingLeft;
             final int childRight = childLeft + child.getMeasuredWidth();
-            child.layout(childLeft, childTop, childRight, childBottom);
 
-            nextYStart += child.getHeight();
+            child.layout(childLeft, childTop, childRight, childBottom);
         }
 
         if (mFirstLayout) {
@@ -508,11 +502,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setSlidingEnabled(boolean enabled) {
         mIsSlidingEnabled = enabled;
     }
-    
+
     /**
      * Set if the drag view can have its own touch events.  If set
      * to true, a drag view can scroll horizontally and have its own click listener.
-     * 
+     *
      * Default is set to false.
      */
     public void setEnableDragViewTouchEvents(boolean enabled) {
@@ -565,7 +559,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mInitialMotionX = x;
                 mInitialMotionY = y;
                 mDragViewHit = isDragViewHit((int) x, (int) y);
-                
+
                 if (mDragViewHit && !mIsUsingDragViewTouchEvents) {
                     interceptTap = true;
                 }
@@ -576,7 +570,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float adx = Math.abs(x - mInitialMotionX);
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
-                
+
                 // Handle any horizontal scrolling on the drag view.
                 if (mIsUsingDragViewTouchEvents) {
                     if (adx > mScrollTouchSlop && ady < mScrollTouchSlop) {
@@ -588,7 +582,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                         interceptTap = mDragViewHit;
                     }
                 }
-                
+
                 if (ady > dragSlop && adx > ady) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
@@ -661,6 +655,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return true;
         }
         return false;
+    }
+
+    private int getSlidingTop() {
+        if (mSlideableView != null) {
+            return getMeasuredHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight();
+        }
+
+        return getMeasuredHeight() - getPaddingBottom();
     }
 
     /**
@@ -753,7 +755,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private void onPanelDragged(int newTop) {
-        final int topBound = getPaddingTop();
+        final int topBound = getSlidingTop();
         mSlideOffset = (float) (newTop - topBound) / mSlideRange;
         dispatchOnPanelSlide(mSlideableView);
     }
@@ -802,7 +804,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return false;
         }
 
-        final int topBound = getPaddingTop();
+        final int topBound = getSlidingTop();
         int y = (int) (topBound + slideOffset * mSlideRange);
 
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), y)) {
@@ -965,7 +967,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int top = getPaddingTop();
+            int top = getSlidingTop();
 
             if (mAnchorPoint != 0) {
                 int anchoredTop = (int)(mAnchorPoint*mSlideRange);
@@ -993,14 +995,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public int clampViewPositionVertical(View child, int top, int dy) {
-            final int topBound = getPaddingTop();
+            final int topBound = getSlidingTop();
             final int bottomBound = topBound + mSlideRange;
 
-            final int newLeft = Math.min(Math.max(top, topBound), bottomBound);
-
-            return newLeft;
+            return Math.min(Math.max(top, topBound), bottomBound);
         }
-
     }
 
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
