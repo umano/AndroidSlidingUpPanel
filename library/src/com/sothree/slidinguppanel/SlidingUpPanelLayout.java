@@ -243,7 +243,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Set the Drag Viuew after the view is inflated
+     * Set the Drag View after the view is inflated
      */
     @Override
     protected void onFinishInflate() {
