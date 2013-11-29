@@ -30,23 +30,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Default peeking out panel height
      */
-    private static int DEFAULT_PANEL_HEIGHT = 68; // dp;
+    private static final int DEFAULT_PANEL_HEIGHT = 68; // dp;
 
     /**
      * Default height of the shadow above the peeking out panel
      */
-    private static int DEFAULT_SHADOW_HEIGHT = 4; // dp;
+    private static final int DEFAULT_SHADOW_HEIGHT = 4; // dp;
 
     /**
      * If no fade color is given by default it will fade to 80% gray.
      */
-    private static int DEFAULT_FADE_COLOR = 0x99000000;
+    private static final int DEFAULT_FADE_COLOR = 0x99000000;
+
+    /**
+     * Default Minimum velocity that will be detected as a fling
+     */
+    private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
 
     /**
      * Minimum velocity that will be detected as a fling
      */
-    private static int MIN_FLING_VELOCITY = 400; // dips per second
-
+    private int mMinFlingVelocity = DEFAULT_MIN_FLING_VELOCITY;
+    
     /**
      * The fade color used for the panel covered by the slider. 0 = no fading.
      */
@@ -211,8 +216,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_showedSize, -1);
                 mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowSize, -1);
  
-                MIN_FLING_VELOCITY = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, MIN_FLING_VELOCITY);
-                DEFAULT_FADE_COLOR = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
+                mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
+                mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
  
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
             }
@@ -231,7 +236,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         setWillNotDraw(false);
 
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
-        mDragHelper.setMinVelocity(MIN_FLING_VELOCITY * density);
+        mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mCanSlide = true;
         mIsSlidingEnabled = true;
