@@ -21,6 +21,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.sothree.slidinguppanel.library.R;
+
 public class SlidingUpPanelLayout extends ViewGroup {
     
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
@@ -41,10 +43,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final int DEFAULT_FADE_COLOR = 0x99000000;
 
     /**
+     * Default Minimum velocity that will be detected as a fling
+     */
+    private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
+
+    /**
      * Minimum velocity that will be detected as a fling
      */
-    private static final int MIN_FLING_VELOCITY = 400; // dips per second
-
+    private int mMinFlingVelocity = DEFAULT_MIN_FLING_VELOCITY;
+    
     /**
      * The fade color used for the panel covered by the slider. 0 = no fading.
      */
@@ -63,12 +70,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * The size of the overhang in pixels.
      */
-    private int mPanelHeight;
+    private int mPanelHeight = -1;
 
     /**
      * The size of the shadow in pixels.
      */
-    private final int mShadowHeight;
+    private int mShadowHeight = -1;
 
     /**
      * True if a panel can slide with the current measurements
@@ -79,7 +86,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
      * used for dragging.
      */
-    private  View mDragView;
+    private View mDragView;
+
+    /**
+     * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
+     * used for dragging.
+     */
+    private int mDragViewResId = -1;
 
     /**
      * The child view that can slide, if any.
@@ -196,15 +209,34 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        if (attrs != null) {
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
+ 
+            if (ta != null) {
+                mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_showedSize, -1);
+                mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowSize, -1);
+ 
+                mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
+                mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
+ 
+                mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
+            }
+ 
+            ta.recycle();
+        }
 
         final float density = context.getResources().getDisplayMetrics().density;
-        mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
-        mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
+        if (mPanelHeight == -1) {
+            mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
+        }
+        if (mShadowHeight == -1) {
+            mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
+        }
 
         setWillNotDraw(false);
 
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
-        mDragHelper.setMinVelocity(MIN_FLING_VELOCITY * density);
+        mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mCanSlide = true;
         mIsSlidingEnabled = true;
@@ -213,6 +245,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         
         ViewConfiguration vc = ViewConfiguration.get(context);
         mScrollTouchSlop = vc.getScaledTouchSlop();
+    }
+
+    /**
+     * Set the Drag View after the view is inflated
+     */
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        if (mDragViewResId != -1) {
+            mDragView = findViewById(mDragViewResId);
+        }
     }
 
     /**
