@@ -65,6 +65,8 @@ Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Supp
 
 Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
 
+Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
+
 If you have an awesome pull request, send it over!
 
 ### Licence
