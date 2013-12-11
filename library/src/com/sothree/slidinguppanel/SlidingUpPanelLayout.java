@@ -568,7 +568,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int[] viewLocation = new int[2];
         v.getLocationOnScreen(viewLocation);
         int[] parentLocation = new int[2];
-        this.getLocationOnScreen(parentLocation);
+        //changes 
+        v.getLocationOnScreen(parentLocation);
         int screenX = parentLocation[0] + x;
         int screenY = parentLocation[1] + y;
         return screenX >= viewLocation[0] && screenX < viewLocation[0] + v.getWidth() &&
@@ -587,8 +588,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
+        final int action = MotionEventCompat.getActionMasked(ev);
 
-        if (!mCanSlide || !mIsSlidingEnabled || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
+		// Preserve the open state based on the last view that was touched.
+		if (!mCanSlide && action == MotionEvent.ACTION_DOWN
+				&& getChildCount() > 1) {
+			// After the first things will be slideable.
+			final View secondChild = getChildAt(1);
+			if (secondChild != null) {
+				mPreservedExpandedState = !mDragHelper.isViewUnder(secondChild,
+						(int) ev.getX(), (int) ev.getY());
+				return super.onInterceptTouchEvent(ev);
+			}
+		}
+        if (!mCanSlide  || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
         }
@@ -607,9 +620,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
-                mDragViewHit = isDragViewHit((int) x, (int) y);
+                //
+                mDragViewHit = isDragViewHit((int) -x, (int) y);
                 
-                if (mDragViewHit && !mIsUsingDragViewTouchEvents) {
+                if (mDragViewHit) {
                     interceptTap = true;
                 }
                 break;
@@ -641,7 +655,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
         }
 
-        final boolean interceptForDrag = mDragViewHit && mDragHelper.shouldInterceptTouchEvent(ev);
+        final boolean interceptForDrag =  mDragHelper.shouldInterceptTouchEvent(ev);
 
         return interceptForDrag || interceptTap;
     }
@@ -667,21 +681,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_UP: {
-                final float x = ev.getX();
-                final float y = ev.getY();
-                final float dx = x - mInitialMotionX;
-                final float dy = y - mInitialMotionY;
-                final int slop = mDragHelper.getTouchSlop();
-                if (dx * dx + dy * dy < slop * slop &&
-                        isDragViewHit((int) x, (int) y)) {
-                    View v = mDragView != null ? mDragView : mSlideableView;
-                    v.playSoundEffect(SoundEffectConstants.CLICK);
-                    if (!isExpanded() && !isAnchored()) {
-                        expandPane(mSlideableView, 0, mAnchorPoint);
-                    } else {
-                        collapsePane();
+                if (isDimmed(mSlideableView)) {
+                    final float x = ev.getX();
+                    final float y = ev.getY();
+                    final float dx = x - mInitialMotionX;
+                    final float dy = y - mInitialMotionY;
+                    final int slop = mDragHelper.getTouchSlop();
+                    if (dx * dx + dy * dy < slop * slop &&
+                            isDragViewHit((int) x, (int) y)) {
+                        View v = mDragView != null ? mDragView : mSlideableView;
+                        v.playSoundEffect(SoundEffectConstants.CLICK);
+                        if (!isExpanded() && !isAnchored()) {
+                            expandPane(mSlideableView, 0, mAnchorPoint);
+                        } else {
+                            collapsePane();
+                        }
+                        break;
                     }
-                    break;
                 }
                 break;
             }
@@ -689,7 +705,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         return wantTouchEvents;
     }
-
+    boolean isDimmed(View child) {
+		if (child == null) {
+			return false;
+		}
+		final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+		return mCanSlide && lp.dimWhenOffset && mSlideOffset > 0;
+	}
     private boolean expandPane(View pane, int initialVelocity, float mSlideOffset) {
         if (mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity)) {
             mPreservedExpandedState = true;
