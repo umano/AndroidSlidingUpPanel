@@ -67,6 +67,8 @@ Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Suppor
 
 Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
 
+Dec 22, 13 - Vladimir Mironov ([@mironov-nsk](https://github.com/mironov-nsk)) - Custom Expanded Panel Height
+
 If you have an awesome pull request, send it over!
 
 ### Licence
