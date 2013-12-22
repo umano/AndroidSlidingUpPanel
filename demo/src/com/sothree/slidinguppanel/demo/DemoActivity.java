@@ -6,12 +6,15 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import android.os.Bundle;
 import android.app.Activity;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
 public class DemoActivity extends Activity {
+
+    public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,24 +42,36 @@ public class DemoActivity extends Activity {
 
             @Override
             public void onPanelExpanded(View panel) {
-
+                Log.i("TEST", "onPanelExpanded");
 
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
-
+                Log.i("TEST", "onPanelCollapsed");
 
             }
 
             @Override
             public void onPanelAnchored(View panel) {
-
+                Log.i("TEST", "onPanelAnchored");
 
             }
         });
         TextView t = (TextView) findViewById(R.id.brought_by);
         t.setMovementMethod(LinkMovementMethod.getInstance());
+
+        boolean actionBarHidden = savedInstanceState != null ?
+                savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false): false;
+        if (actionBarHidden) {
+            getActionBar().hide();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, !getActionBar().isShowing());
     }
 
     @Override
