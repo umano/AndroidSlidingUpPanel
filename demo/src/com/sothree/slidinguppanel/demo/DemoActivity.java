@@ -3,13 +3,16 @@ package com.sothree.slidinguppanel.demo;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -60,7 +63,18 @@ public class DemoActivity extends Activity {
 
             }
         });
-        TextView t = (TextView) findViewById(R.id.name);
+
+        TextView t = (TextView) findViewById(R.id.main);
+        t.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("http://www.umanoapp.com"));
+                startActivity(i);
+            }
+        });
+
+        t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
         t = (TextView) findViewById(R.id.follow);
         t.setText(Html.fromHtml(getString(R.string.follow)));

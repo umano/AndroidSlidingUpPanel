@@ -14,17 +14,23 @@
         sothree:dragView="@+id/name">
 
         <TextView
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Main Content"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#eee"
-            android:orientation="vertical" >
+            android:orientation="vertical" 
+            android:clickable="true"
+            android:focusable="false">
 
             <LinearLayout
                 android:layout_width="match_parent"

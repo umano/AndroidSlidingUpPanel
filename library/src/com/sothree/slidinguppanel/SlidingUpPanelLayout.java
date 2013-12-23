@@ -146,7 +146,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private float mInitialMotionX;
     private float mInitialMotionY;
-    private boolean mDragViewHit;
     private float mAnchorPoint = 0.f;
 
     private PanelSlideListener mPanelSlideListener;
@@ -575,23 +574,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mIsUsingDragViewTouchEvents = enabled;
     }
 
-    private boolean isDragViewHit(int x, int y) {
-        View v = mDragView != null ? mDragView : mSlideableView;
-        if (v == null) return false;
-        int[] viewLocation = new int[2];
-        v.getLocationOnScreen(viewLocation);
-        int[] parentLocation = new int[2];
-        this.getLocationOnScreen(parentLocation);
-        int screenX = parentLocation[0] + x;
-        int screenY = parentLocation[1] + y;
-        return screenX >= viewLocation[0] && screenX < viewLocation[0] + v.getWidth() &&
-                screenY >= viewLocation[1] && screenY < viewLocation[1] + v.getHeight();
-    }
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
-
 
         if (!mCanSlide || !mIsSlidingEnabled || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.cancel();
@@ -612,9 +597,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
-                mDragViewHit = isDragViewHit((int) x, (int) y);
-
-                if (mDragViewHit && !mIsUsingDragViewTouchEvents) {
+                if (isDragViewUnder((int) x, (int) y) && !mIsUsingDragViewTouchEvents) {
                     interceptTap = true;
                 }
                 break;
@@ -633,7 +616,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     // Intercept the touch if the drag view has any vertical scroll.
                     // onTouchEvent will determine if the view should drag vertically.
                     else if (ady > mScrollTouchSlop) {
-                        interceptTap = mDragViewHit;
+                        interceptTap = isDragViewUnder((int) x, (int) y);
                     }
                 }
 
@@ -646,7 +629,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
         }
 
-        final boolean interceptForDrag = mDragViewHit && mDragHelper.shouldInterceptTouchEvent(ev);
+        final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
 
         return interceptForDrag || interceptTap;
     }
@@ -677,10 +660,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float dx = x - mInitialMotionX;
                 final float dy = y - mInitialMotionY;
                 final int slop = mDragHelper.getTouchSlop();
+                View dragView = mDragView != null ? mDragView : mSlideableView;
                 if (dx * dx + dy * dy < slop * slop &&
-                        isDragViewHit((int) x, (int) y)) {
-                    View v = mDragView != null ? mDragView : mSlideableView;
-                    v.playSoundEffect(SoundEffectConstants.CLICK);
+                        isDragViewUnder((int) x, (int) y)) {
+                    dragView.playSoundEffect(SoundEffectConstants.CLICK);
                     if (!isExpanded() && !isAnchored()) {
                         expandPane(mAnchorPoint);
                     } else {
@@ -693,6 +676,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         return wantTouchEvents;
+    }
+
+    private boolean isDragViewUnder(int x, int y) {
+        View dragView = mDragView != null ? mDragView : mSlideableView;
+        if (dragView == null) return false;
+        int[] viewLocation = new int[2];
+        dragView.getLocationOnScreen(viewLocation);
+        int[] parentLocation = new int[2];
+        this.getLocationOnScreen(parentLocation);
+        int screenX = parentLocation[0] + x;
+        int screenY = parentLocation[1] + y;
+        return screenX >= viewLocation[0] && screenX < viewLocation[0] + dragView.getWidth() &&
+                screenY >= viewLocation[1] && screenY < viewLocation[1] + dragView.getHeight();
     }
 
     private boolean expandPane(View pane, int initialVelocity, float mSlideOffset) {
