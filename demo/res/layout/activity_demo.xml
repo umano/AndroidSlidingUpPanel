@@ -1,13 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"    
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DemoActivity">
+    tools:context=".DemoActivity" >
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"        
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        sothree:collapsedHeight="68dp"
+        sothree:shadowHeight="4dp"
+        sothree:dragView="@+id/name">
 
         <TextView
             android:layout_width="match_parent"
@@ -20,31 +24,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#eee"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:gravity="center|bottom"
-                android:text="The Awesome Sliding Up Panel"
-                android:textSize="16sp" />
+                android:layout_height="68dp" 
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/brought_by"
-                android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:gravity="center|top"
-                android:text="Brought to you by http://umanoapp.com"
-                android:textSize="14sp"
-                android:autoLink="web" />
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"/>
+                
+				<TextView
+                    android:id="@+id/follow"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical|right"                    
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"/>                
+
+            </LinearLayout>
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@drawable/graphic"
-                android:scaleType="fitStart">
-
+                android:scaleType="fitStart"
+                android:src="@drawable/graphic" >
             </ImageView>
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>

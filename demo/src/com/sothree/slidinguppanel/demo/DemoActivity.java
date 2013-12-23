@@ -5,6 +5,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 public class DemoActivity extends Activity {
+    private static final String TAG = "DemoActivity";
 
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
@@ -26,9 +28,9 @@ public class DemoActivity extends Activity {
         layout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
         layout.setAnchorPoint(0.3f);
         layout.setPanelSlideListener(new PanelSlideListener() {
-
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
+                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
                 if (slideOffset < 0.2) {
                     if (getActionBar().isShowing()) {
                         getActionBar().hide();
@@ -42,23 +44,26 @@ public class DemoActivity extends Activity {
 
             @Override
             public void onPanelExpanded(View panel) {
-                Log.i("TEST", "onPanelExpanded");
+                Log.i(TAG, "onPanelExpanded");
 
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
-                Log.i("TEST", "onPanelCollapsed");
+                Log.i(TAG, "onPanelCollapsed");
 
             }
 
             @Override
             public void onPanelAnchored(View panel) {
-                Log.i("TEST", "onPanelAnchored");
+                Log.i(TAG, "onPanelAnchored");
 
             }
         });
-        TextView t = (TextView) findViewById(R.id.brought_by);
+        TextView t = (TextView) findViewById(R.id.name);
+        t.setText(Html.fromHtml(getString(R.string.hello)));
+        t = (TextView) findViewById(R.id.follow);
+        t.setText(Html.fromHtml(getString(R.string.follow)));
         t.setMovementMethod(LinkMovementMethod.getInstance());
 
         boolean actionBarHidden = savedInstanceState != null ?
