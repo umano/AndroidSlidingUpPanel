@@ -144,6 +144,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private final int mScrollTouchSlop;
 
+    /*
+     * Flag is Transparent
+     */
+    private boolean mIsTransparent = false;
+    
+    /**
+     * If panel is transparent, set default panel color
+     */
+    private static final int DEFAULT_PANEL_COLOR_TRANSPARENT = 0x99FFFFFF;
+    
     private float mInitialMotionX;
     private float mInitialMotionY;
     private float mAnchorPoint = 0.f;
@@ -315,6 +325,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Set transparent flag
+     *
+     */
+    public void setIsTransparent(boolean mIsTransparent)
+    {
+       this.mIsTransparent = mIsTransparent;
+    }
+    
+    /**
      * Set an anchor point where the panel can stop during sliding
      *
      * @param anchorPoint A value between 0 and 1, determining the position of the anchor point
@@ -473,23 +492,30 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             int childWidthSpec;
-            if (lp.width == LayoutParams.WRAP_CONTENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.AT_MOST);
-            } else if (lp.width == LayoutParams.MATCH_PARENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
-            } else {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
-            }
-
             int childHeightSpec;
-            if (lp.height == LayoutParams.WRAP_CONTENT) {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
-            } else if (lp.height == LayoutParams.MATCH_PARENT) {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-            } else {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+            if(mIsTransparent && i == 0) 
+            {
+               childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
+               childHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY);
+            } 
+            else 
+            {
+               if (lp.width == LayoutParams.WRAP_CONTENT) {
+                  childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.AT_MOST);
+               } else if (lp.width == LayoutParams.MATCH_PARENT) {
+                  childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
+               } else {
+                  childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
+               }
+               
+               if (lp.height == LayoutParams.WRAP_CONTENT) {
+                  childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+               } else if (lp.height == LayoutParams.MATCH_PARENT) {
+                  childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+               } else {
+                  childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+               }
             }
-
             child.measure(childWidthSpec, childHeightSpec);
         }
 
@@ -521,6 +547,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
 
+            if (mIsTransparent && i==1) {
+               child.setBackgroundColor(DEFAULT_PANEL_COLOR_TRANSPARENT);
+            }
+            
             if (child.getVisibility() == GONE) {
                 continue;
             }
@@ -817,7 +847,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // Clip against the slider; no sense drawing what will immediately be covered.
             canvas.getClipBounds(mTmpRect);
             mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
-            canvas.clipRect(mTmpRect);
+            
+            if(!mIsTransparent) {
+               canvas.clipRect(mTmpRect);
+            }
+            
             if (mSlideOffset < 1) {
                 drawScrim = true;
             }
