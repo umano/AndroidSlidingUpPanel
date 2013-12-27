@@ -620,7 +620,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     }
                 }
 
-                if (ady > dragSlop && adx > ady) {
+                if ((ady > dragSlop && adx > ady) || !isDragViewUnder((int) x, (int) y)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
