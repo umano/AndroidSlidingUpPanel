@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>slidinguppanel</artifactId>
-    <packaging>apklib</packaging>
+    <packaging>aar</packaging>
 
     <name>Android Sliding Up Panel (Library)</name>
 
