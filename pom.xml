@@ -48,9 +48,9 @@
         <junit.version>4.10</junit.version>
 
         <!-- Plugin Versions -->
-        <android-maven-plugin.version>3.6.0</android-maven-plugin.version>
-        <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
-        <maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
+        <android-maven-plugin.version>3.8.2</android-maven-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
     </properties>
 
