@@ -249,8 +249,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mCanSlide = true;
         mIsSlidingEnabled = true;
 
-        setCoveredFadeColor(DEFAULT_FADE_COLOR);
-
         ViewConfiguration vc = ViewConfiguration.get(context);
         mScrollTouchSlop = vc.getScaledTouchSlop();
     }
