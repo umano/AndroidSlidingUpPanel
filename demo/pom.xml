@@ -29,7 +29,7 @@
             <groupId>com.sothree.slidinguppanel</groupId>
             <artifactId>slidinguppanel</artifactId>
             <version>${project.version}</version>
-            <type>apklib</type>
+            <type>aar</type>
         </dependency>
     </dependencies>
 
