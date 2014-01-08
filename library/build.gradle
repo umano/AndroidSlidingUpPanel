@@ -1,29 +1,26 @@
+apply plugin: 'android-library'
+
 buildscript {
-        repositories {
-            mavenCentral()
-        }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:0.7.+'
+  }
+}
 
-        dependencies {
-            classpath 'com.android.tools.build:gradle:0.7.+'
-        }
-    }
+dependencies {
+  compile 'com.android.support:support-v4:13.0.0'
+}
 
-    apply plugin: 'android-library'
+android {
+    compileSdkVersion 18
+    buildToolsVersion "18.0.1"
 
-    dependencies {
-	    compile 'com.android.support:support-v4:13.0.0'
-    }
-
-    android {
-        compileSdkVersion 17
-        buildToolsVersion "17.0.0"
-        sourceSets {
-            main {
-                manifest.srcFile 'AndroidManifest.xml'
-                java.srcDirs = ['src']
-                resources.srcDirs = ['src']
-                res.srcDirs = ['res']
-                assets.srcDirs = ['assets']
-            }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
         }
     }
+}
