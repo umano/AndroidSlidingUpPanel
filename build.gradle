@@ -1,4 +1,8 @@
 allprojects {
+
+  group 'com.sothree.slidinguppanel'
+  version '1.0.0-SNAPSHOT'
+
   buildscript {
     repositories {
       mavenCentral()
