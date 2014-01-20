@@ -89,6 +89,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private View mDragView;
 
     /**
+     * If provided, these views will be ignored for actioning the sliding panel. This allows there
+     * to be clickable items in the draggable area.
+     */
+    private View[] mActionViews;
+
+    /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
      * used for dragging.
      */
@@ -590,6 +596,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final float y = ev.getY();
         boolean interceptTap = false;
 
+        boolean canHandleChild = true;
+
+        if (mActionViews != null) {
+            for (View view : mActionViews) {
+                if (isViewUnder(view, (int)x, (int)y)) {
+                    canHandleChild = false;
+                }
+            }
+        }
+
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 mIsUnableToDrag = false;
@@ -629,7 +645,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
 
-        return interceptForDrag || interceptTap;
+        return (interceptForDrag || interceptTap) && canHandleChild;
     }
 
     @Override
@@ -678,16 +694,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private boolean isDragViewUnder(int x, int y) {
         View dragView = mDragView != null ? mDragView : mSlideableView;
-        if (dragView == null) return false;
+        if (dragView == null) {
+					return false;
+				} else {
+					return isViewUnder(dragView, x, y);
+				}
+    }
+		
+    private boolean isViewUnder(View v, int x, int y) {
         int[] viewLocation = new int[2];
-        dragView.getLocationOnScreen(viewLocation);
+        v.getLocationOnScreen(viewLocation);
         int[] parentLocation = new int[2];
         this.getLocationOnScreen(parentLocation);
         int screenX = parentLocation[0] + x;
         int screenY = parentLocation[1] + y;
-        return screenX >= viewLocation[0] && screenX < viewLocation[0] + dragView.getWidth() &&
-                screenY >= viewLocation[1] && screenY < viewLocation[1] + dragView.getHeight();
+        return screenX >= viewLocation[0] && screenX < viewLocation[0] + v.getWidth() &&
+                screenY >= viewLocation[1] && screenY < viewLocation[1] + v.getHeight();
     }
+		
 
     private boolean expandPane(View pane, int initialVelocity, float mSlideOffset) {
         if (mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity)) {
