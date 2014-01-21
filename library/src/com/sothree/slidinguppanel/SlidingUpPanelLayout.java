@@ -234,7 +234,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
 
             if (defAttrs != null) {
-                mIsSlidingUp = defAttrs.getInt(0, Gravity.BOTTOM) == Gravity.BOTTOM;
+                int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
+                if (gravity != Gravity.TOP && gravity != Gravity.BOTTOM) {
+                    throw new IllegalArgumentException("layout_gravity must be set to either top or bottom");
+                }
+                mIsSlidingUp = gravity == Gravity.BOTTOM;
             }
 
             defAttrs.recycle();
