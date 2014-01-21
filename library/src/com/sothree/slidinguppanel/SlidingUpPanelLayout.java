@@ -51,7 +51,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Default attributes for layout
      */
-    private static final int[] ATTRS = new int[] {
+    private static final int[] DEFAULT_ATTRS = new int[] {
         android.R.attr.layout_gravity
     };
 
@@ -231,7 +231,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         if (attrs != null) {
-            TypedArray defAttrs = context.obtainStyledAttributes(attrs, ATTRS);
+            TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
 
             if (defAttrs != null) {
                 mIsSlidingUp = defAttrs.getInt(0, Gravity.BOTTOM) == Gravity.BOTTOM;
