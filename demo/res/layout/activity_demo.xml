@@ -46,9 +46,9 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"/>
                 
-				<TextView
+				<Button
                     android:id="@+id/follow"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textSize="14sp"
                     android:gravity="center_vertical|right"                    

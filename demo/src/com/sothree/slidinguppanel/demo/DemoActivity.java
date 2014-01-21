@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DemoActivity extends Activity {
@@ -76,9 +77,18 @@ public class DemoActivity extends Activity {
 
         t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
-        t = (TextView) findViewById(R.id.follow);
-        t.setText(Html.fromHtml(getString(R.string.follow)));
-        t.setMovementMethod(LinkMovementMethod.getInstance());
+        Button f = (Button) findViewById(R.id.follow);
+        f.setText(Html.fromHtml(getString(R.string.follow)));
+        f.setMovementMethod(LinkMovementMethod.getInstance());
+        f.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("http://www.twitter.com/umanoapp"));
+                startActivity(i);
+            }
+        });
+
 
         boolean actionBarHidden = savedInstanceState != null ?
                 savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false): false;
