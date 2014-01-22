@@ -57,6 +57,25 @@ This code is heavily based on the opened-sourced [SlidingPaneLayout](http://deve
 
 Tested on Android 2.2+
 
+If you are using Android studio, make sure to add the following section to the root `build.gradle` file:
+
+```
+allprojects {
+
+  buildscript {
+    repositories {
+      mavenCentral()
+    }
+  }
+
+  dependencies {
+    repositories {
+      mavenCentral()
+    }
+  }
+}
+```
+
 ### Other Contributors 
 
 Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
