@@ -14,6 +14,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
@@ -48,6 +49,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
 
     /**
+     * Default attributes for layout
+     */
+    private static final int[] DEFAULT_ATTRS = new int[] {
+        android.R.attr.layout_gravity
+    };
+
+    /**
      * Minimum velocity that will be detected as a fling
      */
     private int mMinFlingVelocity = DEFAULT_MIN_FLING_VELOCITY;
@@ -76,6 +84,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The size of the shadow in pixels.
      */
     private int mShadowHeight = -1;
+
+    /**
+     * True if the collapsed panel should be dragged up.
+     */
+    private boolean mIsSlidingUp;
 
     /**
      * True if a panel can slide with the current measurements
@@ -218,6 +231,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         if (attrs != null) {
+            TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
+
+            if (defAttrs != null) {
+                int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
+                if (gravity != Gravity.TOP && gravity != Gravity.BOTTOM) {
+                    throw new IllegalArgumentException("layout_gravity must be set to either top or bottom");
+                }
+                mIsSlidingUp = gravity == Gravity.BOTTOM;
+            }
+
+            defAttrs.recycle();
+
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
             if (ta != null) {
@@ -530,7 +555,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideRange = childHeight - mPanelHeight;
             }
 
-            final int childTop = lp.slideable ? slidingTop + (int) (mSlideRange * mSlideOffset) : paddingTop;
+            final int childTop;
+            if (mIsSlidingUp) {
+                childTop = lp.slideable ? slidingTop + (int) (mSlideRange * mSlideOffset) : paddingTop;
+            } else {
+                childTop = lp.slideable ? slidingTop - (int) (mSlideRange * mSlideOffset) : paddingTop + mPanelHeight;
+            }
             final int childBottom = childTop + childHeight;
             final int childLeft = paddingLeft;
             final int childRight = childLeft + child.getMeasuredWidth();
@@ -799,7 +829,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private void onPanelDragged(int newTop) {
         final int topBound = getSlidingTop();
-        mSlideOffset = (float) (newTop - topBound) / mSlideRange;
+        mSlideOffset = mIsSlidingUp
+                ? (float) (newTop - topBound) / mSlideRange
+                : (float) (topBound - newTop) / mSlideRange;
         dispatchOnPanelSlide(mSlideableView);
     }
 
@@ -814,7 +846,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mCanSlide && !lp.slideable && mSlideableView != null) {
             // Clip against the slider; no sense drawing what will immediately be covered.
             canvas.getClipBounds(mTmpRect);
-            mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+            if (mIsSlidingUp) {
+                mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+            } else {
+                mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
+            }
             canvas.clipRect(mTmpRect);
             if (mSlideOffset < 1) {
                 drawScrim = true;
@@ -848,7 +884,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         final int topBound = getSlidingTop();
-        int y = (int) (topBound + slideOffset * mSlideRange);
+        int y = mIsSlidingUp
+                ? (int) (topBound + slideOffset * mSlideRange)
+                : (int) (topBound - slideOffset * mSlideRange);
 
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), y)) {
             setAllChildrenVisible();
@@ -880,8 +918,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         final int right = mSlideableView.getRight();
-        final int top = mSlideableView.getTop() - mShadowHeight;
-        final int bottom = mSlideableView.getTop();
+        final int top;
+        final int bottom;
+        if (mIsSlidingUp) {
+            top = mSlideableView.getTop() - mShadowHeight;
+            bottom = mSlideableView.getTop();
+        } else {
+            top = mSlideableView.getBottom();
+            bottom = mSlideableView.getBottom() + mShadowHeight;
+        }
         final int left = mSlideableView.getLeft();
 
         if (mShadowDrawable != null) {
@@ -1010,11 +1055,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int top = getSlidingTop();
+            int top = mIsSlidingUp
+                    ? getSlidingTop()
+                    : getSlidingTop() - mSlideRange;
 
             if (mAnchorPoint != 0) {
-                int anchoredTop = (int)(mAnchorPoint*mSlideRange);
-                float anchorOffset = (float)anchoredTop/(float)mSlideRange;
+                int anchoredTop;
+                float anchorOffset;
+                if (mIsSlidingUp) {
+                    anchoredTop = (int)(mAnchorPoint*mSlideRange);
+                    anchorOffset = (float)anchoredTop/(float)mSlideRange;
+                } else {
+                    anchoredTop = mPanelHeight - (int)(mAnchorPoint*mSlideRange);
+                    anchorOffset = (float)(mPanelHeight - anchoredTop)/(float)mSlideRange;
+                }
 
                 if (yvel > 0 || (yvel == 0 && mSlideOffset >= (1f+anchorOffset)/2)) {
                     top += mSlideRange;
@@ -1038,8 +1092,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public int clampViewPositionVertical(View child, int top, int dy) {
-            final int topBound = getSlidingTop();
-            final int bottomBound = topBound + mSlideRange;
+            final int topBound;
+            final int bottomBound;
+            if (mIsSlidingUp) {
+                topBound = getSlidingTop();
+                bottomBound = topBound + mSlideRange;
+            } else {
+                bottomBound = getPaddingTop();
+                topBound = bottomBound - mSlideRange;
+            }
 
             return Math.min(Math.max(top, topBound), bottomBound);
         }
