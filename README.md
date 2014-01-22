@@ -79,7 +79,7 @@ allprojects {
 }
 ```
 
-### Other Contributors 
+### Other Contributors
 
 Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
 

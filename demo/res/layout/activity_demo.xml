@@ -1,11 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"    
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DemoActivity" >
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"        
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,13 +29,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#eee"
-            android:orientation="vertical" 
+            android:orientation="vertical"
             android:clickable="true"
             android:focusable="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="68dp" 
+                android:layout_height="68dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -46,15 +46,15 @@
                     android:textSize="14sp"
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"/>
-                
+
 				<Button
                     android:id="@+id/follow"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textSize="14sp"
-                    android:gravity="center_vertical|right"                    
+                    android:gravity="center_vertical|right"
                     android:paddingRight="10dp"
-                    android:paddingLeft="10dp"/>                
+                    android:paddingLeft="10dp"/>
 
             </LinearLayout>
 
