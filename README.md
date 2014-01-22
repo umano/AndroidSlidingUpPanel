@@ -49,6 +49,8 @@ You can disable sliding by using `setSlidingEnabled` method. This can be useful 
 
 You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 
+You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
+
 ### Implementation
 
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
@@ -77,6 +79,8 @@ allprojects {
 ```
 
 ### Other Contributors 
+
+Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
 
 Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
 
