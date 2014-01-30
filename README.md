@@ -50,6 +50,8 @@ You can disable sliding by using `setSlidingEnabled` method. This can be useful 
 
 You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 
+You can set a `PanelSlideListener` to monitor events about sliding panes.
+
 You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
 
 ### Implementation
