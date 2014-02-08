@@ -44,7 +44,7 @@
 
         <!-- Dependency Versions -->
         <android.version>4.1.1.4</android.version>
-        <android-support.version>13.0.0</android-support.version>
+        <android-support-v13.version>19.0.1</android-support-v13.version>
         <junit.version>4.10</junit.version>
 
         <!-- Plugin Versions -->
@@ -64,8 +64,8 @@
             </dependency>
             <dependency>
                 <groupId>com.android.support</groupId>
-                <artifactId>support-v4</artifactId>
-                <version>${android-support.version}</version>
+                <artifactId>support-v13</artifactId>
+                <version>${android-support-v13.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
