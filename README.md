@@ -58,7 +58,7 @@ You can also make the panel slide from the top by changing the `layout_gravity` 
 
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
 
-### Requrements
+### Requirements
 
 Tested on Android 2.2+
 
