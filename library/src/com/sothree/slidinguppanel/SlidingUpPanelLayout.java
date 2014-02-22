@@ -52,7 +52,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default attributes for layout
      */
     private static final int[] DEFAULT_ATTRS = new int[] {
-        android.R.attr.layout_gravity
+        android.R.attr.gravity
     };
 
     /**
