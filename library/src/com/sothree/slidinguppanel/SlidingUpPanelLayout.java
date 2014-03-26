@@ -735,7 +735,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private int getSlidingTop() {
         if (mSlideableView != null) {
-            return getMeasuredHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight();
+            return mIsSlidingUp
+                ? getMeasuredHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight()
+                : getMeasuredHeight() - getPaddingBottom() - (mSlideableView.getMeasuredHeight() * 2);
         }
 
         return getMeasuredHeight() - getPaddingBottom();
