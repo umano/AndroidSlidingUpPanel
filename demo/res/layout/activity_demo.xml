@@ -14,16 +14,32 @@
         sothree:shadowHeight="4dp"
         sothree:dragView="@+id/name">
 
-        <TextView
-            android:id="@+id/main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Main Content"
-            android:clickable="true"
-            android:focusable="false"
-            android:focusableInTouchMode="true"
-            android:textSize="16sp" />
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+
+            <TextView
+                    android:id="@+id/main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Main Content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp" />
+
+            <Button
+                    android:id="@+id/exchange_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom"
+                    android:text="Exchange Layout"/>
+
+        </FrameLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
