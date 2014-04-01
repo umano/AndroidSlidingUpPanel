@@ -56,6 +56,26 @@ public class SlidingUpPanelLayout extends ViewGroup {
     };
 
     /**
+     * Use Expand View Width when sliding
+     */
+    private boolean mUseExpandView = false;
+
+    /**
+     * Expand View Res Id
+     */
+    private int mExpandViewResId = -1;
+
+    /**
+     * Expand View when sliding
+     */
+    private View mExpandView;
+
+    /**
+     * Expand View min width
+     */
+    private int mExpandMinWidth = -1;
+
+    /**
      * Minimum velocity that will be detected as a fling
      */
     private int mMinFlingVelocity = DEFAULT_MIN_FLING_VELOCITY;
@@ -239,9 +259,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     throw new IllegalArgumentException("layout_gravity must be set to either top or bottom");
                 }
                 mIsSlidingUp = gravity == Gravity.BOTTOM;
-            }
 
-            defAttrs.recycle();
+                defAttrs.recycle();
+            }
 
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
@@ -253,9 +273,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
-            }
+                mExpandViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_expandView, -1);
 
-            ta.recycle();
+                ta.recycle();
+            }
         }
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -286,6 +307,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super.onFinishInflate();
         if (mDragViewResId != -1) {
             mDragView = findViewById(mDragViewResId);
+        }
+
+        if (mExpandViewResId != -1) {
+            mExpandView = findViewById(mExpandViewResId);
+            mUseExpandView = true;
         }
     }
 
@@ -491,7 +517,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 lp.dimWhenOffset = true;
                 mSlideableView = child;
                 mCanSlide = true;
-            } else {
+            }  else if (!mUseExpandView) {
                 height -= panelHeight;
             }
 
@@ -512,8 +538,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
             } else {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
             }
-
             child.measure(childWidthSpec, childHeightSpec);
+        }
+
+        if (mUseExpandView && mExpandMinWidth < 0) {
+            ViewGroup.LayoutParams lp = mExpandView.getLayoutParams();
+            if (lp.width == LayoutParams.WRAP_CONTENT) {
+                mExpandMinWidth = mExpandView.getMeasuredWidth();
+            } else if (lp.width == LayoutParams.MATCH_PARENT) {
+                throw new IllegalStateException("Expand View Width must have an exact value or WRAP_CONTENT");
+            } else {
+                mExpandMinWidth = lp.width;
+            }
         }
 
         setMeasuredDimension(widthSize, heightSize);
@@ -837,6 +873,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
         dispatchOnPanelSlide(mSlideableView);
     }
 
+    private void onExpandWidthView() {
+        if (mUseExpandView && mExpandView != null) {
+            int widthSize = getMeasuredWidth();
+            ViewGroup.LayoutParams params = mExpandView.getLayoutParams();
+
+            params.width = (int)((1.0f - mSlideOffset) * (widthSize - mExpandMinWidth)) + mExpandMinWidth;
+
+            mExpandView.setLayoutParams(params);
+        }
+
+    }
+
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -848,11 +896,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mCanSlide && !lp.slideable && mSlideableView != null) {
             // Clip against the slider; no sense drawing what will immediately be covered.
             canvas.getClipBounds(mTmpRect);
-            if (mIsSlidingUp) {
-                mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
-            } else {
-                mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
+            if (!mUseExpandView) {
+                if (mIsSlidingUp) {
+                    mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+                } else {
+                    mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
+                }
             }
+
             canvas.clipRect(mTmpRect);
             if (mSlideOffset < 1) {
                 drawScrim = true;
@@ -1052,6 +1103,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             onPanelDragged(top);
+            onExpandWidthView();
             invalidate();
         }
 

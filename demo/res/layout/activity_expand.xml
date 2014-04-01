@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".slide.SlideActivity" >
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+            xmlns:sothree="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/sliding_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            sothree:collapsedHeight="80dp"
+            sothree:shadowHeight="0dp"
+            sothree:expandView="@+id/follow"
+            sothree:dragView="@+id/drag">
+
+        <TextView
+                android:id="@+id/main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Main Content"
+                android:clickable="true"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
+                android:textSize="16sp"
+                android:background="#fff"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="false">
+
+            <FrameLayout
+                    android:id="@+id/drag"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                <Button
+                        android:id="@+id/follow"
+                        android:layout_width="140dp"
+                        android:layout_height="match_parent"
+                        android:textSize="14sp"
+                        android:layout_gravity="center_vertical|right"
+                        android:paddingRight="10dp"
+                        android:paddingLeft="10dp"/>
+
+            </FrameLayout>
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/graphic" >
+            </ImageView>
+        </LinearLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+</RelativeLayout>
