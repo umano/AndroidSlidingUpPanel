@@ -47,7 +47,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default Minimum velocity that will be detected as a fling
      */
     private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
-
+    /**
+     * Default is set to false because that is how it was written
+     */
+    private static final boolean DEFAULT_OVERLAY_FLAG = false;
     /**
      * Default attributes for layout
      */
@@ -94,6 +97,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * True if a panel can slide with the current measurements
      */
     private boolean mCanSlide;
+    
+    /**
+     * Panel overlays the windows instead of putting it underneath it.
+     */
+    private boolean mPanelIsOverlay = DEFAULT_OVERLAY_FLAG;
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -236,7 +244,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (defAttrs != null) {
                 int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
                 if (gravity != Gravity.TOP && gravity != Gravity.BOTTOM) {
-                    throw new IllegalArgumentException("layout_gravity must be set to either top or bottom");
+                    throw new IllegalArgumentException("gravity must be set to either top or bottom");
                 }
                 mIsSlidingUp = gravity == Gravity.BOTTOM;
             }
@@ -253,6 +261,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
+                
+                mPanelIsOverlay = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
             }
 
             ta.recycle();
@@ -305,6 +315,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public int getCoveredFadeColor() {
         return mCoveredFadeColor;
+    }
+    
+    /**
+     * Set sliding enabled flag
+     * @param enabled flag value
+     */
+    public void setSlidingEnabled(boolean enabled) {
+        mIsSlidingEnabled = enabled;
     }
 
     /**
@@ -492,7 +510,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideableView = child;
                 mCanSlide = true;
             } else {
-                height -= panelHeight;
+                 if(mPanelIsOverlay) {
+                   //do not change the size of the window.
+                }else{
+                    height -= panelHeight;
+                }
             }
 
             int childWidthSpec;
@@ -804,6 +826,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mCanSlide;
     }
 
+    /**
+     * Check if the panel is set as an overlay.
+     */
+    public boolean isPanelOveray() { return mPanelIsOverlay;}
+    
     public boolean isPaneVisible() {
         if (getChildCount() < 2) {
             return false;
