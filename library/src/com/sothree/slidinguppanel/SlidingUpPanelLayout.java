@@ -47,7 +47,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default Minimum velocity that will be detected as a fling
      */
     private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
-
+    /**
+     * Default is set to false because that is how it was written
+     */
+    private static final boolean DEFAULT_OVERLAY_FLAG = false;
     /**
      * Default attributes for layout
      */
@@ -98,7 +101,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Panel overlays the windows instead of putting it underneath it.
      */
-    private boolean mPanelIsOverlay = false;
+    private boolean mPanelIsOverlay = DEFAULT_OVERLAY_FLAG;
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -258,6 +261,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
+                
+                mPanelIsOverlay = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
             }
 
             ta.recycle();
