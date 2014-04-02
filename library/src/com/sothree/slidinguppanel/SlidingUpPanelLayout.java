@@ -94,6 +94,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * True if a panel can slide with the current measurements
      */
     private boolean mCanSlide;
+    
+    /**
+     * Panel overlays the windows instead of putting it underneath it.
+     */
+    private boolean mPanelIsOverlay = false;
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -306,6 +311,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public int getCoveredFadeColor() {
         return mCoveredFadeColor;
     }
+    
+    /**
+     * Set sliding enabled flag
+     * @param enabled flag value
+     */
+    public void setSlidingEnabled(boolean enabled) {
+        mIsSlidingEnabled = enabled;
+    }
 
     /**
      * Set the collapsed panel height in pixels
@@ -492,7 +505,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideableView = child;
                 mCanSlide = true;
             } else {
-                height -= panelHeight;
+                 if(mPanelIsOverlay) {
+                   //do not change the size of the window.
+                }else{
+                    height -= panelHeight;
+                }
             }
 
             int childWidthSpec;
@@ -804,6 +821,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mCanSlide;
     }
 
+    /**
+     * Check if the panel is set as an overlay.
+     */
+    public boolean isPanelOveray() { return mPanelIsOverlay;}
+    
     public boolean isPaneVisible() {
         if (getChildCount() < 2) {
             return false;
