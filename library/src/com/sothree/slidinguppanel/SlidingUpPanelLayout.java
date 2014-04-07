@@ -39,6 +39,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final int DEFAULT_SHADOW_HEIGHT = 4; // dp;
 
     /**
+     * Default height of the shadow above the peeking out panel
+     */
+    private static final int DEFAULT_SHADOW_DRAWABLE = R.drawable.default_shadow; // dp;
+
+    /**
      * If no fade color is given by default it will fade to 80% gray.
      */
     private static final int DEFAULT_FADE_COLOR = 0x99000000;
@@ -76,7 +81,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Drawable used to draw the shadow between panes.
      */
-    private Drawable mShadowDrawable;
+    private final Drawable mShadowDrawable;
 
     /**
      * The size of the overhang in pixels.
@@ -275,6 +280,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mShadowHeight == -1) {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
+        // If the shadow height is zero, don't show the shadow
+        if (mShadowHeight > 0) {
+            mShadowDrawable = getResources().getDrawable(DEFAULT_SHADOW_DRAWABLE);
+        } else {
+            mShadowDrawable = null;
+        }
 
         setWillNotDraw(false);
 
@@ -364,14 +375,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setAnchorPoint(float anchorPoint) {
         if (anchorPoint > 0 && anchorPoint < 1)
             mAnchorPoint = anchorPoint;
-    }
-
-    /**
-     * Set the shadow for the sliding panel
-     *
-     */
-    public void setShadowDrawable(Drawable drawable) {
-        mShadowDrawable = drawable;
     }
 
     void dispatchOnPanelSlide(View panel) {

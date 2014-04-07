@@ -12,7 +12,8 @@
         android:gravity="bottom"
         sothree:collapsedHeight="68dp"
         sothree:shadowHeight="4dp"
-        sothree:dragView="@+id/name">
+        sothree:dragView="@+id/name"
+        sothree:overlay="true">
 
         <TextView
             android:id="@+id/main"
