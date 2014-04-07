@@ -106,7 +106,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Panel overlays the windows instead of putting it underneath it.
      */
-    private boolean mPanelIsOverlay = DEFAULT_OVERLAY_FLAG;
+    private boolean mOverlayContent = DEFAULT_OVERLAY_FLAG;
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -267,7 +267,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
-                mPanelIsOverlay = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+                mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
             }
 
             ta.recycle();
@@ -513,9 +513,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideableView = child;
                 mCanSlide = true;
             } else {
-                 if(mPanelIsOverlay) {
+                if(mOverlayContent) {
                    //do not change the size of the window.
-                }else{
+                } else {
                     height -= panelHeight;
                 }
             }
@@ -824,7 +824,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Check if the panel is set as an overlay.
      */
-    public boolean isPanelOveray() { return mPanelIsOverlay;}
+    public boolean isOverlayed() {
+        return mOverlayContent;
+    }
 
     public boolean isPaneVisible() {
         if (getChildCount() < 2) {
@@ -868,14 +870,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         boolean drawScrim = false;
 
         if (mCanSlide && !lp.slideable && mSlideableView != null) {
-            // Clip against the slider; no sense drawing what will immediately be covered.
-            canvas.getClipBounds(mTmpRect);
-            if (mIsSlidingUp) {
-                mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
-            } else {
-                mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
+            // Clip against the slider; no sense drawing what will immediately be covered,
+            // Unless the panel is set to overlay content
+            if (!mOverlayContent) {
+                canvas.getClipBounds(mTmpRect);
+                if (mIsSlidingUp) {
+                    mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+                } else {
+                    mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
+                }
+                canvas.clipRect(mTmpRect);
             }
-            canvas.clipRect(mTmpRect);
             if (mSlideOffset < 1) {
                 drawScrim = true;
             }
