@@ -1,17 +1,21 @@
 package com.sothree.slidinguppanel.demo;
 
+import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
-
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
@@ -28,20 +32,21 @@ public class DemoActivity extends Activity {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_demo);
 
-        SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        final SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         layout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
-                if (slideOffset < 0.2) {
-                    if (getActionBar().isShowing()) {
-                        getActionBar().hide();
-                    }
-                } else {
-                    if (!getActionBar().isShowing()) {
-                        getActionBar().show();
-                    }
-                }
+                setActionBarTranslation(layout.getCurrentParalaxOffset());
+//                if (slideOffset < 0.2) {
+//                    if (getActionBar().isShowing()) {
+//                        getActionBar().hide();
+//                    }
+//                } else {
+//                    if (!getActionBar().isShowing()) {
+//                        getActionBar().show();
+//                    }
+//                }
             }
 
             @Override
@@ -108,4 +113,31 @@ public class DemoActivity extends Activity {
         return true;
     }
 
+    @SuppressLint("NewApi")
+    public void setActionBarTranslation(float y) {
+        // Figure out the actionbar height
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        // A hack to add the translation to the action bar
+        ViewGroup content = ((ViewGroup) findViewById(android.R.id.content).getParent());
+        int children = content.getChildCount();
+        for (int i = 0; i < children; i++) {
+            View child = content.getChildAt(i);
+            if (child.getId() != android.R.id.content) {
+                if (y <= -actionBarHeight) {
+                    child.setVisibility(View.GONE);
+                } else {
+                    child.setVisibility(View.VISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        child.setTranslationY(y);
+                    } else {
+                        AnimatorProxy.wrap(child).setTranslationY(y);
+                    }
+                }
+            }
+        }
+    }
 }
