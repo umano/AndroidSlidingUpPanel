@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
@@ -22,6 +23,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
@@ -37,11 +39,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default height of the shadow above the peeking out panel
      */
     private static final int DEFAULT_SHADOW_HEIGHT = 4; // dp;
-
-    /**
-     * Default height of the shadow above the peeking out panel
-     */
-    private static final int DEFAULT_SHADOW_DRAWABLE = R.drawable.default_shadow; // dp;
 
     /**
      * If no fade color is given by default it will fade to 80% gray.
@@ -74,6 +71,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int mCoveredFadeColor = DEFAULT_FADE_COLOR;
 
     /**
+     * Default paralax length of the main view
+     */
+    private static final int DEFAULT_PARALAX_OFFSET = 0;
+
+    /**
      * The paint used to dim the main layout when sliding
      */
     private final Paint mCoveredFadePaint = new Paint();
@@ -92,6 +94,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The size of the shadow in pixels.
      */
     private int mShadowHeight = -1;
+
+    /**
+     * Paralax offset
+     */
+    private int mParalaxOffset = -1;
 
     /**
      * True if the collapsed panel should be dragged up.
@@ -124,6 +131,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The child view that can slide, if any.
      */
     private View mSlideableView;
+
+    /**
+     * The main view
+     */
+    private View mMainView;
 
     /**
      * Current state of the slideable view.
@@ -261,6 +273,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (ta != null) {
                 mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_panelHeight, -1);
                 mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowHeight, -1);
+                mParalaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_paralaxOffset, -1);
 
                 mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
@@ -280,9 +293,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mShadowHeight == -1) {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
+        if (mParalaxOffset == -1) {
+            mParalaxOffset = (int) (DEFAULT_PARALAX_OFFSET * density);
+        }
         // If the shadow height is zero, don't show the shadow
         if (mShadowHeight > 0) {
-            mShadowDrawable = getResources().getDrawable(DEFAULT_SHADOW_DRAWABLE);
+            if (mIsSlidingUp) {
+                mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
+            } else {
+                mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
+            }
+
         } else {
             mShadowDrawable = null;
         }
@@ -351,6 +372,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public int getPanelHeight() {
         return mPanelHeight;
+    }
+
+    /**
+     * @return The current paralax offset
+     */
+    public int getCurrentParalaxOffset() {
+        int offset = (int)(mParalaxOffset * (1 - mSlideOffset));
+        return mIsSlidingUp ? -offset : offset;
     }
 
     /**
@@ -532,11 +561,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideableView = child;
                 mCanSlide = true;
             } else {
-                if(mOverlayContent) {
-                   //do not change the size of the window.
-                } else {
+                if (!mOverlayContent) {
                     height -= panelHeight;
                 }
+                mMainView = child;
             }
 
             int childWidthSpec;
@@ -599,11 +627,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideRange = childHeight - mPanelHeight;
             }
 
-            final int childTop;
+            int childTop;
             if (mIsSlidingUp) {
                 childTop = lp.slideable ? slidingTop + (int) (mSlideRange * mSlideOffset) : paddingTop;
             } else {
-                childTop = lp.slideable ? slidingTop - (int) (mSlideRange * mSlideOffset) : paddingTop + mPanelHeight;
+                childTop = lp.slideable ? slidingTop - (int) (mSlideRange * mSlideOffset) : paddingTop;
+                if (!lp.slideable && !mOverlayContent) {
+                    childTop += mPanelHeight;
+                }
             }
             final int childBottom = childTop + childHeight;
             final int childLeft = paddingLeft;
@@ -772,8 +803,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int getSlidingTop() {
         if (mSlideableView != null) {
             return mIsSlidingUp
-                ? getMeasuredHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight()
-                : getMeasuredHeight() - getPaddingBottom() - (mSlideableView.getMeasuredHeight() * 2);
+                    ? getMeasuredHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight()
+                    : getPaddingTop();
         }
 
         return getMeasuredHeight() - getPaddingBottom();
@@ -871,6 +902,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 ? (float) (newTop - topBound) / mSlideRange
                 : (float) (topBound - newTop) / mSlideRange;
         dispatchOnPanelSlide(mSlideableView);
+
+        if (mParalaxOffset > 0) {
+            int mainViewOffset = getCurrentParalaxOffset();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                mMainView.setTranslationY(mainViewOffset);
+            } else {
+                AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
+            }
+        }
     }
 
     @Override

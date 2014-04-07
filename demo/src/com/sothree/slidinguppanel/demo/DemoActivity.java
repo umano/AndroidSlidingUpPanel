@@ -29,7 +29,6 @@ public class DemoActivity extends Activity {
         setContentView(R.layout.activity_demo);
 
         SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        layout.setAnchorPoint(0.3f);
         layout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {

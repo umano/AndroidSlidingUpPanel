@@ -12,6 +12,7 @@
         android:gravity="bottom"
         sothree:panelHeight="68dp"
         sothree:shadowHeight="4dp"
+        sothree:paralaxOffset="100dp"
         sothree:dragView="@+id/name">
 
         <LinearLayout 
