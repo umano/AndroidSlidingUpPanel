@@ -52,6 +52,8 @@ If you would like to hide the shadow above the sliding panel, set `shadowHeight`
 
 You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
 
+You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example). 
+
 You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 
 You can set a `PanelSlideListener` to monitor events about sliding panes.
