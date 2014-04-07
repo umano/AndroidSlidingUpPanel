@@ -9,13 +9,16 @@ As seen in Umano ([http://umanoapp.com](http://umanoapp.com)):
 
 ### Usage
 
-To use the layout, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the Root element in your activity Layout. Layout must have `gravity` set to either `top` or `bottom`. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. Both children should have width and height set to `match_parent`. For more information, please refer to the sample code.
+To use the layout, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the Root element in your activity Layout. Layout must have `gravity` set to either `top` or `bottom`. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. The main layout should have the width and the height set to `match_parent`. The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height. For more information, please refer to the sample code.
 ```xml
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    sothree:panelHeight="68dp"
+    sothree:shadowHeight="4dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -37,14 +40,15 @@ For smooth interaction with the ActionBar, make sure that `windowActionBarOverla
 <style name="AppTheme">
     <item name="android:windowActionBarOverlay">true</item>
 </style>
+However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`.
 ```
-### Additional Features
+### Additional Features and Customization
 
-You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method. Otherwise, the whole panel will be slideable and it will intercept all clicks.
+You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method or `dragView` attribute. Otherwise, the whole panel will be slideable and it will intercept all clicks.
 
-You can change the panel height by using the `setPanelHeight` method.
+You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
 
-You can change the panel shadow by using the `setShadowDrawable` method. No shadow is displayed by default.
+If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
 
 You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
 
@@ -53,6 +57,8 @@ You can set a anchor point in the middle of the screen using `setAnchorPoint` to
 You can set a `PanelSlideListener` to monitor events about sliding panes.
 
 You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
+
+By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
 
 ### Implementation
 
