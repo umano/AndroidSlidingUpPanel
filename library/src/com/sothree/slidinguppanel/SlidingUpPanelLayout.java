@@ -353,6 +353,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mPanelHeight;
     }
 
+    /**
+     * Sets the panel slide listener
+     * @param listener
+     */
     public void setPanelSlideListener(PanelSlideListener listener) {
         mPanelSlideListener = listener;
     }
@@ -376,6 +380,22 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (anchorPoint > 0 && anchorPoint < 1)
             mAnchorPoint = anchorPoint;
     }
+
+    /**
+     * Sets whether or not the panel overlays the content
+     * @param overlayed
+     */
+    public void setOverlayed(boolean overlayed) {
+        mOverlayContent = overlayed;
+    }
+
+    /**
+     * Check if the panel is set as an overlay.
+     */
+    public boolean isOverlayed() {
+        return mOverlayContent;
+    }
+
 
     void dispatchOnPanelSlide(View panel) {
         if (mPanelSlideListener != null) {
@@ -819,13 +839,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public boolean isSlideable() {
         return mCanSlide;
-    }
-
-    /**
-     * Check if the panel is set as an overlay.
-     */
-    public boolean isOverlayed() {
-        return mOverlayContent;
     }
 
     public boolean isPaneVisible() {
