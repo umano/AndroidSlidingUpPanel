@@ -97,7 +97,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * True if a panel can slide with the current measurements
      */
     private boolean mCanSlide;
-    
+
     /**
      * Panel overlays the windows instead of putting it underneath it.
      */
@@ -261,7 +261,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
-                
+
                 mPanelIsOverlay = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
             }
 
@@ -316,7 +316,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public int getCoveredFadeColor() {
         return mCoveredFadeColor;
     }
-    
+
     /**
      * Set sliding enabled flag
      * @param enabled flag value
@@ -607,14 +607,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Set sliding enabled flag
-     * @param enabled flag value
-     */
-    public void setSlidingEnabled(boolean enabled) {
-        mIsSlidingEnabled = enabled;
-    }
-
-    /**
      * Set if the drag view can have its own touch events.  If set
      * to true, a drag view can scroll horizontally and have its own click listener.
      *
@@ -830,7 +822,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Check if the panel is set as an overlay.
      */
     public boolean isPanelOveray() { return mPanelIsOverlay;}
-    
+
     public boolean isPaneVisible() {
         if (getChildCount() < 2) {
             return false;
