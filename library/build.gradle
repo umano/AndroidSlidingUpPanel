@@ -2,18 +2,21 @@ apply plugin: 'android-library'
 
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.7.+'
+    classpath 'com.android.tools.build:gradle:0.9.+'
   }
 }
 
 dependencies {
   compile 'com.android.support:support-v4:13.0.0'
+	compile 'com.nineoldandroids:library:2.4.0'
 }
 
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.1"
-
+		lintOptions {
+		          abortOnError false
+		      }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
