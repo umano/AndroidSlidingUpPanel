@@ -40,11 +40,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.6</java.version>
-        <android.sdk.platform>16</android.sdk.platform>
+        <android.sdk.platform>19</android.sdk.platform>
 
         <!-- Dependency Versions -->
         <android.version>4.1.1.4</android.version>
-        <android-support-v13.version>19.0.1</android-support-v13.version>
+        <android-support-v4.version>19.1.0</android-support-v4.version>
         <junit.version>4.10</junit.version>
 
         <!-- Plugin Versions -->
@@ -64,8 +64,8 @@
             </dependency>
             <dependency>
                 <groupId>com.android.support</groupId>
-                <artifactId>support-v13</artifactId>
-                <version>${android-support-v13.version}</version>
+                <artifactId>support-v4</artifactId>
+                <version>${android-support-v4.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
