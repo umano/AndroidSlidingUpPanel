@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>com.android.support</groupId>
-            <artifactId>support-v13</artifactId>
+            <artifactId>support-v4</artifactId>
         </dependency>
 
         <!-- Library -->
