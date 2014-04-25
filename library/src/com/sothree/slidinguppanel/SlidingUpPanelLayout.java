@@ -255,6 +255,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        
+        if(isInEditMode()) {
+            return;
+        }
+        
         if (attrs != null) {
             TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
 
