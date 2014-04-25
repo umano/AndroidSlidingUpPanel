@@ -6,7 +6,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.Html;
@@ -38,15 +37,6 @@ public class DemoActivity extends Activity {
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
                 setActionBarTranslation(layout.getCurrentParalaxOffset());
-//                if (slideOffset < 0.2) {
-//                    if (getActionBar().isShowing()) {
-//                        getActionBar().hide();
-//                    }
-//                } else {
-//                    if (!getActionBar().isShowing()) {
-//                        getActionBar().show();
-//                    }
-//                }
             }
 
             @Override
@@ -113,7 +103,7 @@ public class DemoActivity extends Activity {
         return true;
     }
 
-    @SuppressLint("NewApi")
+
     public void setActionBarTranslation(float y) {
         // Figure out the actionbar height
         int actionBarHeight = 0;
