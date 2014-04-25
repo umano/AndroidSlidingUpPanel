@@ -7,13 +7,13 @@ buildscript {
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:13.0.0'
-	compile 'com.nineoldandroids:library:2.4.0'
+  compile 'com.android.support:support-v4:+'
+	compile 'com.nineoldandroids:library:+'
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "19.0.3"
 		lintOptions {
 		          abortOnError false
 		      }

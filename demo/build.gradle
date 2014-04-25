@@ -8,14 +8,14 @@ buildscript {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "19.0.3"
 		
 		lintOptions {
 			abortOnError false
 		}
 					
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 11
         targetSdkVersion 19
     }
      sourceSets {
@@ -30,6 +30,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:13.0.+'
+    compile 'com.android.support:support-v4:+'
     compile project(':library')
 }
