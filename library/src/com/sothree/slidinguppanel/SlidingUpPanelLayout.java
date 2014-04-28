@@ -257,10 +257,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super(context, attrs, defStyle);
         
         if(isInEditMode()) {
-            //Fix "might not be initialized" error
-	        mShadowDrawable = null;
-	        mScrollTouchSlop = 0;
-	        mDragHelper = null;
+            mShadowDrawable = null;
+            mScrollTouchSlop = 0;
+            mDragHelper = null;
             return;
         }
         
