@@ -257,6 +257,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super(context, attrs, defStyle);
         
         if(isInEditMode()) {
+            mShadowDrawable = null;
+            mScrollTouchSlop = 0;
+            mDragHelper = null;
             return;
         }
         
