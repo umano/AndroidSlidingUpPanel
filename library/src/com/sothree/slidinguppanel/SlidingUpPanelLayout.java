@@ -36,6 +36,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final int DEFAULT_PANEL_HEIGHT = 68; // dp;
 
     /**
+     * Default anchor point height
+     */
+    private static final float DEFAULT_ANCHOR_POINT = 0.0f; // In relative %
+
+    /**
+     * Default initial state for the component
+     */
+    private static SlideState DEFAULT_SLIDE_STATE = SlideState.COLLAPSED;
+
+    /**
      * Default height of the shadow above the peeking out panel
      */
     private static final int DEFAULT_SHADOW_HEIGHT = 4; // dp;
@@ -73,7 +83,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Default paralax length of the main view
      */
-    private static final int DEFAULT_PARALAX_OFFSET = 0;
+    private static final int DEFAULT_PARALLAX_OFFSET = 0;
 
     /**
      * The paint used to dim the main layout when sliding
@@ -83,7 +93,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Drawable used to draw the shadow between panes.
      */
-    private final Drawable mShadowDrawable;
+    private Drawable mShadowDrawable;
 
     /**
      * The size of the overhang in pixels.
@@ -145,7 +155,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         COLLAPSED,
         ANCHORED
     }
-    private SlideState mSlideState = SlideState.COLLAPSED;
+    private SlideState mSlideState;
 
     /**
      * How far the panel is offset from its expanded position.
@@ -180,7 +190,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Threshold to tell if there was a scroll touch event.
      */
-    private final int mScrollTouchSlop;
+    private int mScrollTouchSlop;
 
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -188,7 +198,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private PanelSlideListener mPanelSlideListener;
 
-    private final ViewDragHelper mDragHelper;
+    private ViewDragHelper mDragHelper;
 
     /**
      * Stores whether or not the pane was expanded the last time it was slideable.
@@ -286,6 +296,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+
+                mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_anchorPoint, DEFAULT_ANCHOR_POINT);
+
+                mSlideState = SlideState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_initialState, DEFAULT_SLIDE_STATE.ordinal())];
             }
 
             ta.recycle();
@@ -299,7 +313,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
         if (mParalaxOffset == -1) {
-            mParalaxOffset = (int) (DEFAULT_PARALAX_OFFSET * density);
+            mParalaxOffset = (int) (DEFAULT_PARALLAX_OFFSET * density);
         }
         // If the shadow height is zero, don't show the shadow
         if (mShadowHeight > 0) {
@@ -411,8 +425,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      *                    starting from the top of the layout.
      */
     public void setAnchorPoint(float anchorPoint) {
-        if (anchorPoint > 0 && anchorPoint < 1)
-            mAnchorPoint = anchorPoint;
+        if (anchorPoint < 0 || anchorPoint > 1) {
+            throw new IllegalArgumentException("Anchor point must be a value between 0 and 1!");
+        }
+        mAnchorPoint = anchorPoint;
     }
 
     /**
@@ -824,6 +840,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public boolean expandPane() {
         return expandPane(0);
+    }
+
+    /**
+     * Expand the sliding pane to the anchor point specified if it's currently slideable. If first
+     * layout has already completed this will animate.
+     *
+     * @return true if the pane was slideable and is now expanded/in the process of expading
+     */
+    public boolean expandToAnchor() {
+        return expandPane(mAnchorPoint);
     }
 
     /**
