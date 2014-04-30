@@ -3,6 +3,7 @@ package com.sothree.slidinguppanel.demo;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,18 +26,20 @@ public class DemoActivity extends Activity {
 
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
+    private SlidingUpPanelLayout mLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_demo);
 
-        final SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        layout.setPanelSlideListener(new PanelSlideListener() {
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
-                setActionBarTranslation(layout.getCurrentParalaxOffset());
+                setActionBarTranslation(mLayout.getCurrentParalaxOffset());
             }
 
             @Override
@@ -83,17 +86,17 @@ public class DemoActivity extends Activity {
         });
 
 
-        boolean actionBarHidden = savedInstanceState != null ?
-                savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false): false;
+        boolean actionBarHidden = savedInstanceState != null && savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false);
         if (actionBarHidden) {
-            getActionBar().hide();
+            int actionBarHeight = getActionBarHeight();
+            setActionBarTranslation(-actionBarHeight);//will "hide" an ActionBar
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, !getActionBar().isShowing());
+        outState.putBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, mLayout.isExpanded());
     }
 
     @Override
@@ -103,14 +106,18 @@ public class DemoActivity extends Activity {
         return true;
     }
 
-
-    public void setActionBarTranslation(float y) {
-        // Figure out the actionbar height
+    private int getActionBarHeight(){
         int actionBarHeight = 0;
         TypedValue tv = new TypedValue();
         if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
+        return actionBarHeight;
+    }
+
+    public void setActionBarTranslation(float y) {
+        // Figure out the actionbar height
+        int actionBarHeight = getActionBarHeight();
         // A hack to add the translation to the action bar
         ViewGroup content = ((ViewGroup) findViewById(android.R.id.content).getParent());
         int children = content.getChildCount();
