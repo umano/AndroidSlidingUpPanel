@@ -1,17 +1,23 @@
-allprojects {
-
-  group 'com.sothree.slidinguppanel'
-  version '1.0.0-SNAPSHOT'
-
-  buildscript {
-    repositories {
-      mavenCentral()
-    }
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+  repositories {
+    mavenCentral()
   }
 
   dependencies {
+    classpath 'com.android.tools.build:gradle:0.9.+'
+  }
+}
+
+def isReleaseBuild() {
+  return version.contains("SNAPSHOT") == false
+}
+
+allprojects {
+  version = VERSION_NAME
+    group = GROUP
+
     repositories {
       mavenCentral()
     }
-  }
 }

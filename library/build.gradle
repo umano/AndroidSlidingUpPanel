@@ -1,29 +1,37 @@
 apply plugin: 'android-library'
 
 buildscript {
+  repositories {
+    mavenCentral()
+  }
   dependencies {
     classpath 'com.android.tools.build:gradle:0.9.+'
   }
 }
 
+repositories {
+  mavenCentral()
+}
+
 dependencies {
   compile 'com.android.support:support-v4:+'
-	compile 'com.nineoldandroids:library:+'
+  compile 'com.nineoldandroids:library:+'
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.3"
-		lintOptions {
-		          abortOnError false
-		      }
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
+  compileSdkVersion 19
+  buildToolsVersion "19.0.3"
+  lintOptions {
+    abortOnError false
+  }
+  sourceSets {
+    main {
+      manifest.srcFile 'AndroidManifest.xml'
+      java.srcDirs = ['src']
+      resources.srcDirs = ['src']
+      res.srcDirs = ['res']
+      assets.srcDirs = ['assets']
     }
+  }
 }
+
