@@ -9,7 +9,18 @@ As seen in Umano ([http://umanoapp.com](http://umanoapp.com)):
 
 ### Usage
 
-To use the layout, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the Root element in your activity Layout. Layout must have `gravity` set to either `top` or `bottom`. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. The main layout should have the width and the height set to `match_parent`. The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height. For more information, please refer to the sample code.
+To use the library, include the `library` project as a dependency in Eclipse or you just add the following dependency to your `build.gradle` file if you are using Android Studio:
+
+```
+dependencies {  
+    repositories {
+        mavenCentral()
+    }
+    compile 'com.sothree.slidinguppanel:library:+'
+}
+```
+
+Then, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the Root element in your activity Layout. Layout must have `gravity` set to either `top` or `bottom`. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. The main layout should have the width and the height set to `match_parent`. The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height. For more information, please refer to the sample code.
 ```xml
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
@@ -40,8 +51,9 @@ For smooth interaction with the ActionBar, make sure that `windowActionBarOverla
 <style name="AppTheme">
     <item name="android:windowActionBarOverlay">true</item>
 </style>
-However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`.
 ```
+However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`.
+
 ### Additional Features and Customization
 
 You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method or `dragView` attribute. Otherwise, the whole panel will be slideable and it will intercept all clicks.
@@ -69,25 +81,6 @@ This code is heavily based on the opened-sourced [SlidingPaneLayout](http://deve
 ### Requirements
 
 Tested on Android 2.2+
-
-If you are using Android studio, make sure to add the following section to the root `build.gradle` file:
-
-```
-allprojects {
-
-  buildscript {
-    repositories {
-      mavenCentral()
-    }
-  }
-
-  dependencies {
-    repositories {
-      mavenCentral()
-    }
-  }
-}
-```
 
 ### Other Contributors
 
