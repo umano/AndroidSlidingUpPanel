@@ -1104,7 +1104,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
                 final int newTop = mSlideableView.getTop();
                 final int topBound = getSlidingTop();
-                Log.d(TAG, "onViewDragStateChange newTop " + newTop + " topBound " + topBound);
                 mSlideOffset = mIsSlidingUp
                         ? (float) (newTop - topBound) / mSlideRange
                         : (float) (topBound - newTop) / mSlideRange;
