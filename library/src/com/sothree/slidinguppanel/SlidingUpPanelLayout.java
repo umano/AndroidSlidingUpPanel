@@ -122,6 +122,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private View mDragView;
 
     /**
+     * If set to true, will intercept tap events on the drag view; otherwise, they will not be captured
+     * and will allow horizontal scroll in the drag view.
+     */
+    private boolean mInterceptTaps = true;
+
+    /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
      * used for dragging.
      */
@@ -289,6 +295,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+                mInterceptTaps = ta.getBoolean(R.styleable.SlidingUpPanelLayout_interceptTaps, true);
             }
 
             ta.recycle();
@@ -697,7 +704,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
-                if (isDragViewUnder((int) x, (int) y) && !mIsUsingDragViewTouchEvents) {
+                if (mInterceptTaps && isDragViewUnder((int) x, (int) y) && !mIsUsingDragViewTouchEvents) {
                     interceptTap = true;
                 }
                 break;
