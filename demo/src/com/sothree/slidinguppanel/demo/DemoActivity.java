@@ -39,7 +39,12 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
-                setActionBarTranslation(mLayout.getCurrentParalaxOffset());
+              
+                if (slideOffset > 0.2) {
+                    getSupportActionBar().show();
+                } else {
+                    getSupportActionBar().hide();
+                }
             }
 
             @Override
@@ -88,8 +93,7 @@ public class DemoActivity extends ActionBarActivity {
 
         boolean actionBarHidden = savedInstanceState != null && savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false);
         if (actionBarHidden) {
-            int actionBarHeight = getActionBarHeight();
-            setActionBarTranslation(-actionBarHeight);//will "hide" an ActionBar
+             getSupportActionBar().hide();//will "hide" an ActionBar
         }
     }
 
@@ -105,7 +109,7 @@ public class DemoActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.demo, menu);
         return true;
     }
-
+    
     private int getActionBarHeight(){
           return getSupportActionBar().getHeight();
     }
@@ -113,6 +117,7 @@ public class DemoActivity extends ActionBarActivity {
     public void setActionBarTranslation(float y) {
         // Figure out the actionbar height
         int actionBarHeight = getActionBarHeight();
+        //android.R.id.content not supported in action bar activity
         // A hack to add the translation to the action bar
         ViewGroup content = ((ViewGroup) findViewById(android.R.id.content).getParent());
         int children = content.getChildCount();
