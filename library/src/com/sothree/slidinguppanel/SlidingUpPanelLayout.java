@@ -1,5 +1,6 @@
 package com.sothree.slidinguppanel;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -255,14 +256,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        
+
         if(isInEditMode()) {
             mShadowDrawable = null;
             mScrollTouchSlop = 0;
             mDragHelper = null;
             return;
         }
-        
+
         if (attrs != null) {
             TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
 
@@ -895,6 +896,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         requestLayout();
     }
 
+    @SuppressLint("NewApi")
     private void onPanelDragged(int newTop) {
         final int topBound = getSlidingTop();
         mSlideOffset = mIsSlidingUp
