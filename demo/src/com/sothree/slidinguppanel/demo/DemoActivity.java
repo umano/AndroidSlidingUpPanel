@@ -14,6 +14,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -96,7 +97,7 @@ public class DemoActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, mLayout.isExpanded());
+        outState.putBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, mLayout.isPanelExpanded());
     }
 
     @Override
@@ -104,6 +105,22 @@ public class DemoActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.demo, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_toggle) {
+            if (mLayout != null) {
+                if (mLayout.isPanelVisible()) {
+                    mLayout.hidePanel();
+                    item.setTitle(R.string.action_show);
+                } else {
+                    mLayout.showPanel();
+                    item.setTitle(R.string.action_hide);
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private int getActionBarHeight(){
@@ -140,8 +157,8 @@ public class DemoActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (mLayout != null && mLayout.isExpanded()) {
-            mLayout.collapsePane();
+        if (mLayout != null && mLayout.isPanelExpanded()) {
+            mLayout.collapsePanel();
         } else {
             super.onBackPressed();
         }

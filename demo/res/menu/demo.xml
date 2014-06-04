@@ -1,6 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/action_toggle"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_hide"/>
+        
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"

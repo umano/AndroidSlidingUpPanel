@@ -765,10 +765,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (dx * dx + dy * dy < slop * slop &&
                         isDragViewUnder((int) x, (int) y)) {
                     dragView.playSoundEffect(SoundEffectConstants.CLICK);
-                    if (!isExpanded() && !isAnchored()) {
-                        expandPane(mAnchorPoint);
+                    if (!isPanelExpanded() && !isPanelAnchored()) {
+                        expandPanel(mAnchorPoint);
                     } else {
-                        collapsePane();
+                        collapsePanel();
                     }
                     break;
                 }
@@ -792,11 +792,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + dragView.getHeight();
     }
 
-    private boolean expandPane(View pane, int initialVelocity, float mSlideOffset) {
+    private boolean expandPanel(View pane, int initialVelocity, float mSlideOffset) {
         return mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity);
     }
 
-    private boolean collapsePane(View pane, int initialVelocity) {
+    private boolean collapsePanel(View pane, int initialVelocity) {
         return mFirstLayout || smoothSlideTo(1.f, initialVelocity);
     }
 
@@ -816,8 +816,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      *
      * @return true if the pane was slideable and is now collapsed/in the process of collapsing
      */
-    public boolean collapsePane() {
-        return collapsePane(mSlideableView, 0);
+    public boolean collapsePanel() {
+        return collapsePanel(mSlideableView, 0);
     }
 
     /**
@@ -826,52 +826,56 @@ public class SlidingUpPanelLayout extends ViewGroup {
      *
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
-    public boolean expandPane() {
-        return expandPane(0);
+    public boolean expandPanel() {
+        return expandPanel(0);
     }
 
     /**
-     * Partially expand the sliding pane up to a specific offset
+     * Partially expand the sliding panel up to a specific offset
      *
      * @param mSlideOffset Value between 0 and 1, where 0 is completely expanded.
-     * @return true if the pane was slideable and is now expanded/in the process of expading
+     * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
-    public boolean expandPane(float mSlideOffset) {
-        if (!isPaneVisible()) {
-            showPane();
+    public boolean expandPanel(float mSlideOffset) {
+        if (!isPanelVisible()) {
+            showPanel();
         }
-        return expandPane(mSlideableView, 0, mSlideOffset);
+        return expandPanel(mSlideableView, 0, mSlideOffset);
     }
 
     /**
-     * Check if the layout is completely expanded.
+     * Check if the sliding panel in this layout is fully expanded.
      *
-     * @return true if sliding panels are completely expanded
+     * @return true if sliding panel is completely expanded
      */
-    public boolean isExpanded() {
+    public boolean isPanelExpanded() {
         return mSlideState == SlideState.EXPANDED;
     }
 
     /**
-     * Check if the layout is anchored in an intermediate point.
+     * Check if the sliding panel in this layout is achnored.
      *
-     * @return true if sliding panels are anchored
+     * @return true if sliding panel is anchored
      */
-    public boolean isAnchored() {
+    public boolean isPanelAnchored() {
         return mSlideState == SlideState.ANCHORED;
     }
 
     /**
-     * Check if the content in this layout cannot fully fit side by side and therefore
-     * the content pane can be slid back and forth.
+     * Check if the sliding panel in this layout can be expanded.
      *
-     * @return true if content in this layout can be expanded
+     * @return true if sliding panel can be expanded
      */
-    public boolean isSlideable() {
+    public boolean isPanelSlideable() {
         return mCanSlide;
     }
 
-    public boolean isPaneVisible() {
+    /**
+     * Check if the sliding panel in this layout is currently visible.
+     *
+     * @return true if the sliding panel is visible.
+     */
+    public boolean isPanelVisible() {
         if (getChildCount() < 2) {
             return false;
         }
@@ -879,7 +883,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return slidingPane.getVisibility() == View.VISIBLE;
     }
 
-    public void showPane() {
+    public void showPanel() {
         if (getChildCount() < 2) {
             return;
         }
@@ -888,7 +892,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         requestLayout();
     }
 
-    public void hidePane() {
+    public void hidePanel() {
         if (mSlideableView == null) {
             return;
         }
