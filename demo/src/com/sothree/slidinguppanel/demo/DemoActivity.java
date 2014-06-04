@@ -36,6 +36,7 @@ public class DemoActivity extends Activity {
         setContentView(R.layout.activity_demo);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        //mLayout.setAnchorPoint(0.7f);
         mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -63,15 +64,6 @@ public class DemoActivity extends Activity {
         });
 
         TextView t = (TextView) findViewById(R.id.main);
-        t.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("http://www.umanoapp.com"));
-                startActivity(i);
-            }
-        });
-
         t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
         Button f = (Button) findViewById(R.id.follow);

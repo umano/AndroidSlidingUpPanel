@@ -15,6 +15,7 @@
         sothree:paralaxOffset="100dp"
         sothree:dragView="@+id/name">
 
+        <!-- MAIN CONTENT -->
         <LinearLayout 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,6 +32,7 @@
 	            android:textSize="16sp" />            
         </LinearLayout>
 
+        <!-- SLIDING LAYOUT -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
