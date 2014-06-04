@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SlidingUpPanelDemo</string>
+    <string name="app_name">Sliding Up Panel Demo</string>
     <string name="action_settings">Settings</string>
     <string name="action_hide">Hide Panel</string>
     <string name="action_show">Show Panel</string>

@@ -290,6 +290,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+
+                mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_anchorPoint, 1.0f);
             }
 
             ta.recycle();
@@ -801,7 +803,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private int computePanelTopPosition(float slideOffset) {
         int panelHeight = mSlideableView != null ? mSlideableView.getMeasuredHeight() : 0;
-        int slidePixelOffset = (int) slideOffset * mSlideRange;
+        int slidePixelOffset = (int) (slideOffset * mSlideRange);
         // Compute the top of the panel if its collapsed
         return mIsSlidingUp
                 ? getMeasuredHeight() - getPaddingBottom() - mPanelHeight - slidePixelOffset
@@ -1153,19 +1155,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // direction is always positive if we are sliding in the expanded direction
             float direction = mIsSlidingUp ? -yvel : yvel;
 
-            // if there is velocity, we always expand fully
-            // TODO(tokudu): add a threshold before which we only expand to the anchor point
             if (direction > 0) {
+                // swipe up -> expand
                 target = computePanelTopPosition(1.0f);
-            } else if (mAnchorPoint != 1 && direction == 0 && mSlideOffset >= (1.f + mAnchorPoint) / 2) {
+            } else if (direction < 0) {
+                // swipe down -> collapse
+                target = computePanelTopPosition(0.0f);
+            } else if (mAnchorPoint != 1 && mSlideOffset >= (1.f + mAnchorPoint) / 2) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
-            } else if (mAnchorPoint == 1 && direction == 0 && mSlideOffset >= 0.5f) {
+            } else if (mAnchorPoint == 1 && mSlideOffset >= 0.5f) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
             } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint) {
                 target = computePanelTopPosition(mAnchorPoint);
-            } else if (mAnchorPoint != 1 && direction == 0 && mSlideOffset >= mAnchorPoint / 2) {
+            } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint / 2) {
                 target = computePanelTopPosition(mAnchorPoint);
             } else {
                 // settle at the bottom
