@@ -101,14 +101,29 @@ public class DemoActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_toggle) {
-            if (mLayout != null) {
-                if (mLayout.isPanelVisible()) {
-                    mLayout.hidePanel();
-                    item.setTitle(R.string.action_show);
-                } else {
-                    mLayout.showPanel();
-                    item.setTitle(R.string.action_hide);
+        switch (item.getItemId()){
+            case R.id.action_toggle: {
+                if (mLayout != null) {
+                    if (mLayout.isPanelVisible()) {
+                        mLayout.hidePanel();
+                        item.setTitle(R.string.action_show);
+                    } else {
+                        mLayout.showPanel();
+                        item.setTitle(R.string.action_hide);
+                    }
+                }
+            }
+            case R.id.action_anchor: {
+                if (mLayout != null) {
+                    if (mLayout.getAnchorPoint() == 1.0f) {
+                        mLayout.setAnchorPoint(0.7f);
+                        mLayout.expandPanel(0.7f);
+                        item.setTitle(R.string.action_anchor_disable);
+                    } else {
+                        mLayout.setAnchorPoint(1.0f);
+                        mLayout.collapsePanel();
+                        item.setTitle(R.string.action_anchor_enable);
+                    }
                 }
             }
         }
@@ -149,7 +164,7 @@ public class DemoActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (mLayout != null && mLayout.isPanelExpanded()) {
+        if (mLayout != null && mLayout.isPanelExpanded() || mLayout.isPanelAnchored()) {
             mLayout.collapsePanel();
         } else {
             super.onBackPressed();

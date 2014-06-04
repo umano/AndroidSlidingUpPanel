@@ -417,8 +417,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
      *                    starting from the top of the layout.
      */
     public void setAnchorPoint(float anchorPoint) {
-        if (anchorPoint > 0 && anchorPoint < 1)
+        if (anchorPoint > 0 && anchorPoint <= 1) {
             mAnchorPoint = anchorPoint;
+        }
+    }
+
+    /**
+     * Gets the currently set anchor point
+     *
+     * @return the currently set anchor point
+     */
+    public float getAnchorPoint() {
+        return mAnchorPoint;
     }
 
     /**
