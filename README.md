@@ -74,6 +74,8 @@ You can also make the panel slide from the top by changing the `layout_gravity` 
 
 By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
 
+By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `fadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+
 ### Implementation
 
 This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
