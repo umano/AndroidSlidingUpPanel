@@ -36,7 +36,6 @@ public class DemoActivity extends Activity {
         setContentView(R.layout.activity_demo);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        //mLayout.setAnchorPoint(0.7f);
         mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -96,7 +95,21 @@ public class DemoActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.demo, menu);
+        MenuItem item = menu.findItem(R.id.action_toggle);
+        if (mLayout != null) {
+            if (mLayout.isPanelHidden()) {
+                item.setTitle(R.string.action_show);
+            } else {
+                item.setTitle(R.string.action_hide);
+            }
+        }
+
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -104,7 +117,7 @@ public class DemoActivity extends Activity {
         switch (item.getItemId()){
             case R.id.action_toggle: {
                 if (mLayout != null) {
-                    if (mLayout.isPanelVisible()) {
+                    if (!mLayout.isPanelHidden()) {
                         mLayout.hidePanel();
                         item.setTitle(R.string.action_show);
                     } else {
@@ -112,6 +125,7 @@ public class DemoActivity extends Activity {
                         item.setTitle(R.string.action_hide);
                     }
                 }
+                return true;
             }
             case R.id.action_anchor: {
                 if (mLayout != null) {
@@ -125,6 +139,7 @@ public class DemoActivity extends Activity {
                         item.setTitle(R.string.action_anchor_enable);
                     }
                 }
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
