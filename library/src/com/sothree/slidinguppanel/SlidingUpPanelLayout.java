@@ -891,12 +891,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     public void showPanel() {
-        if (!isSlidingEnabled()) return;
+        if (!isPanelHidden()) return;
         smoothSlideTo(0, 0);
     }
 
     public void hidePanel() {
-        if (!isSlidingEnabled()) return;
         mIsPanelBeingHidden = true;
         int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
         smoothSlideTo(computeSlideOffset(newTop), 0);
