@@ -27,7 +27,8 @@
 	            android:gravity="center"
 	            android:text="Main Content"
 	            android:clickable="true"
-	            android:focusable="false"	           
+	            android:focusable="false"	         
+	            android:background="#ff0000"  
 	            android:focusableInTouchMode="true"
 	            android:textSize="16sp" />            
         </LinearLayout>
