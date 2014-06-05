@@ -15,7 +15,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -629,8 +628,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
         }
 
-        Log.i(TAG, "onLayout");
-
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
 
@@ -647,7 +644,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (!mIsSlidingUp) {
                 if (child == mMainView && !mOverlayContent) {
-                    childTop += mPanelHeight;
+                    childTop = computePanelTopPosition(mSlideOffset) + mSlideableView.getMeasuredHeight();
                 }
             }
             final int childBottom = childTop + childHeight;
@@ -925,7 +922,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mSlideOffset <= 0 && !mOverlayContent) {
             // expand the main view
             LayoutParams lp = (LayoutParams)mMainView.getLayoutParams();
-            lp.height = newTop - getPaddingBottom();
+            lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTop);
             mMainView.requestLayout();
         }
     }
