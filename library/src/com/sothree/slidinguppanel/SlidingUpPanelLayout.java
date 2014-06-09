@@ -135,6 +135,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Current state of the slideable view.
      */
     private enum SlideState {
+        DRAGGING,
         EXPANDED,
         COLLAPSED,
         ANCHORED,
@@ -163,11 +164,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Flag indicating that sliding feature is enabled\disabled
      */
     private boolean mIsSlidingEnabled;
-
-    /**
-     * Flags indicating that sliding panel is being hidden
-     */
-    private boolean mIsPanelBeingHidden;
 
     /**
      * Flag indicating if a drag view can have its own touch events.  If set
@@ -210,20 +206,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
          */
         public void onPanelSlide(View panel, float slideOffset);
         /**
-         * Called when a sliding pane becomes slid completely collapsed. The pane may or may not
-         * be interactive at this point depending on if it's shown or hidden
-         * @param panel The child view that was slid to an collapsed position, revealing other panes
+         * Called when a sliding panel becomes slid completely collapsed.
+         * @param panel The child view that was slid to an collapsed position
          */
         public void onPanelCollapsed(View panel);
 
         /**
-         * Called when a sliding pane becomes slid completely expanded. The pane is now guaranteed
-         * to be interactive. It may now obscure other views in the layout.
+         * Called when a sliding panel becomes slid completely expanded.
          * @param panel The child view that was slid to a expanded position
          */
         public void onPanelExpanded(View panel);
 
+        /**
+         * Called when a sliding panel becomes anchored.
+         * @param panel The child view that was slid to a anchored position
+         */
         public void onPanelAnchored(View panel);
+
+        /**
+         * Called when a sliding panel becomes completely hidden.
+         * @param panel The child view that was slid to a hidden position
+         */
+        public void onPanelHidden(View panel);
     }
 
     /**
@@ -242,6 +246,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         @Override
         public void onPanelAnchored(View panel) {
+        }
+        @Override
+        public void onPanelHidden(View panel) {
         }
     }
 
@@ -324,7 +331,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsSlidingEnabled = true;
-        mIsPanelBeingHidden = false;
 
         ViewConfiguration vc = ViewConfiguration.get(context);
         mScrollTouchSlop = vc.getScaledTouchSlop();
@@ -477,6 +483,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
+    void dispatchOnPanelHidden(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelHidden(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
     void updateObscuredViewVisibility() {
         if (getChildCount() == 0) {
             return;
@@ -510,15 +523,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             vis = VISIBLE;
         }
         child.setVisibility(vis);
-    }
-
-    void setAllChildrenVisible() {
-        for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
-            final View child = getChildAt(i);
-            if (child.getVisibility() == INVISIBLE) {
-                child.setVisibility(VISIBLE);
-            }
-        }
     }
 
     private static boolean hasOpaqueBackground(View v) {
@@ -560,13 +564,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mMainView = getChildAt(0);
         mSlideableView = getChildAt(1);
 
+        // If the sliding panel is not visible, then put the whole view in the hidden state
+        if (mSlideableView.getVisibility() == GONE) {
+            mSlideState = SlideState.HIDDEN;
+        }
+
         int layoutHeight = heightSize - getPaddingTop() - getPaddingBottom();
 
         // First pass. Measure based on child LayoutParams width/height.
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (child.getVisibility() == GONE) {
+
+            // We always measure the sliding panel in order to know it's height (needed for show panel)
+            if (child.getVisibility() == GONE && i == 0) {
                 continue;
             }
 
@@ -631,7 +642,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
 
-            if (child.getVisibility() == GONE) {
+            // Always layout the sliding view on the first layout
+            if (child.getVisibility() == GONE && (i == 0 || mFirstLayout)) {
                 continue;
             }
 
@@ -681,10 +693,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        if (!enabled) {
+            collapsePanel();
+        }
+        super.setEnabled(enabled);
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
-        if (!mIsSlidingEnabled || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
+        if (!isEnabled() || !mIsSlidingEnabled || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
         }
@@ -838,7 +858,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now collapsed/in the process of collapsing
      */
     public boolean collapsePanel() {
-        if (isPanelHidden()) return false;
+        if (mSlideState == SlideState.HIDDEN || mSlideState == SlideState.COLLAPSED) return false;
         return collapsePanel(mSlideableView, 0);
     }
 
@@ -849,7 +869,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
     public boolean expandPanel() {
-        if (isPanelExpanded()) return false;
+        if (mSlideState == SlideState.EXPANDED) return false;
         return expandPanel(1.0f);
     }
 
@@ -891,18 +911,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     public void showPanel() {
-        if (!isPanelHidden()) return;
+        if (mSlideState != SlideState.HIDDEN) return;
+        mSlideableView.setVisibility(View.VISIBLE);
+        requestLayout();
         smoothSlideTo(0, 0);
     }
 
     public void hidePanel() {
-        mIsPanelBeingHidden = true;
+        if (mSlideState == SlideState.DRAGGING || mSlideState == SlideState.HIDDEN) return;
         int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
         smoothSlideTo(computeSlideOffset(newTop), 0);
     }
 
     @SuppressLint("NewApi")
     private void onPanelDragged(int newTop) {
+        mSlideState = SlideState.DRAGGING;
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
         // Update the parallax based on the new slide offset
@@ -973,7 +996,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         int panelTop = computePanelTopPosition(slideOffset);
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop)) {
-            setAllChildrenVisible();
             ViewCompat.postInvalidateOnAnimation(this);
             return true;
         }
@@ -1119,7 +1141,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     }
                 } else if (mSlideOffset < 0) {
                     mSlideState = SlideState.HIDDEN;
-                    mIsPanelBeingHidden = false;
+                    mSlideableView.setVisibility(View.GONE);
+                    dispatchOnPanelHidden(mSlideableView);
                 } else if (mSlideState != SlideState.ANCHORED) {
                     updateObscuredViewVisibility();
                     mSlideState = SlideState.ANCHORED;
@@ -1129,10 +1152,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         @Override
-        public void onViewCaptured(View capturedChild, int activePointerId) {
-            // Make all child views visible in preparation for sliding things around
-            setAllChildrenVisible();
-        }
+        public void onViewCaptured(View capturedChild, int activePointerId) {}
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {

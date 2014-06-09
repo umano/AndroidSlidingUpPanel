@@ -58,7 +58,11 @@ public class DemoActivity extends Activity {
             @Override
             public void onPanelAnchored(View panel) {
                 Log.i(TAG, "onPanelAnchored");
+            }
 
+            @Override
+            public void onPanelHidden(View panel) {
+                Log.i(TAG, "onPanelHidden");
             }
         });
 
