@@ -374,7 +374,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     public boolean isSlidingEnabled() {
-        return mIsSlidingEnabled && mSlideableView != null && mSlideableView.getVisibility() == View.VISIBLE;
+        return mIsSlidingEnabled && mSlideableView != null;
     }
 
     /**
@@ -869,7 +869,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
     public boolean expandPanel() {
-        if (mSlideState == SlideState.EXPANDED) return false;
         return expandPanel(1.0f);
     }
 
@@ -880,6 +879,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
     public boolean expandPanel(float mSlideOffset) {
+        if (mSlideState == SlideState.EXPANDED) return false;
+        mSlideableView.setVisibility(View.VISIBLE);
         return expandPanel(mSlideableView, 0, mSlideOffset);
     }
 
