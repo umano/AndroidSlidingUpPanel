@@ -525,6 +525,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
         child.setVisibility(vis);
     }
 
+    void setAllChildrenVisible() {
+        for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
+            final View child = getChildAt(i);
+            if (child.getVisibility() == INVISIBLE) {
+                child.setVisibility(VISIBLE);
+            }
+        }
+    }
+
     private static boolean hasOpaqueBackground(View v) {
         final Drawable bg = v.getBackground();
         return bg != null && bg.getOpacity() == PixelFormat.OPAQUE;
@@ -997,6 +1006,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         int panelTop = computePanelTopPosition(slideOffset);
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop)) {
+            setAllChildrenVisible();
             ViewCompat.postInvalidateOnAnimation(this);
             return true;
         }
@@ -1153,7 +1163,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         @Override
-        public void onViewCaptured(View capturedChild, int activePointerId) {}
+        public void onViewCaptured(View capturedChild, int activePointerId) {
+            setAllChildrenVisible();
+        }
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
