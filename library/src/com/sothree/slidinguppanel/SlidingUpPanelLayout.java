@@ -56,7 +56,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default attributes for layout
      */
     private static final int[] DEFAULT_ATTRS = new int[] {
-        android.R.attr.gravity
+            android.R.attr.gravity
     };
 
     /**
@@ -632,19 +632,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         if (mFirstLayout) {
             switch (mSlideState) {
-            case EXPANDED:
-                mSlideOffset = 1.0f;
-                break;
-            case ANCHORED:
-                mSlideOffset = mAnchorPoint;
-                break;
-            case HIDDEN:
-                int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
-                mSlideOffset = computeSlideOffset(newTop);
-                break;
-            default:
-                mSlideOffset = 0.f;
-                break;
+                case EXPANDED:
+                    mSlideOffset = 1.0f;
+                    break;
+                case ANCHORED:
+                    mSlideOffset = mAnchorPoint;
+                    break;
+                case HIDDEN:
+                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+                    mSlideOffset = computeSlideOffset(newTop);
+                    break;
+                default:
+                    mSlideOffset = 0.f;
+                    break;
             }
         }
 
@@ -881,6 +881,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return expandPanel(1.0f);
     }
 
+    private Runnable expandRunnable = new Runnable() {
+        @Override
+        public void run() {
+            expandPanel();
+        }
+    };
+
     /**
      * Partially expand the sliding panel up to a specific offset
      *
@@ -888,6 +895,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
     public boolean expandPanel(float mSlideOffset) {
+        if (mSlideableView == null) {
+            postDelayed(expandRunnable, 1000 / 60);
+            return false;
+        }
         if (mSlideState == SlideState.EXPANDED) return false;
         mSlideableView.setVisibility(View.VISIBLE);
         return expandPanel(mSlideableView, 0, mSlideOffset);
@@ -1224,7 +1235,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
         private static final int[] ATTRS = new int[] {
-            android.R.attr.layout_weight
+                android.R.attr.layout_weight
         };
 
         public LayoutParams() {
@@ -1280,15 +1291,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+                    @Override
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
 
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+                    @Override
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 }
