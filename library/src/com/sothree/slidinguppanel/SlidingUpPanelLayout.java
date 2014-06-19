@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
@@ -888,7 +889,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
     public boolean expandPanel(float mSlideOffset) {
-        if (mSlideState == SlideState.EXPANDED) return false;
+        if (mSlideableView == null || mSlideState == SlideState.EXPANDED) return false;
         mSlideableView.setVisibility(View.VISIBLE);
         return expandPanel(mSlideableView, 0, mSlideOffset);
     }
@@ -921,7 +922,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     public void showPanel() {
-        if (mSlideState != SlideState.HIDDEN) return;
+        if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
         mSlideableView.setVisibility(View.VISIBLE);
         requestLayout();
         smoothSlideTo(0, 0);
