@@ -573,6 +573,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mMainView = getChildAt(0);
         mSlideableView = getChildAt(1);
+        mSlideableView.setClickable(true);
 
         // If the sliding panel is not visible, then put the whole view in the hidden state
         if (mSlideableView.getVisibility() == GONE) {
