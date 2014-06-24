@@ -11,8 +11,8 @@ As seen in [Umano](http://umanoapp.com) [Android app](https://play.google.com/st
 
 To use the library, include the `library` project as a dependency in Eclipse or you just add the following dependency to your `build.gradle` file if you are using Android Studio:
 
-```
-dependencies {  
+```groovy
+dependencies {
     repositories {
         mavenCentral()
     }
@@ -20,7 +20,15 @@ dependencies {
 }
 ```
 
-Then, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the Root element in your activity Layout. Layout must have `gravity` set to either `top` or `bottom`. Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel. The main layout should have the width and the height set to `match_parent`. The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height. For more information, please refer to the sample code.
+* Then, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the root element in your activity layout.
+* The layout must have `gravity` set to either `top` or `bottom`.
+* Make sure that it has two children. The first child is your main layout.
+* The second child is your layout for the sliding up panel.
+* The main layout should have the width and the height set to `match_parent`.
+* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height.
+
+For more information, please refer to the sample code.
+
 ```xml
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
@@ -64,7 +72,7 @@ If you would like to hide the shadow above the sliding panel, set `shadowHeight`
 
 You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
 
-You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example). 
+You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example).
 
 You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 
@@ -86,30 +94,25 @@ Tested on Android 2.2+
 
 ### Other Contributors
 
-Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
-
-Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
-
-Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
-
-Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
-
-Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
-
-Dec 22, 13 - Vladimir Mironov ([@mironov-nsk](https://github.com/mironov-nsk)) - Custom Expanded Panel Height
+* Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
+* Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
+* Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
+* Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
+* Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
+* Dec 22, 13 - Vladimir Mironov ([@mironov-nsk](https://github.com/mironov-nsk)) - Custom Expanded Panel Height
 
 If you have an awesome pull request, send it over!
 
 ### Licence
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this work except in compliance with the License.
-You may obtain a copy of the License in the LICENSE file, or at:
-
-  [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+> Licensed under the Apache License, Version 2.0 (the "License");
+> you may not use this work except in compliance with the License.
+> You may obtain a copy of the License in the LICENSE file, or at:
+>
+>  [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+>
+> Unless required by applicable law or agreed to in writing, software
+> distributed under the License is distributed on an "AS IS" BASIS,
+> WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+> See the License for the specific language governing permissions and
+> limitations under the License.
