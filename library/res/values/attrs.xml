@@ -10,6 +10,12 @@
         <attr name="dragView" format="reference" />
         <attr name="overlay" format="boolean"/>
         <attr name="anchorPoint" format="float" />
+        <attr name="initialState" format="enum">
+            <enum name="expanded" value="0" />
+            <enum name="collapsed" value="1" />
+            <enum name="anchored" value="2" />
+            <enum name="hidden" value="3" />
+        </attr>
     </declare-styleable>
 
 </resources>

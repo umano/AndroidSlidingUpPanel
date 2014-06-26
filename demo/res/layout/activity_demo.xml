@@ -13,23 +13,23 @@
         sothree:panelHeight="68dp"
         sothree:shadowHeight="4dp"
         sothree:paralaxOffset="100dp"
-        sothree:dragView="@+id/name">
+        sothree:dragView="@+id/dragView">
 
         <!-- MAIN CONTENT -->
-        <LinearLayout 
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="?android:attr/actionBarSize">
-	        <TextView
-	            android:id="@+id/main"
-	            android:layout_width="match_parent"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:text="Main Content"
-	            android:clickable="true"
-	            android:focusable="false"	           
-	            android:focusableInTouchMode="true"
-	            android:textSize="16sp" />            
+            <TextView
+                android:id="@+id/main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Main Content"
+                android:clickable="true"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <!-- SLIDING LAYOUT -->
@@ -39,7 +39,8 @@
             android:background="#eeeeee"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="false">
+            android:focusable="false"
+            android:id="@+id/dragView">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,7 +56,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"/>
 
-				<Button
+                <Button
                     android:id="@+id/follow"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
