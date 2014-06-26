@@ -7,9 +7,15 @@ As seen in [Umano](http://umanoapp.com) [Android app](https://play.google.com/st
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
-### Usage
+### Importing the library
 
-To use the library, include the `library` project as a dependency in Eclipse or you just add the following dependency to your `build.gradle` file if you are using Android Studio:
+#### Eclipse 
+
+Download the [latest release](https://github.com/umano/AndroidSlidingUpPanel/releases) and include the `library` project as a dependency in Eclipse.
+
+#### Android Studio 
+
+Simply add the following dependency to your `build.gradle` file to use the latest version:
 
 ```groovy
 dependencies {
@@ -20,12 +26,14 @@ dependencies {
 }
 ```
 
-* Then, simply include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the root element in your activity layout.
+### Usage 
+
+* Include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the root element in your activity layout.
 * The layout must have `gravity` set to either `top` or `bottom`.
-* Make sure that it has two children. The first child is your main layout.
-* The second child is your layout for the sliding up panel.
+* Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
 * The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height.
+* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `dragView` attribute. 
 
 For more information, please refer to the sample code.
 
@@ -62,31 +70,22 @@ For smooth interaction with the ActionBar, make sure that `windowActionBarOverla
 ```
 However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`.
 
-### Additional Features and Customization
+### Caveats, Additional Features and Customization
 
-You can restrict the drag area of the sliding panel to a specific view by using the `setDragView` method or `dragView` attribute. Otherwise, the whole panel will be slideable and it will intercept all clicks.
-
-You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
-
-If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
-
-You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
-
-You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example).
-
-You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
-
-You can set a `PanelSlideListener` to monitor events about sliding panes.
-
-You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
-
-By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
-
-By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `fadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+* If you are using a custom `dragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to provent this.
+* You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
+* If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
+* You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
+* You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example).
+* You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
+* You can set a `PanelSlideListener` to monitor events about sliding panes.
+* You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
+* By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
+* By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `fadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
 
 ### Implementation
 
-This code is heavily based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
+This library was initially based on the opened-sourced [SlidingPaneLayout](http://developer.android.com/reference/android/support/v4/widget/SlidingPaneLayout.html) component from the r13 of the Android Support Library. Thanks Android team!
 
 ### Requirements
 
