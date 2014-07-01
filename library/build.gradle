@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:+'
-  compile 'com.nineoldandroids:library:19.1.+'
+  compile 'com.android.support:support-v4:19.1+'
+  compile 'com.nineoldandroids:library:+'
 }
 
 android {
