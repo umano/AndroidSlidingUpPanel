@@ -102,6 +102,11 @@ Tested on Android 2.2+
 
 If you have an awesome pull request, send it over!
 
+### Changelog
+
+* 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
+* 1.0.1 - Initial Release 
+
 ### Licence
 
 > Licensed under the Apache License, Version 2.0 (the "License");
