@@ -842,8 +842,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now collapsed/in the process of collapsing
      */
     public boolean collapsePanel() {
-        if (mSlideState == SlideState.HIDDEN || mSlideState == SlideState.COLLAPSED) return false;
-        return collapsePanel(mSlideableView, 0);
+        if (mFirstLayout) {
+            mSlideState = SlideState.COLLAPSED;
+            return true;
+        } else {
+            if (mSlideState == SlideState.HIDDEN || mSlideState == SlideState.COLLAPSED)
+                return false;
+            return collapsePanel(mSlideableView, 0);
+        }
     }
 
     /**
@@ -852,7 +858,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
     public boolean expandPanel() {
-        return expandPanel(1.0f);
+        if (mFirstLayout) {
+            mSlideState = SlideState.EXPANDED;
+            return true;
+        } else {
+            return expandPanel(1.0f);
+        }
     }
 
     /**
@@ -861,7 +872,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
     public boolean anchorPanel() {
-        return expandPanel(mAnchorPoint);
+        if (mFirstLayout) {
+            mSlideState = SlideState.ANCHORED;
+            return true;
+        } else {
+            return expandPanel(mAnchorPoint);
+        }
     }
 
     /**
@@ -903,17 +919,31 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mSlideState == SlideState.HIDDEN;
     }
 
+    /**
+     * Shows the panel from the hidden state
+     */
     public void showPanel() {
-        if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
-        mSlideableView.setVisibility(View.VISIBLE);
-        requestLayout();
-        smoothSlideTo(0, 0);
+        if (mFirstLayout) {
+            mSlideState = SlideState.COLLAPSED;
+        } else {
+            if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
+            mSlideableView.setVisibility(View.VISIBLE);
+            requestLayout();
+            smoothSlideTo(0, 0);
+        }
     }
 
+    /**
+     * Hides the sliding panel entirely.
+     */
     public void hidePanel() {
-        if (mSlideState == SlideState.DRAGGING || mSlideState == SlideState.HIDDEN) return;
-        int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
-        smoothSlideTo(computeSlideOffset(newTop), 0);
+        if (mFirstLayout) {
+            mSlideState = SlideState.HIDDEN;
+        } else {
+            if (mSlideState == SlideState.DRAGGING || mSlideState == SlideState.HIDDEN) return;
+            int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+            smoothSlideTo(computeSlideOffset(newTop), 0);
+        }
     }
 
     @SuppressLint("NewApi")
