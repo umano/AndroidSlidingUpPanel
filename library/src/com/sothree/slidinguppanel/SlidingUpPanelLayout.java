@@ -1028,7 +1028,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public void computeScroll() {
-        if (mDragHelper.continueSettling(true)) {
+        if (mDragHelper != null && mDragHelper.continueSettling(true)) {
             if (!isSlidingEnabled()) {
                 mDragHelper.abort();
                 return;
