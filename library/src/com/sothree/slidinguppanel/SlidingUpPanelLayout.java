@@ -288,20 +288,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
             if (ta != null) {
-                mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_panelHeight, -1);
-                mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowHeight, -1);
-                mParallaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_paralaxOffset, -1);
+                mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_supPanelHeight, -1);
+                mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_supShadowHeight, -1);
+                mParallaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_supParalaxOffset, -1);
 
-                mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
-                mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
+                mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_supFlingVelocity, DEFAULT_MIN_FLING_VELOCITY);
+                mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_supFadeColor, DEFAULT_FADE_COLOR);
 
-                mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
+                mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_supDragView, -1);
 
-                mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+                mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_supOverlay,DEFAULT_OVERLAY_FLAG);
 
-                mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_anchorPoint, DEFAULT_ANCHOR_POINT);
+                mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_supAnchorPoint, DEFAULT_ANCHOR_POINT);
 
-                mSlideState = SlideState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_initialState, DEFAULT_SLIDE_STATE.ordinal())];
+                mSlideState = SlideState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_supInitialState, DEFAULT_SLIDE_STATE.ordinal())];
             }
 
             ta.recycle();
