@@ -2,15 +2,15 @@
 <resources>
 
     <declare-styleable name="SlidingUpPanelLayout">
-        <attr name="panelHeight" format="dimension" />
-        <attr name="shadowHeight" format="dimension" />
-        <attr name="paralaxOffset" format="dimension" />
-        <attr name="fadeColor" format="color" />
-        <attr name="flingVelocity" format="integer" />
-        <attr name="dragView" format="reference" />
-        <attr name="overlay" format="boolean"/>
-        <attr name="anchorPoint" format="float" />
-        <attr name="initialState" format="enum">
+        <attr name="supPanelHeight" format="dimension" />
+        <attr name="supShadowHeight" format="dimension" />
+        <attr name="supParalaxOffset" format="dimension" />
+        <attr name="supFadeColor" format="color" />
+        <attr name="supFlingVelocity" format="integer" />
+        <attr name="supDragView" format="reference" />
+        <attr name="supOverlay" format="boolean"/>
+        <attr name="supAnchorPoint" format="float" />
+        <attr name="supInitialState" format="enum">
             <enum name="expanded" value="0" />
             <enum name="collapsed" value="1" />
             <enum name="anchored" value="2" />
