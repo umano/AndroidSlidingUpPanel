@@ -636,11 +636,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
             }
 
-            if (child == mSlideableView) {
-                mSlideRange = MeasureSpec.getSize(childHeightSpec) - mPanelHeight;
-            }
-
             child.measure(childWidthSpec, childHeightSpec);
+
+            if (child == mSlideableView) {
+                mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
+            }
         }
 
         setMeasuredDimension(widthSize, heightSize);
