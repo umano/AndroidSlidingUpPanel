@@ -5,7 +5,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.12.+'
+    classpath 'com.android.tools.build:gradle:0.12.2'
   }
 }
 
@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:19.1+'
-  compile 'com.nineoldandroids:library:+'
+  compile 'com.android.support:support-v4:19.1.0'
+  compile 'com.nineoldandroids:library:2.4.0'
 }
 
 android {
