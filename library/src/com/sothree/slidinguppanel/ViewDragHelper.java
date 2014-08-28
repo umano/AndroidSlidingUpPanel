@@ -17,8 +17,6 @@
 
 package com.sothree.slidinguppanel;
 
-import java.util.Arrays;
-
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
@@ -30,6 +28,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+
+import java.util.Arrays;
 
 /**
  * ViewDragHelper is a utility class for writing custom ViewGroups. It offers a number
@@ -713,6 +713,10 @@ public class ViewDragHelper {
      * @return true if settle is still in progress
      */
     public boolean continueSettling(boolean deferCallbacks) {
+        // Make sure, there is a captured view
+        if (mCapturedView == null) {
+            return false;
+        }
         if (mDragState == STATE_SETTLING) {
             boolean keepGoing = mScroller.computeScrollOffset();
             final int x = mScroller.getCurrX();
