@@ -16,6 +16,7 @@
             <enum name="anchored" value="2" />
             <enum name="hidden" value="3" />
         </attr>
+        <attr name="expandAllEnable" format="boolean"/>
     </declare-styleable>
 
 </resources>
