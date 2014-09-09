@@ -630,6 +630,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int height = layoutHeight;
             if (child == mMainView && !mOverlayContent && mSlideState != SlideState.HIDDEN) {
                 height -= mPanelHeight;
+            } else if (child == mSlideableView && !mExpandAll) {
+                if (!mOverlayContent && mSlideState != SlideState.HIDDEN)
+                    height -= mPanelHeight;
+
+                height = Math.min((int) (height * mAnchorPoint + 0.5) + mPanelHeight, layoutHeight);
             }
 
             int childWidthSpec;
@@ -828,7 +833,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private int computePanelTopPosition(float slideOffset) {
         int slidingViewHeight = mSlideableView != null ? mSlideableView.getMeasuredHeight() : 0;
-        int slidePixelOffset = (int) (slideOffset * mSlideRange + 0.5);
+        int slidePixelOffset = (int) (slideOffset * mSlideRange);
         // Compute the top of the panel if its collapsed
         return mIsSlidingUp
                 ? getMeasuredHeight() - getPaddingBottom() - mPanelHeight - slidePixelOffset
@@ -1166,20 +1171,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
                 mSlideOffset = computeSlideOffset(mSlideableView.getTop());
 
-                final int maxOffset = (int)(100.0f * (mExpandAll ? 1.0f : mAnchorPoint));
-                final int slideOffset = (int)(100.0f * mSlideOffset);
-                if (slideOffset == maxOffset) {
+                if (mSlideOffset == 1) {
                     if (mSlideState != SlideState.EXPANDED) {
                         updateObscuredViewVisibility();
                         mSlideState = SlideState.EXPANDED;
                         dispatchOnPanelExpanded(mSlideableView);
                     }
-                } else if (slideOffset == 0) {
+                } else if (mSlideOffset == 0) {
                     if (mSlideState != SlideState.COLLAPSED) {
                         mSlideState = SlideState.COLLAPSED;
                         dispatchOnPanelCollapsed(mSlideableView);
                     }
-                } else if (slideOffset < 0) {
+                } else if (mSlideOffset < 0) {
                     mSlideState = SlideState.HIDDEN;
                     mSlideableView.setVisibility(View.GONE);
                     dispatchOnPanelHidden(mSlideableView);
@@ -1209,27 +1212,34 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // direction is always positive if we are sliding in the expanded direction
             float direction = mIsSlidingUp ? -yvel : yvel;
 
-            final float maxExpandOffset = mExpandAll ? 1.0f : mAnchorPoint;
-
             if (direction > 0) {
                 // swipe up -> expand
-                target = computePanelTopPosition(maxExpandOffset);
+                target = computePanelTopPosition(1.0f);
             } else if (direction < 0) {
                 // swipe down -> collapse
                 target = computePanelTopPosition(0.0f);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= (1.f + mAnchorPoint) / 2) {
-                // zero velocity, and far enough from anchor point => expand to the top
-                target = computePanelTopPosition(maxExpandOffset);
-            } else if (mAnchorPoint == 1 && mSlideOffset >= 0.5f) {
-                // zero velocity, and far enough from anchor point => expand to the top
-                target = computePanelTopPosition(maxExpandOffset);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint) {
-                target = computePanelTopPosition(mAnchorPoint);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint / 2) {
-                target = computePanelTopPosition(mAnchorPoint);
             } else {
-                // settle at the bottom
-                target = computePanelTopPosition(0.0f);
+                // zero velocity, check which position we are...
+                if (mAnchorPoint != 1 && mExpandAll) {
+                    // we've set an anchor,
+                    if (mSlideOffset > mAnchorPoint) {
+                        // if we're above anchor... expand all...
+                        target = computePanelTopPosition(1.0f);
+                    } else if (mSlideOffset > mAnchorPoint / 2.0f) {
+                        // if we're above half distance of the bottom and anchor point, go to anchor point
+                        target = computePanelTopPosition(mAnchorPoint);
+                    } else {
+                        // we're closer to closed state, collapse to bottom
+                        target = computePanelTopPosition(0.0f);
+                    }
+                } else {
+                    // without anchor, just see if we're in the half upper side or not
+                    if (mSlideOffset >= 0.5f) {
+                        target = computePanelTopPosition(1.0f);
+                    } else {
+                        target = computePanelTopPosition(0.0f);
+                    }
+                }
             }
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
@@ -1244,7 +1254,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         @Override
         public int clampViewPositionVertical(View child, int top, int dy) {
             final int collapsedTop = computePanelTopPosition(0.f);
-            final int expandedTop = computePanelTopPosition(mExpandAll ? 1.0f : mAnchorPoint);
+            final int expandedTop = computePanelTopPosition(1.0f);
             if (mIsSlidingUp) {
                 return Math.min(Math.max(top, expandedTop), collapsedTop);
             } else {
