@@ -72,7 +72,7 @@ However, in this case you would likely want to add a top margin to your main lay
 
 ### Caveats, Additional Features and Customization
 
-* If you are using a custom `dragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to provent this.
+* If you are using a custom `dragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to prevent this.
 * You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
 * If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
 * You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
