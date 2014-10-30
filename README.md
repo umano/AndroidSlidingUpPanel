@@ -71,7 +71,8 @@ For smooth interaction with the ActionBar, make sure that `windowActionBarOverla
     <item name="android:windowActionBarOverlay">true</item>
 </style>
 ```
-However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`.
+However, in this case you would likely want to add a top margin to your main layout of `?android:attr/actionBarSize`
+or `?attr/actionBarSize` to support older API versions.
 
 ### Caveats, Additional Features and Customization
 
