@@ -801,12 +801,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + mDragView.getHeight();
     }
 
-    private boolean expandPanel(View pane, int initialVelocity, float mSlideOffset) {
-        return mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity);
+    private boolean expandPanel(View pane, int initialVelocity, float mSlideOffset, boolean forced) {
+        return mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity, forced);
     }
 
-    private boolean collapsePanel(View pane, int initialVelocity) {
-        return mFirstLayout || smoothSlideTo(0.0f, initialVelocity);
+    private boolean collapsePanel(View pane, int initialVelocity, boolean forced) {
+        return mFirstLayout || smoothSlideTo(0.0f, initialVelocity, forced);
     }
 
     /*
@@ -842,13 +842,22 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now collapsed/in the process of collapsing
      */
     public boolean collapsePanel() {
+        return collapsePanel(false);
+    }
+
+    /**
+     * Collapse the sliding pane.
+     * @param forced if true, the panel will be collapsed even if sliding is disabled.
+     * @return true if the pane was slideable and is now collapsed/in the process of collapsing
+     */
+    public boolean collapsePanel(boolean forced){
         if (mFirstLayout) {
             mSlideState = SlideState.COLLAPSED;
             return true;
         } else {
             if (mSlideState == SlideState.HIDDEN || mSlideState == SlideState.COLLAPSED)
                 return false;
-            return collapsePanel(mSlideableView, 0);
+            return collapsePanel(mSlideableView, 0, forced);
         }
     }
 
@@ -858,11 +867,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
     public boolean expandPanel() {
+        return expandPanel(false);
+    }
+
+    /**
+     * Expands the sliding pane.
+     * @param forced if true, the panel will be expanded even if sliding is disabled.
+     * @return true if the pane was slideable and is now expanded/in the process of expanding
+     */
+    public boolean expandPanel(boolean forced) {
         if (mFirstLayout) {
             mSlideState = SlideState.EXPANDED;
             return true;
         } else {
-            return expandPanel(1.0f);
+            return expandPanel(1.0f, forced);
         }
     }
 
@@ -884,12 +902,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Partially expand the sliding panel up to a specific offset
      *
      * @param mSlideOffset Value between 0 and 1, where 0 is completely expanded.
+     * @param forced if true the panel will be expanded even if sliding is disabled
      * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
-    public boolean expandPanel(float mSlideOffset) {
+    public boolean expandPanel(float mSlideOffset, boolean forced) {
         if (mSlideableView == null || mSlideState == SlideState.EXPANDED) return false;
         mSlideableView.setVisibility(View.VISIBLE);
-        return expandPanel(mSlideableView, 0, mSlideOffset);
+        return expandPanel(mSlideableView, 0, mSlideOffset, forced);
+    }
+
+    /**
+     * Equivalent to callind expandPanel(mSlideOffset, false)
+     */
+    public boolean expandPanel(float mSlideOffset) {
+        return expandPanel(mSlideOffset, false);
     }
 
     /**
@@ -1011,8 +1037,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param slideOffset position to animate to
      * @param velocity initial velocity in case of fling, or 0.
      */
-    boolean smoothSlideTo(float slideOffset, int velocity) {
-        if (!isSlidingEnabled()) {
+    boolean smoothSlideTo(float slideOffset, int velocity, boolean forced) {
+        if (!forced && !isSlidingEnabled()) {
             // Nothing to do.
             return false;
         }
@@ -1024,6 +1050,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return true;
         }
         return false;
+    }
+
+    boolean smoothSlideTo(float mSlideOffset, int velocity){
+        return smoothSlideTo(mSlideOffset, velocity, false);
     }
 
     @Override
