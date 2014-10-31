@@ -37,6 +37,8 @@ dependencies {
 * The main layout should have the width and the height set to `match_parent`.
 * The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height.
 * By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `dragView` attribute. 
+* To programmaticaly expand/collapse the panel you can use `collapsePanel()` and `expandPanel()`. Note that this will only work if sliding is enabled (`isSlidingEnabled()`), you can use `collapsePanel(true)` and `expandPanel(true)` if you
+would like to collapse/expand even if sliding is not enabled.
 
 For more information, please refer to the sample code.
 
