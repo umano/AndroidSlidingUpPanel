@@ -108,6 +108,7 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 2.0.2 - Allow `wrap_content` for sliding view height attribute. Bug fixes. 
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
 * 1.0.1 - Initial Release 
