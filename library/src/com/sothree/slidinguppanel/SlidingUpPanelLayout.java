@@ -405,6 +405,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Set parallax offset for the panel
+     *
+     * @param val A height in pixels
+     */
+    public void setParalaxOffset(int val) {
+        mParallaxOffset = val;
+        requestLayout();
+    }
+
+    /**
      * Sets the panel slide listener
      * @param listener
      */
