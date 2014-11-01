@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "19.1.0"
+  compileSdkVersion 21
+  buildToolsVersion "21.0.1"
 
   lintOptions {
     abortOnError false
@@ -10,7 +10,7 @@ android {
 
   defaultConfig {
     minSdkVersion 11
-    targetSdkVersion 19
+    targetSdkVersion 21
   }
   sourceSets {
     main {
