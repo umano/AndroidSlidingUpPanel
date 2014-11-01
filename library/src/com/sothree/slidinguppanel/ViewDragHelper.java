@@ -843,8 +843,10 @@ public class ViewDragHelper {
             final int pointerId = MotionEventCompat.getPointerId(ev, i);
             final float x = MotionEventCompat.getX(ev, i);
             final float y = MotionEventCompat.getY(ev, i);
-            mLastMotionX[pointerId] = x;
-            mLastMotionY[pointerId] = y;
+            if (mLastMotionX != null && mLastMotionY != null) {
+                mLastMotionX[pointerId] = x;
+                mLastMotionY[pointerId] = y;
+            }
         }
     }
 
