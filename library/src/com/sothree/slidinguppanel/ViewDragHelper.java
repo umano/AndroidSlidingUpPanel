@@ -1006,6 +1006,9 @@ public class ViewDragHelper {
                 final int pointerCount = MotionEventCompat.getPointerCount(ev);
                 for (int i = 0; i < pointerCount && mInitialMotionX != null && mInitialMotionY != null; i++) {
                     final int pointerId = MotionEventCompat.getPointerId(ev, i);
+                    if (pointerId >= mInitialMotionX.length || pointerId >= mInitialMotionY.length) {
+                        continue;
+                    }
                     final float x = MotionEventCompat.getX(ev, i);
                     final float y = MotionEventCompat.getY(ev, i);
                     final float dx = x - mInitialMotionX[pointerId];
