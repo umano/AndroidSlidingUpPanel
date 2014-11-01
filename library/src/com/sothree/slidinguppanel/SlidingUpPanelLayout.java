@@ -893,13 +893,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Partially expand the sliding panel up to a specific offset
      *
-     * @param mSlideOffset Value between 0 and 1, where 0 is completely expanded.
+     * @param slideOffset Value between 0 and 1, where 0 is completely expanded.
      * @return true if the pane was slideable and is now expanded/in the process of expanding
      */
-    public boolean expandPanel(float mSlideOffset) {
-        if (mSlideableView == null || mSlideState == PanelState.EXPANDED) return false;
+    public boolean expandPanel(float slideOffset) {
+        if (mSlideableView == null || (mSlideState == PanelState.EXPANDED && slideOffset == 1.0f)) return false;
         mSlideableView.setVisibility(View.VISIBLE);
-        return expandPanel(mSlideableView, 0, mSlideOffset);
+        return expandPanel(mSlideableView, 0, slideOffset);
     }
 
     /**
