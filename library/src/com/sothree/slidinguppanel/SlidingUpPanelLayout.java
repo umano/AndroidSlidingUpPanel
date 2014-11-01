@@ -989,18 +989,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
                 canvas.clipRect(mTmpRect);
             }
+
+            if (mCoveredFadeColor != 0 && mSlideOffset > 0) {
+                final int baseAlpha = (mCoveredFadeColor & 0xff000000) >>> 24;
+                final int imag = (int) (baseAlpha * mSlideOffset);
+                final int color = imag << 24 | (mCoveredFadeColor & 0xffffff);
+                mCoveredFadePaint.setColor(color);
+                canvas.drawRect(mTmpRect, mCoveredFadePaint);
+            }
         }
 
         result = super.drawChild(canvas, child, drawingTime);
         canvas.restoreToCount(save);
-
-        if (mCoveredFadeColor != 0 && mSlideOffset > 0) {
-            final int baseAlpha = (mCoveredFadeColor & 0xff000000) >>> 24;
-            final int imag = (int) (baseAlpha * mSlideOffset);
-            final int color = imag << 24 | (mCoveredFadeColor & 0xffffff);
-            mCoveredFadePaint.setColor(color);
-            canvas.drawRect(mTmpRect, mCoveredFadePaint);
-        }
 
         return result;
     }
