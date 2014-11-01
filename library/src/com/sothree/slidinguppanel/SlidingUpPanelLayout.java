@@ -60,6 +60,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default is set to false because that is how it was written
      */
     private static final boolean DEFAULT_OVERLAY_FLAG = false;
+
+    /**
+     * Default expand all enabled
+     */
+    private static final boolean DEFAULT_EXPAND_ALL = true;
+
     /**
      * Default attributes for layout
      */
@@ -196,6 +202,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mFirstLayout = true;
 
+    private boolean mExpandAll = DEFAULT_EXPAND_ALL;
+
     private final Rect mTmpRect = new Rect();
 
     /**
@@ -281,9 +289,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     throw new IllegalArgumentException("gravity must be set to either top or bottom");
                 }
                 mIsSlidingUp = gravity == Gravity.BOTTOM;
+                defAttrs.recycle();
             }
 
-            defAttrs.recycle();
+
 
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
@@ -302,9 +311,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_anchorPoint, DEFAULT_ANCHOR_POINT);
 
                 mSlideState = SlideState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_initialState, DEFAULT_SLIDE_STATE.ordinal())];
+
+                mExpandAll = ta.getBoolean(R.styleable.SlidingUpPanelLayout_expandAllEnable, mExpandAll);
+
+                ta.recycle();
             }
 
-            ta.recycle();
+
         }
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -336,6 +349,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mIsSlidingEnabled = true;
     }
+
 
     /**
      * Set the Drag View after the view is inflated
@@ -436,7 +450,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                         collapsePanel();
                     }
                 }
-            });;
+            });
         }
     }
 
@@ -614,8 +628,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             int height = layoutHeight;
+
             if (child == mMainView && !mOverlayContent && mSlideState != SlideState.HIDDEN) {
                 height -= mPanelHeight;
+            } else if (child == mSlideableView && !mExpandAll) {
+                height = Math.min((int) (height * mAnchorPoint + 0.5), layoutHeight);
             }
 
             int childWidthSpec;
@@ -635,6 +652,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             } else {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
             }
+
 
             child.measure(childWidthSpec, childHeightSpec);
 
@@ -802,6 +820,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean expandPanel(View pane, int initialVelocity, float mSlideOffset) {
+
+        final float maxOffset = 1.0f;
+        final float minOffset = 0.0f;
+
+        mSlideOffset = Math.max(minOffset, Math.min(maxOffset, mSlideOffset));
+
         return mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity);
     }
 
@@ -1199,19 +1223,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
             } else if (direction < 0) {
                 // swipe down -> collapse
                 target = computePanelTopPosition(0.0f);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= (1.f + mAnchorPoint) / 2) {
-                // zero velocity, and far enough from anchor point => expand to the top
-                target = computePanelTopPosition(1.0f);
-            } else if (mAnchorPoint == 1 && mSlideOffset >= 0.5f) {
-                // zero velocity, and far enough from anchor point => expand to the top
-                target = computePanelTopPosition(1.0f);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint) {
-                target = computePanelTopPosition(mAnchorPoint);
-            } else if (mAnchorPoint != 1 && mSlideOffset >= mAnchorPoint / 2) {
-                target = computePanelTopPosition(mAnchorPoint);
             } else {
-                // settle at the bottom
-                target = computePanelTopPosition(0.0f);
+                // zero velocity, check which position we are...
+                if (mAnchorPoint != 1 && mExpandAll) {
+                    // we've set an anchor,
+                    if (mSlideOffset > mAnchorPoint) {
+                        // if we're above anchor... expand all...
+                        target = computePanelTopPosition(1.0f);
+                    } else if (mSlideOffset > mAnchorPoint / 2.0f) {
+                        // if we're above half distance of the bottom and anchor point, go to anchor point
+                        target = computePanelTopPosition(mAnchorPoint);
+                    } else {
+                        // we're closer to closed state, collapse to bottom
+                        target = computePanelTopPosition(0.0f);
+                    }
+                } else {
+                    // without anchor, just see if we're in the half upper side or not
+                    if (mSlideOffset >= 0.5f) {
+                        target = computePanelTopPosition(1.0f);
+                    } else {
+                        target = computePanelTopPosition(0.0f);
+                    }
+                }
             }
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
