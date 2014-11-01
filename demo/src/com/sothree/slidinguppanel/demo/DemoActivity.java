@@ -62,6 +62,13 @@ public class DemoActivity extends ActionBarActivity {
         });
 
         TextView t = (TextView) findViewById(R.id.main);
+        t.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLayout.collapsePanel();
+            }
+        });
+
         t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
         Button f = (Button) findViewById(R.id.follow);
