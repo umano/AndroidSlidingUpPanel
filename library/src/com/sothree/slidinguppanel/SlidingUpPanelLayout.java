@@ -998,15 +998,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (isSlidingEnabled() && mSlideableView != child) {
             // Clip against the slider; no sense drawing what will immediately be covered,
             // Unless the panel is set to overlay content
-                canvas.getClipBounds(mTmpRect);
-                if (!mOverlayContent) {
-                    if (mIsSlidingUp) {
-                        mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
-                    } else {
-                        mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
-                    }
+            canvas.getClipBounds(mTmpRect);
+            if (!mOverlayContent) {
+                if (mIsSlidingUp) {
+                    mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+                } else {
+                    mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
                 }
-                canvas.clipRect(mTmpRect);
+            }
+            canvas.clipRect(mTmpRect);
+
+            result = super.drawChild(canvas, child, drawingTime);
 
             if (mCoveredFadeColor != 0 && mSlideOffset > 0) {
                 final int baseAlpha = (mCoveredFadeColor & 0xff000000) >>> 24;
@@ -1016,8 +1018,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 canvas.drawRect(mTmpRect, mCoveredFadePaint);
             }
         }
+        else {
+            result = super.drawChild(canvas, child, drawingTime);
+        }
 
-        result = super.drawChild(canvas, child, drawingTime);
         canvas.restoreToCount(save);
 
         return result;
