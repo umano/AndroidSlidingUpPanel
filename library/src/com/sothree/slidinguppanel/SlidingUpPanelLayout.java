@@ -863,7 +863,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
     
     /**
-     * Expand the sliding pane if it is currently slideable.
+     * Collapse the sliding pane if it is currently slideable.
      *
      * @return true if the pane was slideable and is now expanded/in the process of expading
      */
