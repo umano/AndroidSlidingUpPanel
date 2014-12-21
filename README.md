@@ -4,6 +4,15 @@
 Android Sliding Up Panel
 =========================
 
+### Material Design
+
+This is a fork of Umano Sliding Up Panel that aims to bring some Material Design features:
+* Attaching a Floating Action Button
+* Attaching a scrollable View (such as ScrollView, ListView or RecyclerView)
+* Adding listeners when the top/bottom is reached and left (helpful for changing background color or adding shadow when dragging)
+
+### Orginal Readme
+
 This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
 
 As seen in [Umano](http://umanoapp.com) [Android app](https://play.google.com/store/apps/details?id=com.sothree.umano):
