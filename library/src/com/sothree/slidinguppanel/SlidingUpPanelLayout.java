@@ -18,7 +18,9 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.FrameLayout;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
@@ -130,6 +132,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int mDragViewResId = -1;
 
     /**
+     * The previous bottom margin of the floating action button if the initial state was hidden.
+     */
+    private int previousBottomMargin;
+
+    /**
      * The child view that can slide, if any.
      */
     private View mSlideableView;
@@ -138,6 +145,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The main view
      */
     private View mMainView;
+
+    /**
+     * The floating action button, if provided
+     */
+    private View mFloatingActionButton;
 
     /**
      * Current state of the slideable view.
@@ -450,6 +462,25 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    public void attachFloatingActionButton(View v){
+        mFloatingActionButton = v;
+        mDragHelper.setFloatingActionButton(mFloatingActionButton);
+        ViewTreeObserver vto = mFloatingActionButton.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                mDragHelper.setFabY(mPanelHeight - mFloatingActionButton.getMeasuredHeight() / 2);
+                mDragHelper.setFabInitialY(mFloatingActionButton.getTop());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mFloatingActionButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    mFloatingActionButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+            }
+        });
+    }
+
     /**
      * Set an anchor point where the panel can stop during sliding
      *
@@ -596,12 +627,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         final int childCount = getChildCount();
 
-        if (childCount != 2) {
+        if (childCount > 3) {
             throw new IllegalStateException("Sliding up panel layout must have exactly 2 children!");
         }
 
         mMainView = getChildAt(0);
         mSlideableView = getChildAt(1);
+        if (childCount == 3){
+            mFloatingActionButton = getChildAt(2);
+            mDragHelper.setFloatingActionButton(mFloatingActionButton);
+        }
         if (mDragView == null) {
             setDragView(mSlideableView);
         }
@@ -650,6 +685,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (child == mSlideableView) {
                 mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
+                mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight)/ ((float) mSlideRange));
+                mDragHelper.setPanelCharacteristics(mSlideRange, mPanelHeight);
             }
         }
 
@@ -689,6 +726,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 continue;
             }
 
+            if(i == 2){
+                continue;
+            }
+
             final int childHeight = child.getMeasuredHeight();
             int childTop = paddingTop;
 
@@ -710,6 +751,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         if (mFirstLayout) {
             updateObscuredViewVisibility();
+        }
+
+        if(childCount == 3 && mFirstLayout) {
+            MarginLayoutParams lp = (MarginLayoutParams) mFloatingActionButton.getLayoutParams();
+            int childBottom;
+            if (mSlideState == PanelState.HIDDEN) {
+                childBottom = b - lp.bottomMargin;
+            } else if (mSlideState == PanelState.EXPANDED) {
+                childBottom = mPanelHeight - mFloatingActionButton.getMeasuredHeight() / 2;
+            } else {
+                childBottom = b - mPanelHeight + mFloatingActionButton.getMeasuredHeight() / 2;
+            }
+            final int childRight = r - lp.rightMargin;
+            final int childTop = childBottom - mFloatingActionButton.getMeasuredHeight();
+            final int childLeft = childRight - mFloatingActionButton.getMeasuredWidth();
+            mFloatingActionButton.layout(childLeft, childTop, childRight, childBottom);
+            mDragHelper.setFabInitialY(childTop);
+            mDragHelper.setFabY(mPanelHeight - mFloatingActionButton.getMeasuredHeight() / 2);
         }
 
         mFirstLayout = false;

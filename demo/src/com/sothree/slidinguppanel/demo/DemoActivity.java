@@ -32,6 +32,7 @@ public class DemoActivity extends ActionBarActivity {
 
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        //mLayout.attachFloatingActionButton(findViewById(R.id.fab));
         mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {

@@ -1,55 +1,57 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DemoActivity" >
+    tools:context=".DemoActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
+        sothree:initialState="hidden"
+        sothree:dragView="@+id/dragView"
         sothree:panelHeight="68dp"
-        sothree:shadowHeight="4dp"
         sothree:paralaxOffset="100dp"
-        sothree:dragView="@+id/dragView">
+        sothree:shadowHeight="4dp">
 
         <!-- MAIN CONTENT -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <android.support.v7.widget.Toolbar
+
+            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:sothree="http://schemas.android.com/apk/res-auto"
-                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                sothree:theme="@style/ActionBar"
-                android:layout_width="match_parent"/>
+                sothree:theme="@style/ActionBar" />
+
             <TextView
                 android:id="@+id/main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="?attr/actionBarSize"
-                android:gravity="center"
-                android:text="Main Content"
                 android:clickable="true"
                 android:focusable="false"
                 android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:text="Main Content"
                 android:textSize="16sp" />
         </FrameLayout>
 
         <!-- SLIDING LAYOUT -->
         <LinearLayout
+            android:id="@+id/dragView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#eeeeee"
-            android:orientation="vertical"
             android:clickable="true"
             android:focusable="false"
-            android:id="@+id/dragView">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,18 +63,18 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
                     android:gravity="center_vertical"
-                    android:paddingLeft="10dp"/>
+                    android:paddingLeft="10dp"
+                    android:textSize="14sp" />
 
                 <Button
                     android:id="@+id/follow"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="14sp"
                     android:gravity="center_vertical|right"
+                    android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:paddingLeft="10dp"/>
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -81,9 +83,20 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:scaleType="fitStart"
-                android:src="@drawable/graphic" >
-            </ImageView>
+                android:src="@drawable/graphic"></ImageView>
         </LinearLayout>
+
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@android:drawable/ic_input_add"
+            fab:fab_colorNormal="@color/primary"
+            fab:fab_colorPressed="@color/primary_pressed"
+            fab:fab_colorRipple="@color/ripple" />
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-</RelativeLayout>
+</FrameLayout>
