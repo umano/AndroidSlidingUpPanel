@@ -1,17 +1,60 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library)
 
 
-Android Sliding Up Panel
-=========================
-
-### Material Design
-
+Android Sliding Up Panel - Material Design
+===========================================
 This is a fork of Umano Sliding Up Panel that aims to bring some Material Design features:
-* Attaching a Floating Action Button
-* Attaching a scrollable View (such as ScrollView, ListView or RecyclerView)
-* Adding listeners when the top/bottom is reached and left (helpful for changing background color or adding shadow when dragging)
 
-### Orginal Readme
+### Floating Action Button
+
+To add the Floating Action Button change your layout root to this:
+```xml
+<com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DemoActivity">
+    
+    <!-- SLIDING UP PANEL -->
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:initialState="hidden"
+        sothree:dragView="@+id/dragView"
+        sothree:panelHeight="68dp"
+        sothree:paralaxOffset="100dp"
+        sothree:shadowHeight="4dp">
+        <!-- The normal content of the Sliding Up Panel (see Original Readme)-->
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <!-- FLOATING ACTION BUTTON -->
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@android:drawable/ic_input_add"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_pressed"
+        fab:fab_colorRipple="@color/ripple" />
+</com.sothree.slidinguppanel.FloatingActionButtonLayout>
+´´´
+This will also animate the Floating Action Button along with the Sliding Up Panel.
+(The Floating Action Button used here and in the demo is [Oleksandr Melnykov's Floating Action Button](https://github.com/makovkastar/FloatingActionButton))
+
+### Attaching a scrollable View (such as ScrollView, ListView or RecyclerView)
+Not implemented yet.
+
+### Adding listeners when the top/bottom is reached and left (helpful for changing background color or adding shadow when dragging)
+Not implemented yet.
+
+Android Sliding Up Panel - Orginal Readme
+==========================================
 
 This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
 
