@@ -43,7 +43,7 @@ To add the Floating Action Button change your layout root to this:
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple" />
 </com.sothree.slidinguppanel.FloatingActionButtonLayout>
-´´´
+```
 This will also animate the Floating Action Button along with the Sliding Up Panel.
 (The Floating Action Button used here and in the demo is [Oleksandr Melnykov's Floating Action Button](https://github.com/makovkastar/FloatingActionButton))
 
