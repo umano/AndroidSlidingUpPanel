@@ -141,7 +141,7 @@ public class ViewDragHelper {
     private float mFabRatio;
     private int mFabExpandedY;
     private int mFabCollapsedY;
-    private int mFabInitialY;
+    private int mFabHideDeltaY;
     private int mSlideRange;
     private int mPanelHeight;
     private boolean alreadyInitialY = false;
@@ -414,12 +414,16 @@ public class ViewDragHelper {
         mFabRatio = ratio;
     }
 
-    protected void setFabY(int fabY) {
-        mFabExpandedY = fabY;
+    protected void setFabExpandedY(int fabExpandedY) {
+        mFabExpandedY = fabExpandedY;
     }
 
-    protected void setFabInitialY(int fabInitialY) {
-        mFabInitialY = fabInitialY;
+    protected void setFabCollapsedY(int fabCollapsedY) {
+        mFabCollapsedY = fabCollapsedY;
+    }
+
+    protected void setFabHideDeltaY(int fabHideDeltaY) {
+        mFabHideDeltaY = fabHideDeltaY;
     }
 
     protected void setPanelCharacteristics(int sliderange, int panelheight) {
@@ -757,13 +761,11 @@ public class ViewDragHelper {
             boolean keepGoing = mScroller.computeScrollOffset();
             final int x = mScroller.getCurrX();
             final int y = mScroller.getCurrY();
-            mFabCollapsedY = Math.round(mFabRatio * mSlideRange) + mFabExpandedY;
             int faby;
             if (y <= mSlideRange) { // Between expanded and collapsed state
                 faby = Math.round(mFabRatio * y) + mFabExpandedY;
             } else { // Between collapsed and hidden state
-                int delta = mFabInitialY - mFabCollapsedY;
-                faby = Math.round((((float) (y - mSlideRange)) / ((float) mPanelHeight)) * delta) + mFabCollapsedY;
+                faby = Math.round((((float) (y - mSlideRange)) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
             }
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
