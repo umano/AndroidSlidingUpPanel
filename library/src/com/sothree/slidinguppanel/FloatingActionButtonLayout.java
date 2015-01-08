@@ -49,7 +49,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) getChildAt(0);
-        measureChildWithMargins(mSlidingUpPanelLayout, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
+        mSlidingUpPanelLayout.measure(widthMeasureSpec, heightMeasureSpec);
         mFloatingActionButton = getChildAt(1);
         measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
         setMeasuredDimension(widthSize, heightSize);
