@@ -46,11 +46,12 @@ public class FloatingActionButtonLayout extends ViewGroup {
     }
 
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) getChildAt(0);
-        mSlidingUpPanelLayout.measure(widthMeasureSpec, heightMeasureSpec);
+        measureChildWithMargins(mSlidingUpPanelLayout, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
         mFloatingActionButton = getChildAt(1);
-        measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, MeasureSpec.getSize(widthMeasureSpec), heightMeasureSpec, MeasureSpec.getSize(heightMeasureSpec));
+        measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
     }
 
     @Override
@@ -61,12 +62,13 @@ public class FloatingActionButtonLayout extends ViewGroup {
             throw new IllegalStateException("FloatingActionButtonLayout must have exactly 2 children");
         }
 
+        mSlidingUpPanelLayout.layout(l, t, r, b);
+
         if (mFirstLayout) {
-            mSlidingUpPanelLayout.layout(l, t, r, b);
             MarginLayoutParams lp = (MarginLayoutParams) mFloatingActionButton.getLayoutParams();
             SlidingUpPanelLayout.PanelState state = mSlidingUpPanelLayout.getPanelState();
             // First get Left and Right (independent of slide state)
-            int fabRight = r -lp.rightMargin;
+            int fabRight = r - lp.rightMargin;
             int fabLeft = fabRight - mFloatingActionButton.getMeasuredWidth();
             // Then calculate Top and Bottom values
             int initialfabBottom = b - lp.bottomMargin;
@@ -100,22 +102,48 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
+        return new FloatingActionButtonLayout.LayoutParams(getContext(), attrs);
     }
 
     @Override
     protected LayoutParams generateDefaultLayoutParams() {
-        return new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     }
 
     @Override
     protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
-        return new MarginLayoutParams(p);
+        return new LayoutParams(p);
     }
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof MarginLayoutParams;
+        return p instanceof LayoutParams;
     }
 
+    public static class LayoutParams extends MarginLayoutParams {
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(int width, int height, int gravity) {
+            super(width, height);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(LayoutParams source) {
+            super(source);
+        }
+    }
 }

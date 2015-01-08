@@ -761,15 +761,8 @@ public class ViewDragHelper {
             boolean keepGoing = mScroller.computeScrollOffset();
             final int x = mScroller.getCurrX();
             final int y = mScroller.getCurrY();
-            int faby;
-            if (y <= mSlideRange) { // Between expanded and collapsed state
-                faby = Math.round(mFabRatio * y) + mFabExpandedY;
-            } else { // Between collapsed and hidden state
-                faby = Math.round((((float) (y - mSlideRange)) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
-            }
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
-            final int fabdy = faby - mFloatingActionButton.getTop();
 
             if (dx != 0) {
                 mCapturedView.offsetLeftAndRight(dx);
@@ -777,6 +770,13 @@ public class ViewDragHelper {
             if (dy != 0) {
                 mCapturedView.offsetTopAndBottom(dy);
                 if (mHasFloatingActionButton) {
+                    int faby;
+                    if (y <= mSlideRange) { // Between expanded and collapsed state
+                        faby = Math.round(mFabRatio * y) + mFabExpandedY;
+                    } else { // Between collapsed and hidden state
+                        faby = Math.round((((float) (y - mSlideRange)) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
+                    }
+                    final int fabdy = faby - mFloatingActionButton.getTop();
                     mFloatingActionButton.offsetTopAndBottom(fabdy);
                 }
             }
@@ -790,17 +790,6 @@ public class ViewDragHelper {
                 // but the user sure doesn't.
                 mScroller.abortAnimation();
                 keepGoing = mScroller.isFinished();
-                /*if (faby == mFabCollapsedY) {
-                    Log.i("DragHelper", "CollapsedY");
-                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mFloatingActionButton.getLayoutParams();
-                    lp.bottomMargin = mPanelHeight - mFloatingActionButton.getMeasuredHeight() / 2;
-                    mFloatingActionButton.setLayoutParams(lp);
-                } else if (faby == mFabInitialY) {
-                    Log.i("DragHelper", "InitialY");
-                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mFloatingActionButton.getLayoutParams();
-                    lp.bottomMargin = lp.rightMargin;
-                    mFloatingActionButton.setLayoutParams(lp);
-                }*/
             }
 
             if (!keepGoing) {
