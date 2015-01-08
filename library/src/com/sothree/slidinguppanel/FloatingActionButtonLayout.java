@@ -52,6 +52,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
         measureChildWithMargins(mSlidingUpPanelLayout, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
         mFloatingActionButton = getChildAt(1);
         measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
+        setMeasuredDimension(widthSize, heightSize);
     }
 
     @Override
