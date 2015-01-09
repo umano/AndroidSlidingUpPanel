@@ -90,17 +90,13 @@ public class DemoActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onPanelExpandedStateYLayout(View panel) {
-                Log.i(TAG, "onPanelExpandedStateYLayout");
+            public void onPanelLayout(View panel, SlidingUpPanelLayout.PanelState state) {
                 LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
-                titleBar.setBackgroundColor(Color.parseColor("#ffff9431"));
-            }
-
-            @Override
-            public void onPanelCollapsedStateYLayout(View panel) {
-                Log.i(TAG, "onPanelCollapsedStateYLayout");
-                LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
-                titleBar.setBackgroundColor(Color.WHITE);
+                if(state == SlidingUpPanelLayout.PanelState.COLLAPSED){
+                    titleBar.setBackgroundColor(Color.WHITE);
+                } else if (state == SlidingUpPanelLayout.PanelState.EXPANDED){
+                    titleBar.setBackgroundColor(Color.parseColor("#ffff9431"));
+                }
             }
         });
 
