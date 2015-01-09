@@ -162,6 +162,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
     private PanelState mSlideState = PanelState.COLLAPSED;
 
+    private boolean alreadyCollapsedStateY;
+
+    private boolean alreadyExpandedStateY;
+
     /**
      * How far the panel is offset from its expanded position.
      * range [0, 1] where 0 = collapsed, 1 = expanded.
@@ -242,6 +246,44 @@ public class SlidingUpPanelLayout extends ViewGroup {
          * @param panel The child view that was slid to a hidden position
          */
         public void onPanelHidden(View panel);
+
+        /**
+         * Called when a sliding panel gets hidden via hidePanel.
+         * @param panel The child view that was hidden
+         */
+        public void onPanelHiddenExecuted(View panel);
+
+        /**
+         * Called when a sliding panel gets shown via showPanel.
+         * @param panel The child view that was shown
+         */
+        public void onPanelShownExecuted(View panel);
+
+        /**
+         * Called when a sliding panel touches the top.
+         * @param panel The child view that was shown
+         * @param reached Whether the panel has just reached the top position (true) or left it (false)
+         */
+        public void onPanelExpandedStateY(View panel, boolean reached);
+
+        /**
+         * Called when a sliding panel touches the bottom.
+         * @param panel The child view that was shown
+         * @param reached Whether the panel has just reached the bottom position (true) or left it (false)
+         */
+        public void onPanelCollapsedStateY(View panel, boolean reached);
+
+        /**
+         * Called when a sliding panel touches the top.
+         * @param panel The child view that was shown
+         */
+        public void onPanelExpandedStateYLayout(View panel);
+
+        /**
+         * Called when a sliding panel touches the bottom.
+         * @param panel The child view that was shown
+         */
+        public void onPanelCollapsedStateYLayout(View panel);
     }
 
     /**
@@ -263,6 +305,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         @Override
         public void onPanelHidden(View panel) {
+        }
+        @Override
+        public void onPanelHiddenExecuted(View panel){
+        }
+        @Override
+        public void onPanelShownExecuted(View panel){
+        }
+        @Override
+        public void onPanelExpandedStateY(View panel, boolean reached){
+        }
+        @Override
+        public void onPanelCollapsedStateY(View panel, boolean reached){
+        }
+        @Override
+        public void onPanelExpandedStateYLayout(View panel) {
+        }
+        @Override
+        public void onPanelCollapsedStateYLayout(View panel) {
         }
     }
 
@@ -539,6 +599,48 @@ public class SlidingUpPanelLayout extends ViewGroup {
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
+    void dispatchOnPanelHiddenExecuted(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelHiddenExecuted(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelShownExecuted(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelShownExecuted(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelExpandedStateY(View panel, boolean reached) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelExpandedStateY(panel, reached);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelCollapsedStateY(View panel, boolean reached) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelCollapsedStateY(panel, reached);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelExpandedStateYLayout(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelExpandedStateYLayout(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelCollapsedStateYLayout(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelCollapsedStateYLayout(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
     void updateObscuredViewVisibility() {
         if (getChildCount() == 0) {
             return;
@@ -688,6 +790,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
             switch (mSlideState) {
             case EXPANDED:
                 mSlideOffset = 1.0f;
+                alreadyExpandedStateY = true;
+                dispatchOnPanelExpandedStateYLayout(mSlideableView);
                 break;
             case ANCHORED:
                 mSlideOffset = mAnchorPoint;
@@ -698,6 +802,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 break;
             default:
                 mSlideOffset = 0.f;
+                alreadyCollapsedStateY = true;
+                dispatchOnPanelCollapsedStateYLayout(mSlideableView);
                 break;
             }
         }
@@ -968,6 +1074,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (mSlideableView == null || mSlideState != PanelState.HIDDEN) return;
             mSlideableView.setVisibility(View.VISIBLE);
             requestLayout();
+            dispatchOnPanelShownExecuted(mSlideableView);
             smoothSlideTo(0, 0);
         }
     }
@@ -981,6 +1088,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         } else {
             if (mSlideState == PanelState.DRAGGING || mSlideState == PanelState.HIDDEN) return;
             int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+            dispatchOnPanelHiddenExecuted(mSlideableView);
             smoothSlideTo(computeSlideOffset(newTop), 0);
         }
     }
@@ -1008,6 +1116,32 @@ public class SlidingUpPanelLayout extends ViewGroup {
             LayoutParams lp = (LayoutParams)mMainView.getLayoutParams();
             lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTop);
             mMainView.requestLayout();
+        }
+        final int collapsedTop = computePanelTopPosition(0.f);
+        final int expandedTop = computePanelTopPosition(1.0f);
+        if (mIsSlidingUp) {
+            if (newTop > expandedTop) {
+                if (alreadyExpandedStateY) {
+                    dispatchOnPanelExpandedStateY(mSlideableView, false);
+                    alreadyExpandedStateY = false;
+                }
+            } else {
+                if (!alreadyExpandedStateY) {
+                    dispatchOnPanelExpandedStateY(mSlideableView, true);
+                    alreadyExpandedStateY = true;
+                }
+            }
+            if (newTop < collapsedTop) {
+                if (alreadyCollapsedStateY) {
+                    dispatchOnPanelCollapsedStateY(mSlideableView, false);
+                    alreadyCollapsedStateY = false;
+                }
+            } else {
+                if (!alreadyCollapsedStateY) {
+                    dispatchOnPanelCollapsedStateY(mSlideableView, true);
+                    alreadyCollapsedStateY = true;
+                }
+            }
         }
     }
 

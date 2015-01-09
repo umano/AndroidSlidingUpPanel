@@ -1,6 +1,7 @@
 package com.sothree.slidinguppanel.demo;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -59,6 +61,46 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelHidden(View panel) {
                 Log.i(TAG, "onPanelHidden");
+            }
+
+            @Override
+            public void onPanelHiddenExecuted(View panel) {
+                Log.i(TAG, "onPanelHiddenExecuted");
+            }
+
+            @Override
+            public void onPanelShownExecuted(View panel) {
+                Log.i(TAG, "onPanelShownExecuted");
+            }
+
+            @Override
+            public void onPanelExpandedStateY(View panel, boolean reached) {
+                Log.i(TAG, "onPanelExpandedStateY" + (reached ? "reached" : "left"));
+            }
+
+            @Override
+            public void onPanelCollapsedStateY(View panel, boolean reached) {
+                Log.i(TAG, "onPanelCollapsedStateY" + (reached ? "reached" : "left"));
+                LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
+                if (reached) {
+                    titleBar.setBackgroundColor(Color.WHITE);
+                } else {
+                    titleBar.setBackgroundColor(Color.parseColor("#ffff9431"));
+                }
+            }
+
+            @Override
+            public void onPanelExpandedStateYLayout(View panel) {
+                Log.i(TAG, "onPanelExpandedStateYLayout");
+                LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
+                titleBar.setBackgroundColor(Color.parseColor("#ffff9431"));
+            }
+
+            @Override
+            public void onPanelCollapsedStateYLayout(View panel) {
+                Log.i(TAG, "onPanelCollapsedStateYLayout");
+                LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
+                titleBar.setBackgroundColor(Color.WHITE);
             }
         });
 
