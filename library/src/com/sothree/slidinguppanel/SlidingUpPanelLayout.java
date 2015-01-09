@@ -417,6 +417,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
+        if(mAnchorPoint != DEFAULT_ANCHOR_POINT){
+            mDragHelper.setAnchorY(computePanelTopPosition(mAnchorPoint));
+        }
 
         mIsSlidingEnabled = true;
     }
@@ -554,6 +557,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setAnchorPoint(float anchorPoint) {
         if (anchorPoint > 0 && anchorPoint <= 1) {
             mAnchorPoint = anchorPoint;
+            if (mAnchorPoint != DEFAULT_ANCHOR_POINT){
+                mDragHelper.setAnchorY(computePanelTopPosition(mAnchorPoint));
+                int anchorTop = computePanelTopPosition(mAnchorPoint);
+                mDragHelper.setFabRatio(((float) anchorTop - mPanelHeight) / ((float) anchorTop));
+            } else{
+                mDragHelper.setAnchorY(-1);
+                mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight) / ((float) mSlideRange));
+            }
         }
     }
 
@@ -781,7 +792,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (child == mSlideableView) {
                 mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
-                mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight) / ((float) mSlideRange));
+                if(mAnchorPoint == DEFAULT_ANCHOR_POINT) {
+                    mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight) / ((float) mSlideRange));
+                } else {
+                    int anchorTop = computePanelTopPosition(mAnchorPoint);
+                    mDragHelper.setFabRatio(((float) anchorTop - mPanelHeight) / ((float) anchorTop));
+                }
                 mDragHelper.setPanelCharacteristics(mSlideRange, mPanelHeight);
             }
         }
