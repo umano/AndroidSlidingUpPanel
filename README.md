@@ -5,9 +5,9 @@ Android Sliding Up Panel - Material Design
 ===========================================
 This is a fork of Umano Sliding Up Panel that aims to bring some Material Design features:
 
-### Floating Action Button
+#### Floating Action Button
 
-To add the Floating Action Button change your layout root to this:
+Added the ability to attach a Floating Action Button to the Sliding Up Panel (as seen in the Google Maps Material Design version). To include the Floating Action Button to your layout change it to this:
 ```xml
 <com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
@@ -44,14 +44,12 @@ To add the Floating Action Button change your layout root to this:
         fab:fab_colorRipple="@color/ripple" />
 </com.sothree.slidinguppanel.FloatingActionButtonLayout>
 ```
-This will also animate the Floating Action Button along with the Sliding Up Panel.
 (The Floating Action Button used here and in the demo is [Oleksandr Melnykov's Floating Action Button](https://github.com/makovkastar/FloatingActionButton))
 
-### Attaching a scrollable View (such as ScrollView, ListView or RecyclerView)
-Not implemented yet.
-
-### Adding listeners when the top/bottom is reached and left (helpful for changing background color or adding shadow when dragging)
-Not implemented yet.
+#### New Listeners
+Added new listeners. Here's a list of the new ones along with a explanation:
+* `onPanelCollapsedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the collapsed state, even while dragging. If boolean reached is true, the panel has just reached the collapsed postion, if it is false, it has just left the collapsed position.
+* `onPanelExpandedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the expanded state, even while dragging. If boolean reached is true, the panel has just reached the expanded postion, if it is false, it has just left the expanded position.
 
 Android Sliding Up Panel - Orginal Readme
 ==========================================
