@@ -405,6 +405,10 @@ public class ViewDragHelper {
         mScroller = ScrollerCompat.create(context, sInterpolator);
     }
 
+    protected Interpolator getInterpolator(){
+        return sInterpolator;
+    }
+
     protected void setFloatingActionButton(View fab) {
         mHasFloatingActionButton = true;
         mFloatingActionButton = fab;
@@ -634,7 +638,7 @@ public class ViewDragHelper {
         return true;
     }
 
-    private int computeSettleDuration(View child, int dx, int dy, int xvel, int yvel) {
+    protected int computeSettleDuration(View child, int dx, int dy, int xvel, int yvel) {
         xvel = clampMag(xvel, (int) mMinVelocity, (int) mMaxVelocity);
         yvel = clampMag(yvel, (int) mMinVelocity, (int) mMaxVelocity);
         final int absDx = Math.abs(dx);

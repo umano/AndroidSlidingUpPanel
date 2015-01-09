@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -64,12 +65,12 @@ public class DemoActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onPanelHiddenExecuted(View panel) {
+            public void onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelHiddenExecuted");
             }
 
             @Override
-            public void onPanelShownExecuted(View panel) {
+            public void onPanelShownExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelShownExecuted");
             }
 

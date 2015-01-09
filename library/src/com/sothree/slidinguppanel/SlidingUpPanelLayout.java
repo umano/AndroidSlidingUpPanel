@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Interpolator;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
@@ -258,14 +259,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
          *
          * @param panel The child view that was hidden
          */
-        public void onPanelHiddenExecuted(View panel);
+        public void onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration);
 
         /**
          * Called when a sliding panel gets shown via showPanel.
          *
          * @param panel The child view that was shown
          */
-        public void onPanelShownExecuted(View panel);
+        public void onPanelShownExecuted(View panel, Interpolator interpolator, int duration);
 
         /**
          * Called when a sliding panel touches the top.
@@ -318,11 +319,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         @Override
-        public void onPanelHiddenExecuted(View panel) {
+        public void onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration) {
         }
 
         @Override
-        public void onPanelShownExecuted(View panel) {
+        public void onPanelShownExecuted(View panel, Interpolator interpolator, int duration) {
         }
 
         @Override
@@ -615,16 +616,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
-    void dispatchOnPanelHiddenExecuted(View panel) {
+    void dispatchOnPanelHiddenExecuted(View panel, Interpolator interpolator, int duration) {
         if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelHiddenExecuted(panel);
+            mPanelSlideListener.onPanelHiddenExecuted(panel, interpolator, duration);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
-    void dispatchOnPanelShownExecuted(View panel) {
+    void dispatchOnPanelShownExecuted(View panel, Interpolator interpolator, int duration) {
         if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelShownExecuted(panel);
+            mPanelSlideListener.onPanelShownExecuted(panel, interpolator, duration);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -1084,7 +1085,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (mSlideableView == null || mSlideState != PanelState.HIDDEN) return;
             mSlideableView.setVisibility(View.VISIBLE);
             requestLayout();
-            dispatchOnPanelShownExecuted(mSlideableView);
+            dispatchOnPanelShownExecuted(mSlideableView, mDragHelper.getInterpolator(), mDragHelper.computeSettleDuration(mSlideableView, 0, mPanelHeight, 0, 0));
             smoothSlideTo(0, 0);
         }
     }
@@ -1098,7 +1099,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         } else {
             if (mSlideState == PanelState.DRAGGING || mSlideState == PanelState.HIDDEN) return;
             int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
-            dispatchOnPanelHiddenExecuted(mSlideableView);
+            dispatchOnPanelHiddenExecuted(mSlideableView, mDragHelper.getInterpolator(), mDragHelper.computeSettleDuration(mSlideableView, 0, mPanelHeight, 0, 0));
             smoothSlideTo(computeSlideOffset(newTop), 0);
         }
     }
