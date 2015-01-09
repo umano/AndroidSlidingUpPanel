@@ -50,6 +50,9 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
 Added new listeners. Here's a list of the new ones along with a explanation:
 * `onPanelCollapsedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the collapsed state, even while dragging. If boolean reached is true, the panel has just reached the collapsed postion, if it is false, it has just left the collapsed position.
 * `onPanelExpandedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the expanded state, even while dragging. If boolean reached is true, the panel has just reached the expanded postion, if it is false, it has just left the expanded position.
+* `onPanelLayout(View panel, PanelState state)`: This gets called whenever the Sliding Up Panel gets laid out freshly. This happens especially when the screen orientation or size is change. It can be used to apply changes that should have been done via `onPanelCollapsedStateY(View panel, boolean reached)` or `onPanelExpandedStateY(View panel, boolean reached)` but have been lost due to orientation or size change.
+* `onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `hidePanel()` and the Sliding Panel isn't yet hidden. It provides interpolator and duration for any animated changes that could be made.
+* `onPanelShownExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `showPanel()` and the Sliding Panel isn't yet shown. It provides interpolator and duration for any animated changes that could be made.
 
 Android Sliding Up Panel - Orginal Readme
 ==========================================
