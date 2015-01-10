@@ -904,7 +904,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // expand the main view
             lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTop);
             mMainView.requestLayout();
-        } else if (lp.height != defaultHeight) {
+        } else if (lp.height != defaultHeight && !mOverlayContent) {
             lp.height = defaultHeight;
             mMainView.requestLayout();
         }
