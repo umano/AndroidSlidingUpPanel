@@ -57,7 +57,7 @@ Added new listeners. Here's a list of the new ones along with a explanation:
 #### Importing the library
 As this fork of the library currently is not available on Maven Central, you'll for now have to do some extra steps to include this to your project. I hope to eventually get these changes back into the main library though.
 
-1. Download the repository as a .zip file (see button on right)
+1. Download the repository as a [.zip file](https://github.com/TR4Android/AndroidSlidingUpPanel/archive/master.zip)
 2. Unzip the .zip file you just downloaded
 3. Copy the `library` folder into your project folder (you can also rename it if you have to because of conflicts)
 4. Add `include ':library'` or `include ':theChangedLibraryName'` if you changed the folder name to your `settings.gradle` of your project folder
