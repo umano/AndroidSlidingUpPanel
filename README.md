@@ -50,9 +50,18 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
 Added new listeners. Here's a list of the new ones along with a explanation:
 * `onPanelCollapsedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the collapsed state, even while dragging. If boolean reached is true, the panel has just reached the collapsed postion, if it is false, it has just left the collapsed position.
 * `onPanelExpandedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the expanded state, even while dragging. If boolean reached is true, the panel has just reached the expanded postion, if it is false, it has just left the expanded position.
-* `onPanelLayout(View panel, PanelState state)`: This gets called whenever the Sliding Up Panel gets laid out freshly. This happens especially when the screen orientation or size is change. It can be used to apply changes that should have been done via `onPanelCollapsedStateY(View panel, boolean reached)` or `onPanelExpandedStateY(View panel, boolean reached)` but have been lost due to orientation or size change.
+* `onPanelLayout(View panel, PanelState state)`: This gets called whenever the Sliding Up Panel gets laid out freshly. This happens especially when the screen orientation or size is changed. It can be used to apply changes that should have been done via `onPanelCollapsedStateY(View panel, boolean reached)` or `onPanelExpandedStateY(View panel, boolean reached)` but have been lost due to orientation or size change.
 * `onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `hidePanel()` and the Sliding Panel isn't yet hidden. It provides interpolator and duration for any animated changes that could be made.
 * `onPanelShownExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `showPanel()` and the Sliding Panel isn't yet shown. It provides interpolator and duration for any animated changes that could be made.
+
+#### Importing the library
+As this fork of the library currently is not available on Maven Central, you'll for now have to do some extra steps to include this to your project. I hope to eventually get these changes back into the main library though.
+1. Download the repository as a .zip file (see button on right)
+2. Unzip the .zip file you just downloaded
+3. Copy the `library` folder into your project folder (you can also rename it if you have to because of conflicts)
+4. Add `include ':library'` or `include ':theChangedLibraryName'` if you changed the folder name to your `settings.gradle` of your project folder
+5. Add `compile project(':library')` or `compile project(':theChangedLibraryName')` if you changed the folder name to your dependencies of the `build.gradle` file of your app module
+6. Now you should be able to work with this library
 
 Android Sliding Up Panel - Orginal Readme
 ==========================================
