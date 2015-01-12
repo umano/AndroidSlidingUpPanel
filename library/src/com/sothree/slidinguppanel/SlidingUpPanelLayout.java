@@ -277,10 +277,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (defAttrs != null) {
                 int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
-                if (gravity != Gravity.TOP && gravity != Gravity.BOTTOM) {
-                    throw new IllegalArgumentException("gravity must be set to either top or bottom");
-                }
-                mIsSlidingUp = gravity == Gravity.BOTTOM;
+                setGravity(gravity);
             }
 
             defAttrs.recycle();
@@ -348,6 +345,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    public void setGravity(int gravity) {
+        if (gravity != Gravity.TOP && gravity != Gravity.BOTTOM) {
+            throw new IllegalArgumentException("gravity must be set to either top or bottom");
+        }
+        mIsSlidingUp = gravity == Gravity.BOTTOM;
+        if (!mFirstLayout) {
+            requestLayout();
+        }
+    }
+
     /**
      * Set the color used to fade the pane covered by the sliding pane out when the pane
      * will become fully covered in the expanded state.
@@ -385,7 +392,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setPanelHeight(int val) {
         mPanelHeight = val;
-        requestLayout();
+        if (!mFirstLayout) {
+            requestLayout();
+        }
+    }
+
+    /**
+     * @return The current shadow height
+     */
+    public int getShadowHeight() {
+        return mShadowHeight;
+    }
+
+    /**
+     * Set the shadow height
+     *
+     * @param val A height in pixels
+     */
+    public void setShadowHeight(int val) {
+        mShadowHeight = val;
+        if (!mFirstLayout) {
+            invalidate();
+        }
     }
 
     /**
@@ -411,7 +439,25 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setParalaxOffset(int val) {
         mParallaxOffset = val;
-        requestLayout();
+        if (!mFirstLayout) {
+            requestLayout();
+        }
+    }
+
+    /**
+     * @return The current minimin fling velocity
+     */
+    public int getMinFlingVelocity() {
+        return mMinFlingVelocity;
+    }
+
+    /**
+     * Sets the minimum fling velocity for the panel
+     *
+     * @param val the new value
+     */
+    public void setMinFlingVelocity(int val) {
+        mMinFlingVelocity = val;
     }
 
     /**
@@ -452,6 +498,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
             });;
         }
+    }
+
+    /**
+     * Set the draggable view portion. Use to null, to allow the whole panel to be draggable
+     *
+     * @param dragViewResId The resource ID of the new drag view
+     */
+    public void setDragView(int dragViewResId) {
+        mDragViewResId = dragViewResId;
+        setDragView(findViewById(dragViewResId));
     }
 
     /**
