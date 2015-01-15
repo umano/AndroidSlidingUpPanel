@@ -96,7 +96,7 @@ public class DemoActivity extends ActionBarActivity {
                 LinearLayout titleBar = (LinearLayout) findViewById(R.id.titlebar);
                 if(state == SlidingUpPanelLayout.PanelState.COLLAPSED){
                     titleBar.setBackgroundColor(Color.WHITE);
-                } else if (state == SlidingUpPanelLayout.PanelState.EXPANDED){
+                } else if (state == SlidingUpPanelLayout.PanelState.EXPANDED || state == SlidingUpPanelLayout.PanelState.ANCHORED){
                     titleBar.setBackgroundColor(Color.parseColor("#ffff9431"));
                 }
             }

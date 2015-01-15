@@ -414,9 +414,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
-        if(mAnchorPoint != DEFAULT_ANCHOR_POINT){
-            mDragHelper.setAnchorY(computePanelTopPosition(mAnchorPoint));
-        }
 
         mIsTouchEnabled = true;
     }
@@ -856,6 +853,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight) / ((float) mSlideRange));
                 } else {
                     int anchorTop = computePanelTopPosition(mAnchorPoint);
+                    mDragHelper.setAnchorY(anchorTop);
                     mDragHelper.setFabRatio(((float) anchorTop - mPanelHeight) / ((float) anchorTop));
                 }
                 mDragHelper.setPanelCharacteristics(mSlideRange, mPanelHeight);
@@ -884,6 +882,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 case HIDDEN:
                     int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
                     mSlideOffset = computeSlideOffset(newTop);
+                    alreadyCollapsedStateY = true;
                     break;
                 default:
                     mSlideOffset = 0.f;
@@ -1075,6 +1074,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     smoothSlideTo(mAnchorPoint, 0);
                     break;
                 case COLLAPSED:
+                    if (mSlideState == PanelState.HIDDEN){
+                        dispatchOnPanelShownExecuted(mSlideableView, mDragHelper.getInterpolator(), mDragHelper.computeSettleDuration(mSlideableView, 0, mPanelHeight, 0, 0));
+                    }
                     smoothSlideTo(0, 0);
                     break;
                 case EXPANDED:
@@ -1082,6 +1084,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     break;
                 case HIDDEN:
                     int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+                    if (mSlideState != PanelState.HIDDEN){
+                        dispatchOnPanelHiddenExecuted(mSlideableView, mDragHelper.getInterpolator(), mDragHelper.computeSettleDuration(mSlideableView, 0, mPanelHeight, 0, 0));
+                    }
                     smoothSlideTo(computeSlideOffset(newTop), 0);
                     break;
             }
