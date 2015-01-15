@@ -10,11 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:initialState="hidden"
-        sothree:dragView="@+id/dragView"
-        sothree:panelHeight="68dp"
-        sothree:paralaxOffset="100dp"
-        sothree:shadowHeight="4dp">
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoParalaxOffset="100dp"
+        sothree:umanoDragView="@+id/dragView">
 
         <!-- MAIN CONTENT -->
         <FrameLayout
