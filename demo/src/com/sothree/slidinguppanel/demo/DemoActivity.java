@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
@@ -105,7 +106,7 @@ public class DemoActivity extends ActionBarActivity {
         t.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLayout.collapsePanel();
+                mLayout.setPanelState(PanelState.COLLAPSED);
             }
         });
 
@@ -130,7 +131,7 @@ public class DemoActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.demo, menu);
         MenuItem item = menu.findItem(R.id.action_toggle);
         if (mLayout != null) {
-            if (mLayout.isPanelHidden()) {
+            if (mLayout.getPanelState() == PanelState.HIDDEN) {
                 item.setTitle(R.string.action_show);
             } else {
                 item.setTitle(R.string.action_hide);
@@ -149,11 +150,11 @@ public class DemoActivity extends ActionBarActivity {
         switch (item.getItemId()){
             case R.id.action_toggle: {
                 if (mLayout != null) {
-                    if (!mLayout.isPanelHidden()) {
-                        mLayout.hidePanel();
+                    if (mLayout.getPanelState() != PanelState.HIDDEN) {
+                        mLayout.setPanelState(PanelState.HIDDEN);
                         item.setTitle(R.string.action_show);
                     } else {
-                        mLayout.showPanel();
+                        mLayout.setPanelState(PanelState.COLLAPSED);
                         item.setTitle(R.string.action_hide);
                     }
                 }
@@ -163,11 +164,11 @@ public class DemoActivity extends ActionBarActivity {
                 if (mLayout != null) {
                     if (mLayout.getAnchorPoint() == 1.0f) {
                         mLayout.setAnchorPoint(0.7f);
-                        mLayout.expandPanel(0.7f);
+                        mLayout.setPanelState(PanelState.ANCHORED);
                         item.setTitle(R.string.action_anchor_disable);
                     } else {
                         mLayout.setAnchorPoint(1.0f);
-                        mLayout.collapsePanel();
+                        mLayout.setPanelState(PanelState.COLLAPSED);
                         item.setTitle(R.string.action_anchor_enable);
                     }
                 }
@@ -179,8 +180,9 @@ public class DemoActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        if (mLayout != null && mLayout.isPanelExpanded() || mLayout.isPanelAnchored()) {
-            mLayout.collapsePanel();
+        if (mLayout != null &&
+                (mLayout.getPanelState() == PanelState.EXPANDED || mLayout.getPanelState() == PanelState.ANCHORED)) {
+            mLayout.setPanelState(PanelState.COLLAPSED);
         } else {
             super.onBackPressed();
         }

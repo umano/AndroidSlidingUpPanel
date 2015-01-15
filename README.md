@@ -88,7 +88,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:+'
+    compile 'com.sothree.slidinguppanel:library:2.0.4'
 }
 ```
 

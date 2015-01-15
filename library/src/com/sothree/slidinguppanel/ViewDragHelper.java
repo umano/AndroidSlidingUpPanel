@@ -1204,7 +1204,8 @@ public class ViewDragHelper {
                     // Check to see if any pointer is now over a draggable view.
                     final int pointerCount = MotionEventCompat.getPointerCount(ev);
                     for (int i = 0; i < pointerCount; i++) {
-                        final int pointerId = MotionEventCompat.getPointerId(ev, i);
+                        final int pointerId = MotionEventCompat.getPointerId(ev, i)
+                                ;
                         final float x = MotionEventCompat.getX(ev, i);
                         final float y = MotionEventCompat.getY(ev, i);
                         final float dx = x - mInitialMotionX[pointerId];
