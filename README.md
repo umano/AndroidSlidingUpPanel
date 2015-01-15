@@ -22,11 +22,10 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:initialState="hidden"
-        sothree:dragView="@+id/dragView"
-        sothree:panelHeight="68dp"
-        sothree:paralaxOffset="100dp"
-        sothree:shadowHeight="4dp">
+        sothree:umanoDragView="@+id/dragView"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoParalaxOffset="100dp"
+        sothree:umanoShadowHeight="4dp">
         <!-- The normal content of the Sliding Up Panel (see Original Readme)-->
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
@@ -50,9 +49,9 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
 Added new listeners. Here's a list of the new ones along with a explanation:
 * `onPanelCollapsedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the collapsed state, even while dragging. If boolean reached is true, the panel has just reached the collapsed postion, if it is false, it has just left the collapsed position.
 * `onPanelExpandedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the expanded state, even while dragging. If boolean reached is true, the panel has just reached the expanded postion, if it is false, it has just left the expanded position.
-* `onPanelLayout(View panel, PanelState state)`: This gets called whenever the Sliding Up Panel gets laid out freshly. This happens especially when the screen orientation or size is changed. It can be used to apply changes that should have been done via `onPanelCollapsedStateY(View panel, boolean reached)` or `onPanelExpandedStateY(View panel, boolean reached)` but have been lost due to orientation or size change.
-* `onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `hidePanel()` and the Sliding Panel isn't yet hidden. It provides interpolator and duration for any animated changes that could be made.
-* `onPanelShownExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `showPanel()` and the Sliding Panel isn't yet shown. It provides interpolator and duration for any animated changes that could be made.
+* `onPanelLayout(View panel, PanelState state)`: This gets called whenever the Sliding Up Panel gets laid out freshly. This happens especially when the screen orientation or size is changed. It can be used to apply changes that should have been done via `onPanelCollapsedStateY(View panel, boolean reached)` or `onPanelExpandedStateY(View panel, boolean reached)` but have been lost due to orientation or size change. This probably won't be needed when `android:configChanges="orientation|screenSize"` is set in your Manifest.
+* `onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `setPanelState(PanelState.HIDDEN)` and the Sliding Panel isn't yet hidden. It provides interpolator and duration for any animated changes that could be made.
+* `onPanelShownExecuted(View panel, Interpolator interpolator, int duration)`: This gets called whenever the application calls `setPanelState(PanelState.COLLAPSED)` and the Sliding Panel isn't yet shown. It provides interpolator and duration for any animated changes that could be made.
 
 #### Importing the library
 As this fork of the library currently is not available on Maven Central, you'll for now have to do some extra steps to include this to your project. I hope to eventually get these changes back into the main library though.
