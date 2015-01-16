@@ -850,6 +850,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (child == mSlideableView) {
                 mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
                 if(mAnchorPoint == DEFAULT_ANCHOR_POINT) {
+                    mDragHelper.setAnchorY(-1);
                     mDragHelper.setFabRatio(((float) mSlideRange - mPanelHeight) / ((float) mSlideRange));
                 } else {
                     int anchorTop = computePanelTopPosition(mAnchorPoint);

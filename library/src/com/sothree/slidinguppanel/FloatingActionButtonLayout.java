@@ -86,9 +86,12 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     fabTop = initialfabTop;
                     break;
                 case ANCHORED:
-                    fabBottom = Math.round((getMeasuredHeight() - mSlidingUpPanelLayout.getPanelHeight()) * (1f - mSlidingUpPanelLayout.getAnchorPoint()) + mFloatingActionButton.getMeasuredHeight() / 2);
-                    fabTop = fabBottom - mFloatingActionButton.getMeasuredHeight();
-                    break;
+                    float anchor = mSlidingUpPanelLayout.getAnchorPoint();
+                    if(anchor != 1.0f) {
+                        fabBottom = Math.round((getMeasuredHeight() - mSlidingUpPanelLayout.getPanelHeight()) * (1f - anchor) + mFloatingActionButton.getMeasuredHeight() / 2);
+                        fabTop = fabBottom - mFloatingActionButton.getMeasuredHeight();
+                        break;
+                    }
                 case EXPANDED:
                     fabBottom = expandedfabBottom;
                     fabTop = expandedfabTop;
