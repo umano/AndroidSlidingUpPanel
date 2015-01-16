@@ -46,6 +46,12 @@ public class FloatingActionButtonLayout extends ViewGroup {
     }
 
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int childcount = getChildCount();
+
+        if (childcount != 2) {
+            throw new IllegalStateException("FloatingActionButtonLayout must have exactly 2 children");
+        }
+
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) getChildAt(0);
@@ -57,12 +63,6 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childcount = getChildCount();
-
-        if (childcount != 2) {
-            throw new IllegalStateException("FloatingActionButtonLayout must have exactly 2 children");
-        }
-
         mSlidingUpPanelLayout.layout(l, t, r, b);
 
         if (mFirstLayout) {
@@ -88,7 +88,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                 case ANCHORED:
                     float anchor = mSlidingUpPanelLayout.getAnchorPoint();
                     if(anchor != 1.0f) {
-                        fabBottom = Math.round((getMeasuredHeight() - mSlidingUpPanelLayout.getPanelHeight()) * (1f - anchor) + mFloatingActionButton.getMeasuredHeight() / 2);
+                        fabBottom = t + Math.round((getMeasuredHeight() - mSlidingUpPanelLayout.getPanelHeight()) * (1f - anchor) + mFloatingActionButton.getMeasuredHeight() / 2);
                         fabTop = fabBottom - mFloatingActionButton.getMeasuredHeight();
                         break;
                     }
