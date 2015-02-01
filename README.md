@@ -13,7 +13,7 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height=["match_parent" | "???dp"]
     tools:context=".DemoActivity">
     
     <!-- SLIDING UP PANEL -->
