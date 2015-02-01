@@ -2,6 +2,7 @@ package com.sothree.slidinguppanel;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -66,6 +67,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
         mSlidingUpPanelLayout.layout(l, t, r, b);
 
         if (mFirstLayout) {
+            int expandedYSpace = getMeasuredHeight() - mSlidingUpPanelLayout.getChildAt(1).getMeasuredHeight();
             MarginLayoutParams lp = (MarginLayoutParams) mFloatingActionButton.getLayoutParams();
             SlidingUpPanelLayout.PanelState state = mSlidingUpPanelLayout.getPanelState();
             // First get Left and Right (independent of slide state)
@@ -76,7 +78,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
             int initialfabTop = initialfabBottom - mFloatingActionButton.getMeasuredHeight();
             int collapsedfabBottom = b - mSlidingUpPanelLayout.getPanelHeight() + mFloatingActionButton.getMeasuredHeight() / 2;
             int collapsedfabTop = collapsedfabBottom - mFloatingActionButton.getMeasuredHeight();
-            int expandedfabBottom = t + mSlidingUpPanelLayout.getPanelHeight() + mFloatingActionButton.getMeasuredHeight() / 2;
+            int expandedfabBottom = t + expandedYSpace + mSlidingUpPanelLayout.getPanelHeight() + mFloatingActionButton.getMeasuredHeight() / 2;
             int expandedfabTop = expandedfabBottom - mFloatingActionButton.getMeasuredHeight();
             int fabBottom = 0;
             int fabTop = 0;
@@ -102,7 +104,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     break;
             }
             mFloatingActionButton.layout(fabLeft, fabTop, fabRight, fabBottom);
-            mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop);
+            mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop, expandedYSpace);
         }
 
         mFirstLayout = false;

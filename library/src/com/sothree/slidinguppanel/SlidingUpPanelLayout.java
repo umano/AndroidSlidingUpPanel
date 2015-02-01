@@ -587,12 +587,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
-    public void attachFloatingActionButton(View v, int initialY, int collapsedY, int expandedY) {
+    public void attachFloatingActionButton(View v, int initialY, int collapsedY, int expandedY, int expandedYSpace) {
         mFloatingActionButton = v;
         mDragHelper.setFloatingActionButton(mFloatingActionButton);
         mDragHelper.setFabHideDeltaY(initialY - collapsedY);
         mDragHelper.setFabCollapsedY(collapsedY);
         mDragHelper.setFabExpandedY(expandedY);
+        mDragHelper.setFabExpandedYSpace(expandedYSpace);
     }
 
     /**

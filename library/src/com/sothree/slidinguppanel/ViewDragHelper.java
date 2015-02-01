@@ -140,6 +140,7 @@ public class ViewDragHelper {
     private boolean mHasFloatingActionButton;
     private float mFabRatio;
     private int mFabExpandedY;
+    private int mFabExpandedYSpace;
     private int mFabCollapsedY;
     private int mFabHideDeltaY;
     private int mSlideRange;
@@ -422,6 +423,10 @@ public class ViewDragHelper {
 
     protected void setFabExpandedY(int fabExpandedY) {
         mFabExpandedY = fabExpandedY;
+    }
+
+    protected void setFabExpandedYSpace(int fabExpandedYSpace) {
+        mFabExpandedYSpace = fabExpandedYSpace;
     }
 
     protected void setFabCollapsedY(int fabCollapsedY) {
@@ -786,9 +791,9 @@ public class ViewDragHelper {
                 mCapturedView.offsetTopAndBottom(dy);
                 if (mHasFloatingActionButton) {
                     int faby;
-                    if (y <= mSlideRange) { // Between expanded and collapsed state
+                    if (y <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
                         if(!mHasAnchor) {
-                            faby = Math.round(mFabRatio * y) + mFabExpandedY;
+                            faby = Math.round(mFabRatio * (y - mFabExpandedYSpace)) + mFabExpandedY;
                         } else {
                             if(y <= mAnchorY){
                                 faby = Math.round(mFabRatio * y) + mFabExpandedY;
@@ -797,7 +802,7 @@ public class ViewDragHelper {
                             }
                         }
                     } else { // Between collapsed and hidden state
-                        faby = Math.round((((float) (y - mSlideRange)) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
+                        faby = Math.round((((float) (y - (mSlideRange + mFabExpandedYSpace))) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
                     }
                     final int fabdy = faby - mFloatingActionButton.getTop();
                     mFloatingActionButton.offsetTopAndBottom(fabdy);
@@ -1461,7 +1466,7 @@ public class ViewDragHelper {
             if (mHasFloatingActionButton) {
                 final int fabclampedY;
                 if(!mHasAnchor) {
-                    fabclampedY = Math.round(mFabRatio * clampedY) + mFabExpandedY;
+                    fabclampedY = Math.round(mFabRatio * (clampedY - mFabExpandedYSpace)) + mFabExpandedY;
                 } else {
                     if(clampedY <= mAnchorY){
                         fabclampedY = Math.round(mFabRatio * clampedY) + mFabExpandedY;
