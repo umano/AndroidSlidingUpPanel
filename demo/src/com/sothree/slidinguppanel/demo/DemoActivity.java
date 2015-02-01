@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.ArgbEvaluator;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -26,6 +27,7 @@ public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
 
     private SlidingUpPanelLayout mLayout;
+    //private LinearLayout mTitleLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +38,13 @@ public class DemoActivity extends ActionBarActivity {
 
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        //mLayout.attachFloatingActionButton(findViewById(R.id.fab));
+        //mTitleLayout = (LinearLayout) findViewById(R.id.titlebar);
+        //final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
         mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+                //mTitleLayout.setBackgroundColor((int) colorEvaluator.evaluate(slideOffset, Color.WHITE, Color.parseColor("#ffff9431")));
             }
 
             @Override
