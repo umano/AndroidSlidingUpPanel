@@ -61,6 +61,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private static final boolean DEFAULT_OVERLAY_FLAG = false;
     /**
+     * Default is set to true for clip panel for performance reasons
+     */
+    private static final boolean DEFAULT_CLIP_PANEL_FLAG = true;
+    /**
      * Default attributes for layout
      */
     private static final int[] DEFAULT_ATTRS = new int[] {
@@ -116,6 +120,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Panel overlays the windows instead of putting it underneath it.
      */
     private boolean mOverlayContent = DEFAULT_OVERLAY_FLAG;
+
+    /**
+     * The main view is clipped to the main top border
+     */
+    private boolean mClipPanel = DEFAULT_CLIP_PANEL_FLAG;
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -294,7 +303,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoDragView, -1);
 
-                mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay,DEFAULT_OVERLAY_FLAG);
+                mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay, DEFAULT_OVERLAY_FLAG);
+                mClipPanel = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoClipPanel, DEFAULT_CLIP_PANEL_FLAG);
 
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
@@ -544,6 +554,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public boolean isOverlayed() {
         return mOverlayContent;
+    }
+
+    /**
+     * Sets whether or not the main content is clipped to the top of the panel
+     * @param overlayed
+     */
+    public void setClipPanel(boolean clip) {
+        mClipPanel = clip;
+    }
+
+    /**
+     * Check whether or not the main content is clipped to the top of the panel
+     */
+    public boolean isClipPanel() {
+        return mClipPanel;
     }
 
     void dispatchOnPanelSlide(View panel) {
@@ -982,7 +1007,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
                 }
             }
-            canvas.clipRect(mTmpRect);
+            if (mClipPanel) {
+                canvas.clipRect(mTmpRect);
+            }
 
             result = super.drawChild(canvas, child, drawingTime);
 

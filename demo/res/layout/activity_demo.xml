@@ -19,7 +19,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#ff0000">
             <android.support.v7.widget.Toolbar
                 xmlns:sothree="http://schemas.android.com/apk/res-auto"
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,7 +46,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#eeeeee"
+            android:background="#55eeeeee"
             android:orientation="vertical"
             android:clickable="true"
             android:focusable="false"
