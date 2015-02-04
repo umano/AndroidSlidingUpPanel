@@ -79,12 +79,15 @@ or `?attr/actionBarSize` to support older API versions.
 * If you are using a custom `dragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to prevent this.
 * You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
 * If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
-* You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
+* Use `setEnabled(false)` to completely disable the sliding panel (including touch and programmatic sliding)
+* Use `setTouchEnabled(false)` to disables panel's touch responsiveness (drag and click), you can still control the panel programatically
+* Use `getPanelState` to get the current panel state
+* Use `setPanelState` to set the current panel state
 * You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example).
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
-* By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
+* By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `clipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `fadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
 
 ### Implementation
