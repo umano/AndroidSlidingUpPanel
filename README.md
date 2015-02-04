@@ -25,7 +25,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:2.0.4'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
 }
 ```
 
@@ -108,6 +108,13 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.0.0
+  * Added `umano` prefix for all attributes
+  * Added `clipPanel` attribute for supporting transparent panels in non-overlay mode.
+  * `setEnabled(false)` - now completely disables the sliding panel (touch and programmatic sliding)
+  * `setTouchEnabled(false)` - disables panel's touch responsiveness (drag and click), you can still control the panel programatically
+  * `getPanelState` - is now the only method to get the current panel state
+  * `setPanelState` - is now the only method to modify the panel state from code
 * 2.0.2 - Allow `wrap_content` for sliding view height attribute. Bug fixes. 
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
