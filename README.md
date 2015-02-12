@@ -47,8 +47,8 @@ For more information, please refer to the sample code.
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:panelHeight="68dp"
-    sothree:shadowHeight="4dp">
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoShadowHeight="4dp">
 
     <TextView
         android:layout_width="match_parent"
