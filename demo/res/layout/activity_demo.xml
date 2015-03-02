@@ -13,14 +13,14 @@
         sothree:umanoPanelHeight="68dp"
         sothree:umanoShadowHeight="4dp"
         sothree:umanoParalaxOffset="100dp"
-        sothree:umanoDragView="@+id/dragView">
+        sothree:umanoDragView="@+id/dragView"
+        sothree:umanoOverlay="true">
 
         <!-- MAIN CONTENT -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="#ff0000">
+            android:orientation="vertical">
             <android.support.v7.widget.Toolbar
                 xmlns:sothree="http://schemas.android.com/apk/res-auto"
                 xmlns:android="http://schemas.android.com/apk/res/android"

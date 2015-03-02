@@ -33,6 +33,7 @@ public class DemoActivity extends ActionBarActivity {
 
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setPanelState(PanelState.HIDDEN);
         mLayout.setPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -62,15 +63,7 @@ public class DemoActivity extends ActionBarActivity {
             }
         });
 
-        TextView t = (TextView) findViewById(R.id.main);
-        t.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLayout.setPanelState(PanelState.COLLAPSED);
-            }
-        });
-
-        t = (TextView) findViewById(R.id.name);
+        TextView t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
         Button f = (Button) findViewById(R.id.follow);
         f.setText(Html.fromHtml(getString(R.string.follow)));
