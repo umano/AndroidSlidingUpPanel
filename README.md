@@ -10,14 +10,16 @@ This is a fork of Umano Sliding Up Panel that aims to bring some Material Design
 Added the ability to attach a Floating Action Button to the Sliding Up Panel (as seen in the Google Maps Material Design version). To include the Floating Action Button to your layout change it to this:
 ```xml
 <com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height=["match_parent" | "???dp"]
+    android:layout_height="match_parent"
+    sothree:umanoFabMode=["leave_behind" | "circular_reveal" | "fade"]
     tools:context=".DemoActivity">
     
     <!-- SLIDING UP PANEL -->
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +46,11 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
 </com.sothree.slidinguppanel.FloatingActionButtonLayout>
 ```
 (The Floating Action Button used here and in the demo is [Oleksandr Melnykov's Floating Action Button](https://github.com/makovkastar/FloatingActionButton))
+
+You can choose the kind of animation you want for the Floating Action Button when dragging the panel by using the `umanoFabMode` attribute:
+* `leave_behind`: This gradually moves the Floating Action Button from the top of the panel header in the collapsed state to the bottom of the header in the expanded state.
+* `circular_reveal`: This keeps the Floating Action button on top of the panel header and show or hides the Floating Action Button based on a threshold value of how far the panel has been dragged to the top using a circular reveal animation (see the Google Maps Floating Action Button). Thanks to @flyingtoaster0 for contributing code!
+* `fade`: This animates the alpha value of the Floating Action Button based on how far the panel has been dragged to the top.
 
 #### New Listeners
 Added new listeners. Here's a list of the new ones along with a explanation:
