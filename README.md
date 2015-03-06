@@ -49,7 +49,7 @@ Added the ability to attach a Floating Action Button to the Sliding Up Panel (as
 
 You can choose the kind of animation you want for the Floating Action Button when dragging the panel by using the `umanoFabMode` attribute:
 * `leave_behind`: This gradually moves the Floating Action Button from the top of the panel header in the collapsed state to the bottom of the header in the expanded state.
-* `circular_reveal`: This keeps the Floating Action button on top of the panel header and show or hides the Floating Action Button based on a threshold value of how far the panel has been dragged to the top using a circular reveal animation (see the Google Maps Floating Action Button). Thanks to @flyingtoaster0 for contributing code!
+* `circular_reveal`: This keeps the Floating Action button on top of the panel header and show or hides the Floating Action Button based on a threshold value of how far the panel has been dragged to the top using a circular reveal animation (see the Google Maps Floating Action Button). Thanks to ([@flyingtoaster0](https://github.com/flyingtoaster0)) for contributing code!
 * `fade`: This animates the alpha value of the Floating Action Button based on how far the panel has been dragged to the top.
 
 #### New Listeners
