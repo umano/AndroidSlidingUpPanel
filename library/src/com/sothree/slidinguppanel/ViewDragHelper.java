@@ -792,15 +792,7 @@ public class ViewDragHelper {
                 if (mHasFloatingActionButton) {
                     int faby;
                     if (y <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
-                        if(!mHasAnchor) {
-                            faby = Math.round(mFabRatio * (y - mFabExpandedYSpace)) + mFabExpandedY;
-                        } else {
-                            if(y <= mAnchorY){
-                                faby = Math.round(mFabRatio * y) + mFabExpandedY;
-                            } else {
-                                faby = y - mPanelHeight + mFabExpandedY;
-                            }
-                        }
+                        faby = Math.round((float) (y - mFloatingActionButton.getMeasuredHeight()/2));
                     } else { // Between collapsed and hidden state
                         faby = Math.round((((float) (y - (mSlideRange + mFabExpandedYSpace))) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
                     }
@@ -1465,15 +1457,13 @@ public class ViewDragHelper {
             mCapturedView.offsetTopAndBottom(clampedY - oldTop);
             if (mHasFloatingActionButton) {
                 final int fabclampedY;
-                if(!mHasAnchor) {
-                    fabclampedY = Math.round(mFabRatio * (clampedY - mFabExpandedYSpace)) + mFabExpandedY;
-                } else {
-                    if(clampedY <= mAnchorY){
-                        fabclampedY = Math.round(mFabRatio * clampedY) + mFabExpandedY;
-                    } else {
-                        fabclampedY = clampedY - mPanelHeight + mFabExpandedY;
-                    }
+
+                if (clampedY <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
+                    fabclampedY = Math.round((float) (clampedY - mFloatingActionButton.getMeasuredHeight()/2));
+                } else { // Between collapsed and hidden state
+                    fabclampedY = Math.round((((float) (clampedY - (mSlideRange + mFabExpandedYSpace))) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
                 }
+
                 final int faboldTop = mFloatingActionButton.getTop();
                 mFloatingActionButton.offsetTopAndBottom(fabclampedY - faboldTop);
             }
