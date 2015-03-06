@@ -25,7 +25,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
     }
 
     private static FabMode DEFAULT_FAB_MODE = FabMode.LEAVE_BEHIND;
-    private FabMode mFabMode = FabMode.LEAVE_BEHIND;
+    private FabMode mFabMode = DEFAULT_FAB_MODE;
 
     public FloatingActionButtonLayout(Context context) {
         this(context, null);
