@@ -94,7 +94,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:2.0.4'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
 }
 ```
 
@@ -105,7 +105,7 @@ dependencies {
 * Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
 * The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height.
-* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `dragView` attribute. 
+* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute. 
 
 For more information, please refer to the sample code.
 
@@ -116,8 +116,8 @@ For more information, please refer to the sample code.
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:panelHeight="68dp"
-    sothree:shadowHeight="4dp">
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoShadowHeight="4dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -145,16 +145,19 @@ or `?attr/actionBarSize` to support older API versions.
 
 ### Caveats, Additional Features and Customization
 
-* If you are using a custom `dragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to prevent this.
-* You can change the panel height by using the `setPanelHeight` method or `panelHeight` attribute.
+* If you are using a custom `umanoDragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to prevent this.
+* You can change the panel height by using the `setPanelHeight` method or `umanoPanelHeight` attribute.
 * If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
-* You can disable sliding by using `setSlidingEnabled` method. This can be useful if you want to show\hide panel only from the code. By default sliding is enabled.
-* You can add paralax to the main view by setting `paralaxOffset` attribute (see demo for the example).
+* Use `setEnabled(false)` to completely disable the sliding panel (including touch and programmatic sliding)
+* Use `setTouchEnabled(false)` to disables panel's touch responsiveness (drag and click), you can still control the panel programatically
+* Use `getPanelState` to get the current panel state
+* Use `setPanelState` to set the current panel state
+* You can add paralax to the main view by setting `umanoParalaxOffset` attribute (see demo for the example).
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
-* By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `overlay` attribute. This is useful if you would like to make the sliding layout semi-transparent.
-* By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `fadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+* By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
+* By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
 
 ### Implementation
 
@@ -177,6 +180,13 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.0.0
+  * Added `umano` prefix for all attributes
+  * Added `clipPanel` attribute for supporting transparent panels in non-overlay mode.
+  * `setEnabled(false)` - now completely disables the sliding panel (touch and programmatic sliding)
+  * `setTouchEnabled(false)` - disables panel's touch responsiveness (drag and click), you can still control the panel programatically
+  * `getPanelState` - is now the only method to get the current panel state
+  * `setPanelState` - is now the only method to modify the panel state from code
 * 2.0.2 - Allow `wrap_content` for sliding view height attribute. Bug fixes. 
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
