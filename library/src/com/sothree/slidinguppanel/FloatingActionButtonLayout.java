@@ -1,10 +1,14 @@
 package com.sothree.slidinguppanel;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.sothree.slidinguppanel.library.R;
 
 /**
  * Created by ThomasR on 06.01.2015.
@@ -13,6 +17,15 @@ public class FloatingActionButtonLayout extends ViewGroup {
     SlidingUpPanelLayout mSlidingUpPanelLayout;
     View mFloatingActionButton;
     boolean mFirstLayout = true;
+
+    public enum FabMode {
+        LEAVE_BEHIND,
+        CIRCULAR_REVEAL,
+        FADE
+    }
+
+    private static FabMode DEFAULT_FAB_MODE = FabMode.LEAVE_BEHIND;
+    private FabMode mFabMode = FabMode.LEAVE_BEHIND;
 
     public FloatingActionButtonLayout(Context context) {
         this(context, null);
@@ -24,6 +37,13 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
     public FloatingActionButtonLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (attrs != null){
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButtonLayout);
+            if (ta != null){
+                mFabMode = FabMode.values()[ta.getInt(R.styleable.FloatingActionButtonLayout_umanoFabMode, DEFAULT_FAB_MODE.ordinal())];
+            }
+            ta.recycle();
+        }
     }
 
     @Override
@@ -104,7 +124,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     break;
             }
             mFloatingActionButton.layout(fabLeft, fabTop, fabRight, fabBottom);
-            mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop, expandedYSpace);
+            mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop, expandedYSpace, mFabMode);
         }
 
         mFirstLayout = false;

@@ -18,6 +18,7 @@
 package com.sothree.slidinguppanel;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
@@ -31,6 +32,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import com.nineoldandroids.view.ViewHelper;
 import com.sothree.slidinguppanel.library.R;
 
 import java.util.Arrays;
@@ -141,6 +143,7 @@ public class ViewDragHelper {
     private View mCapturedView;
     private View mFloatingActionButton;
     private boolean mReleaseInProgress;
+    private FloatingActionButtonLayout.FabMode mFabMode;
     private boolean mHasFloatingActionButton;
     private float mFabRatio;
     private int mFabExpandedY;
@@ -418,6 +421,10 @@ public class ViewDragHelper {
 
     protected Interpolator getInterpolator() {
         return sInterpolator;
+    }
+
+    protected void setFabMode(FloatingActionButtonLayout.FabMode fabMode) {
+        mFabMode = fabMode;
     }
 
     protected void setFloatingActionButton(View fab) {
@@ -801,21 +808,37 @@ public class ViewDragHelper {
                 mCapturedView.offsetTopAndBottom(dy);
                 if (mHasFloatingActionButton) {
                     int faby;
+                    int fabOldTop = mFloatingActionButton.getTop();
                     if (y <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
-                        faby = Math.round((float) (y - mFloatingActionButton.getMeasuredHeight() / 2));
+                        if (mFabMode == FloatingActionButtonLayout.FabMode.CIRCULAR_REVEAL) { // Fab follows top and gets hidden/shown with a circular reveal
+                            faby = Math.round((float) (y - mFloatingActionButton.getMeasuredHeight() / 2));
+
+                            int fabHideHeight = mCapturedView.getMeasuredHeight() / 8;
+
+                            if (fabOldTop <= fabHideHeight) {
+                                hideFloatingActionButton();
+                            } else {
+                                showFloatingActionButton();
+                            }
+                        } else if (mFabMode == FloatingActionButtonLayout.FabMode.FADE) { // Fab follows top and fades away
+                            faby = Math.round((float) (y - mFloatingActionButton.getMeasuredHeight() / 2));
+
+                            float pathLength = (float) (mHasAnchor ? mAnchorY : mSlideRange);
+                            setFloatingActionButtonAlpha(Math.min(1f, y/pathLength));
+                        } else { // Fab gradually moves to bottom of dragView
+                            if (!mHasAnchor) {
+                                faby = Math.round(mFabRatio * (y - mFabExpandedYSpace)) + mFabExpandedY;
+                            } else {
+                                if (y <= mAnchorY) {
+                                    faby = Math.round(mFabRatio * (y - mFabExpandedYSpace)) + mFabExpandedY;
+                                } else {
+                                    faby = Math.round((float) (y - mFloatingActionButton.getMeasuredHeight() / 2));
+                                }
+                            }
+                        }
                     } else { // Between collapsed and hidden state
                         faby = Math.round((((float) (y - (mSlideRange + mFabExpandedYSpace))) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
                     }
-
-                    int fabOldTop = mFloatingActionButton.getTop();
-                    int fabHideHeight = mCapturedView.getMeasuredHeight()/8;
-
-                    if (fabOldTop <= fabHideHeight) {
-                        hideFloatingActionButton();
-                    } else {
-                        showFloatingActionButton();
-                    }
-
                     final int fabdy = faby - fabOldTop;
                     mFloatingActionButton.offsetTopAndBottom(fabdy);
                 }
@@ -1476,22 +1499,37 @@ public class ViewDragHelper {
             mCapturedView.offsetTopAndBottom(clampedY - oldTop);
             if (mHasFloatingActionButton) {
                 final int fabclampedY;
-
+                int faboldTop = mFloatingActionButton.getTop();
                 if (clampedY <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
-                    fabclampedY = Math.round((float) (clampedY - mFloatingActionButton.getMeasuredHeight() / 2));
+                    if (mFabMode == FloatingActionButtonLayout.FabMode.CIRCULAR_REVEAL) { // Fab follows top and gets hidden/shown with a circular reveal
+                        fabclampedY = Math.round((float) (clampedY - mFloatingActionButton.getMeasuredHeight() / 2));
+
+                        int fabHideHeight = mCapturedView.getMeasuredHeight() / 8;
+
+                        if (faboldTop <= fabHideHeight) {
+                            hideFloatingActionButton();
+                        } else {
+                            showFloatingActionButton();
+                        }
+                    } else if (mFabMode == FloatingActionButtonLayout.FabMode.FADE) { // Fab follows top and fades away
+                        fabclampedY = Math.round((float) (clampedY - mFloatingActionButton.getMeasuredHeight() / 2));
+
+                        float pathLength = (float) (mHasAnchor ? mAnchorY : mSlideRange);
+                        setFloatingActionButtonAlpha(Math.min(1f, clampedY/pathLength));
+                    } else { // Fab gradually moves to bottom of dragView
+                        if (!mHasAnchor) {
+                            fabclampedY = Math.round(mFabRatio * (clampedY- mFabExpandedYSpace)) + mFabExpandedY;
+                        } else {
+                            if (clampedY <= mAnchorY) {
+                                fabclampedY = Math.round(mFabRatio * (clampedY - mFabExpandedYSpace)) + mFabExpandedY;
+                            } else {
+                                fabclampedY = Math.round((float) (clampedY - mFloatingActionButton.getMeasuredHeight() / 2));
+                            }
+                        }
+                    }
                 } else { // Between collapsed and hidden state
                     fabclampedY = Math.round((((float) (clampedY - (mSlideRange + mFabExpandedYSpace))) / ((float) mPanelHeight)) * mFabHideDeltaY) + mFabCollapsedY;
                 }
-
-                final int faboldTop = mFloatingActionButton.getTop();
-                final int fabHideHeight = mCapturedView.getMeasuredHeight()/8;
-
-                if (faboldTop <= fabHideHeight) {
-                    hideFloatingActionButton();
-                } else {
-                    showFloatingActionButton();
-                }
-
                 mFloatingActionButton.offsetTopAndBottom(fabclampedY - faboldTop);
             }
         }
@@ -1571,7 +1609,8 @@ public class ViewDragHelper {
         mFadeOutAnimation = AnimationUtils.loadAnimation(mFloatingActionButton.getContext(), R.anim.fade_scale_out);
         mFadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -1580,7 +1619,8 @@ public class ViewDragHelper {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
     }
 
@@ -1588,7 +1628,8 @@ public class ViewDragHelper {
         mFadeInAnimation = AnimationUtils.loadAnimation(mFloatingActionButton.getContext(), R.anim.fade_scale_in);
         mFadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -1597,7 +1638,8 @@ public class ViewDragHelper {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
     }
 
@@ -1610,6 +1652,24 @@ public class ViewDragHelper {
     protected void showFloatingActionButton() {
         if (mFadeInAnimation != null && !mFadeInAnimation.hasStarted() && mFloatingActionButton.getVisibility() == View.INVISIBLE) {
             mFloatingActionButton.startAnimation(mFadeInAnimation);
+        }
+    }
+
+    protected void setFloatingActionButtonAlpha(float alpha){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mFloatingActionButton.setAlpha(alpha);
+        } else {
+            ViewHelper.setAlpha(mFloatingActionButton, alpha);
+        }
+        int visibility = mFloatingActionButton.getVisibility();
+        if (alpha == 0f){
+            if (visibility != View.INVISIBLE){
+                mFloatingActionButton.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            if (visibility != View.VISIBLE){
+                mFloatingActionButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

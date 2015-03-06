@@ -1,11 +1,13 @@
 <com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    sothree:umanoFabMode="fade"
     tools:context=".DemoActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,7 +49,7 @@
         <LinearLayout
             android:id="@+id/dragView"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="match_parent"
             android:background="#eeeeee"
             android:clickable="true"
             android:focusable="false"
