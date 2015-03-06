@@ -117,6 +117,9 @@ public class FloatingActionButtonLayout extends ViewGroup {
                 case EXPANDED:
                     fabBottom = expandedfabBottom;
                     fabTop = expandedfabTop;
+                    if (mFabMode != FabMode.LEAVE_BEHIND) {
+                        mFloatingActionButton.setVisibility(View.INVISIBLE);
+                    }
                     break;
                 default:
                     fabBottom = collapsedfabBottom;
