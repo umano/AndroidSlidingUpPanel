@@ -697,6 +697,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         int layoutHeight = heightSize - getPaddingTop() - getPaddingBottom();
+        int layoutWidth = widthSize - getPaddingLeft() - getPaddingRight();
 
         // First pass. Measure based on child LayoutParams width/height.
         for (int i = 0; i < childCount; i++) {
@@ -709,15 +710,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             int height = layoutHeight;
-            if (child == mMainView && !mOverlayContent && mSlideState != PanelState.HIDDEN) {
-                height -= mPanelHeight;
+            int width = layoutWidth;
+            if (child == mMainView) {
+                if (!mOverlayContent && mSlideState != PanelState.HIDDEN) {
+                    height -= mPanelHeight;
+                }
+
+                width -= lp.leftMargin + lp.rightMargin;
             }
 
             int childWidthSpec;
             if (lp.width == LayoutParams.WRAP_CONTENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.AT_MOST);
+                childWidthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST);
             } else if (lp.width == LayoutParams.MATCH_PARENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
+                childWidthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
             } else {
                 childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
             }
@@ -768,6 +774,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
             // Always layout the sliding view on the first layout
             if (child.getVisibility() == GONE && (i == 0 || mFirstLayout)) {
@@ -787,7 +794,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
             }
             final int childBottom = childTop + childHeight;
-            final int childLeft = paddingLeft;
+            final int childLeft = paddingLeft + lp.leftMargin;
             final int childRight = childLeft + child.getMeasuredWidth();
 
             child.layout(childLeft, childTop, childRight, childBottom);
