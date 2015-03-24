@@ -725,6 +725,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int height = layoutHeight;
             if (child == mMainView && !mOverlayContent && mSlideState != PanelState.HIDDEN) {
                 height -= mPanelHeight;
+            } else if (child == mSlideableView) {
+                // The slideable view should be aware of its top margin.
+                // See https://github.com/umano/AndroidSlidingUpPanel/issues/412.
+                height -= lp.topMargin;
             }
 
             int childWidthSpec;
