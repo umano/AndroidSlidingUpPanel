@@ -821,6 +821,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mFirstLayout) {
             updateObscuredViewVisibility();
         }
+        applyParallaxForCurrentSlideOffset();
 
         mFirstLayout = false;
     }
@@ -985,13 +986,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    /**
+     * Update the parallax based on the current slide offset.
+     */
     @SuppressLint("NewApi")
-    private void onPanelDragged(int newTop) {
-        mSlideState = PanelState.DRAGGING;
-        // Recompute the slide offset based on the new top position
-        mSlideOffset = computeSlideOffset(newTop);
-        // Update the parallax based on the new slide offset
-        if (mParallaxOffset > 0 && mSlideOffset >= 0) {
+    private void applyParallaxForCurrentSlideOffset() {
+        if (mParallaxOffset > 0) {
             int mainViewOffset = getCurrentParalaxOffset();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 mMainView.setTranslationY(mainViewOffset);
@@ -999,6 +999,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
             }
         }
+    }
+
+    private void onPanelDragged(int newTop) {
+        mSlideState = PanelState.DRAGGING;
+        // Recompute the slide offset based on the new top position
+        mSlideOffset = computeSlideOffset(newTop);
+        applyParallaxForCurrentSlideOffset();
         // Dispatch the slide event
         dispatchOnPanelSlide(mSlideableView);
         // If the slide offset is negative, and overlay is not on, we need to increase the
@@ -1195,6 +1202,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public void onViewDragStateChanged(int state) {
             if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
                 mSlideOffset = computeSlideOffset(mSlideableView.getTop());
+                applyParallaxForCurrentSlideOffset();
 
                 if (mSlideOffset == 1) {
                     if (mSlideState != PanelState.EXPANDED) {
