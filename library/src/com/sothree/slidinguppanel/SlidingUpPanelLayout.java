@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
+import com.sothree.slidinguppanel.ViewDragHelper;
 import com.sothree.slidinguppanel.library.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
@@ -36,6 +38,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default anchor point height
      */
     private static final float DEFAULT_ANCHOR_POINT = 1.0f; // In relative %
+
 
     /**
      * Default initial state for the component
@@ -68,7 +71,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default attributes for layout
      */
     private static final int[] DEFAULT_ATTRS = new int[] {
-        android.R.attr.gravity
+            android.R.attr.gravity
     };
 
     /**
@@ -85,6 +88,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default paralax length of the main view
      */
     private static final int DEFAULT_PARALAX_OFFSET = 0;
+
+    /**
+     * Swiping to anchor is disabled by default
+     */
+    private static final boolean DEFAULT_SWIPE_TO_ANCHOR = false;
 
     /**
      * The paint used to dim the main layout when sliding
@@ -148,6 +156,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private View mMainView;
 
+
     /**
      * Current state of the slideable view.
      */
@@ -193,6 +202,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionX;
     private float mInitialMotionY;
     private float mAnchorPoint = 1.f;
+
+    /**
+     * Flag indicating that panel will expand/collapse to anchor point instead of fully expanding/collapsing when set
+     * to
+     * true
+     */
+    private boolean mSwipeToAnchor =false;
 
     private PanelSlideListener mPanelSlideListener;
 
@@ -309,6 +325,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
                 mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
+                mSwipeToAnchor=ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoSwipeToAnchor,
+                        DEFAULT_SWIPE_TO_ANCHOR);
             }
 
             ta.recycle();
@@ -579,6 +597,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Sets whether or not panel will expand/collapse to anchor point instead of fully expanding/collapsing
+     * @param swipeToAnchor
+     */
+    public void setSwipeToAnchor(boolean swipeToAnchor) {
+        mSwipeToAnchor = swipeToAnchor;
+    }
+
+    /**
      * Check whether or not the main content is clipped to the top of the panel
      */
     public boolean isClipPanel() {
@@ -774,19 +800,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         if (mFirstLayout) {
             switch (mSlideState) {
-            case EXPANDED:
-                mSlideOffset = 1.0f;
-                break;
-            case ANCHORED:
-                mSlideOffset = mAnchorPoint;
-                break;
-            case HIDDEN:
-                int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
-                mSlideOffset = computeSlideOffset(newTop);
-                break;
-            default:
-                mSlideOffset = 0.f;
-                break;
+                case EXPANDED:
+                    mSlideOffset = 1.0f;
+                    break;
+                case ANCHORED:
+                    mSlideOffset = mAnchorPoint;
+                    break;
+                case HIDDEN:
+                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+                    mSlideOffset = computeSlideOffset(newTop);
+                    break;
+                default:
+                    mSlideOffset = 0.f;
+                    break;
             }
         }
 
@@ -1238,6 +1264,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             invalidate();
         }
 
+
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             int target = 0;
@@ -1247,10 +1274,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (direction > 0) {
                 // swipe up -> expand
-                target = computePanelTopPosition(1.0f);
+                target = computePanelTopPosition((mSwipeToAnchor && mSlideOffset<mAnchorPoint)?mAnchorPoint:1.0f);
             } else if (direction < 0) {
                 // swipe down -> collapse
-                target = computePanelTopPosition(0.0f);
+                target = computePanelTopPosition((mSwipeToAnchor && mSlideOffset>mAnchorPoint)?mAnchorPoint:0.0f);
             } else if (mAnchorPoint != 1 && mSlideOffset >= (1.f + mAnchorPoint) / 2) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
@@ -1289,7 +1316,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
         private static final int[] ATTRS = new int[] {
-            android.R.attr.layout_weight
+                android.R.attr.layout_weight
         };
 
         public LayoutParams() {
@@ -1345,15 +1372,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+                    @Override
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
 
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+                    @Override
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 }
