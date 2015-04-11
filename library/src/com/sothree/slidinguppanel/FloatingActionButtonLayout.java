@@ -3,8 +3,6 @@ package com.sothree.slidinguppanel;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -69,16 +67,20 @@ public class FloatingActionButtonLayout extends ViewGroup {
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int childcount = getChildCount();
 
+        // layout built for Sliding Up Panel Layout and Floating Action Button
         if (childcount != 2) {
             throw new IllegalStateException("FloatingActionButtonLayout must have exactly 2 children");
         }
 
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        // retrieve and measure the views
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) getChildAt(0);
         mSlidingUpPanelLayout.measure(widthMeasureSpec, heightMeasureSpec);
         mFloatingActionButton = getChildAt(1);
-        measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, widthSize, heightMeasureSpec, heightSize);
+        measureChildWithMargins(mFloatingActionButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
+
+        // measure layout itself
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(widthSize, heightSize);
     }
 
