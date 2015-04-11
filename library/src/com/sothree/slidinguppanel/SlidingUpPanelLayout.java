@@ -486,10 +486,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param val A height in pixels
      */
     public void setPanelHeight(int val) {
+        if (getPanelHeight() == val) {
+            return;
+        }
+
         mPanelHeight = val;
         if (!mFirstLayout) {
             requestLayout();
         }
+
+        if (getPanelState() == PanelState.COLLAPSED) {
+            smoothToBottom();
+            invalidate();
+            return;
+        }
+    }
+
+    protected void smoothToBottom(){
+        smoothSlideTo(0, 0);
     }
 
     /**
@@ -838,6 +852,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         int layoutHeight = heightSize - getPaddingTop() - getPaddingBottom();
+        int layoutWidth = widthSize - getPaddingLeft() - getPaddingRight();
 
         // First pass. Measure based on child LayoutParams width/height.
         for (int i = 0; i < childCount; i++) {
@@ -850,15 +865,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             int height = layoutHeight;
-            if (child == mMainView && !mOverlayContent && mSlideState != PanelState.HIDDEN) {
-                height -= mPanelHeight;
+            int width = layoutWidth;
+            if (child == mMainView) {
+                if (!mOverlayContent && mSlideState != PanelState.HIDDEN) {
+                    height -= mPanelHeight;
+                }
+
+                width -= lp.leftMargin + lp.rightMargin;
+            } else if (child == mSlideableView) {
+                // The slideable view should be aware of its top margin.
+                // See https://github.com/umano/AndroidSlidingUpPanel/issues/412.
+                height -= lp.topMargin;
             }
 
             int childWidthSpec;
             if (lp.width == LayoutParams.WRAP_CONTENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.AT_MOST);
+                childWidthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST);
             } else if (lp.width == LayoutParams.MATCH_PARENT) {
-                childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
+                childWidthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
             } else {
                 childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
             }
@@ -922,6 +946,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
             // Always layout the sliding view on the first layout
             if (child.getVisibility() == GONE && (i == 0 || mFirstLayout)) {
@@ -941,7 +966,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
             }
             final int childBottom = childTop + childHeight;
-            final int childLeft = paddingLeft;
+            final int childLeft = paddingLeft + lp.leftMargin;
             final int childRight = childLeft + child.getMeasuredWidth();
 
             child.layout(childLeft, childTop, childRight, childBottom);
@@ -950,6 +975,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mFirstLayout) {
             updateObscuredViewVisibility();
         }
+        applyParallaxForCurrentSlideOffset();
 
         mFirstLayout = false;
     }
@@ -1121,13 +1147,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    /**
+     * Update the parallax based on the current slide offset.
+     */
     @SuppressLint("NewApi")
-    private void onPanelDragged(int newTop) {
-        mSlideState = PanelState.DRAGGING;
-        // Recompute the slide offset based on the new top position
-        mSlideOffset = computeSlideOffset(newTop);
-        // Update the parallax based on the new slide offset
-        if (mParallaxOffset > 0 && mSlideOffset >= 0) {
+    private void applyParallaxForCurrentSlideOffset() {
+        if (mParallaxOffset > 0) {
             int mainViewOffset = getCurrentParalaxOffset();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 mMainView.setTranslationY(mainViewOffset);
@@ -1135,6 +1160,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
             }
         }
+    }
+
+    private void onPanelDragged(int newTop) {
+        mSlideState = PanelState.DRAGGING;
+        // Recompute the slide offset based on the new top position
+        mSlideOffset = computeSlideOffset(newTop);
+        applyParallaxForCurrentSlideOffset();
         // Dispatch the slide event
         dispatchOnPanelSlide(mSlideableView);
         // If the slide offset is negative, and overlay is not on, we need to increase the
@@ -1382,6 +1414,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public void onViewDragStateChanged(int state) {
             if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
                 mSlideOffset = computeSlideOffset(mSlideableView.getTop());
+                applyParallaxForCurrentSlideOffset();
 
                 if (mSlideOffset == 1) {
                     if (mSlideState != PanelState.EXPANDED) {
