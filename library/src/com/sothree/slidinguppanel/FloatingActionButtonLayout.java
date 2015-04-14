@@ -137,6 +137,11 @@ public class FloatingActionButtonLayout extends ViewGroup {
         mFirstLayout = false;
     }
 
+    /**
+     * method to set the attachment state of the Floating Action Button
+     *
+     * @param attached boolean indicating desired behavior (true for attaching, false for detaching)
+     */
     public void setFloatingActionButtonAttached(boolean attached) {
         if (mSlidingUpPanelLayout != null) {
             mFloatingActionButtonAttached = attached;
@@ -148,6 +153,12 @@ public class FloatingActionButtonLayout extends ViewGroup {
         return mFloatingActionButtonAttached;
     }
 
+    /**
+     * method to set the visibility of the Floating Action Button
+     * (call this instead of the standard setVisibility() so the code can handle visibility while sliding)
+     *
+     * @param visibility integer with the desired visibility (must be one of either View.VISIBLE, View.INVISIBLE or View.GONE)
+     */
     public void setFloatingActionButtonVisibility(int visibility) {
         if (mSlidingUpPanelLayout != null) {
             mSlidingUpPanelLayout.setFloatingActionButtonVisibility(visibility);
