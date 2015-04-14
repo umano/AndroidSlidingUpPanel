@@ -130,6 +130,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     break;
             }
             mFloatingActionButton.layout(fabLeft, fabTop, fabRight, fabBottom);
+            mSlidingUpPanelLayout.setFloatingActionButtonVisibility(mFloatingActionButton.getVisibility());
             mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop, expandedYSpace, mFabMode);
         }
 
@@ -148,7 +149,9 @@ public class FloatingActionButtonLayout extends ViewGroup {
     }
 
     public void setFloatingActionButtonVisibility(int visibility) {
-
+        if (mSlidingUpPanelLayout != null) {
+            mSlidingUpPanelLayout.setFloatingActionButtonVisibility(visibility);
+        }
     }
 
     @Override

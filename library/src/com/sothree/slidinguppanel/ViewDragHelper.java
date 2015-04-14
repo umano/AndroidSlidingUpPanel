@@ -146,6 +146,8 @@ public class ViewDragHelper {
     private FloatingActionButtonLayout.FabMode mFabMode;
     private boolean mHasFloatingActionButton;
     private boolean mIsFabAttached = true;
+    private int mFabVisibility = View.VISIBLE;
+    private int mFabTrackerVisibility;
     private float mFabRatio;
     private int mFabExpandedY;
     private int mFabExpandedYSpace;
@@ -424,6 +426,17 @@ public class ViewDragHelper {
 
     protected void setFabAttached(boolean attached) {
         mIsFabAttached = attached;
+    }
+
+    protected void setFabVisibility(int visibility) {
+        mFabVisibility = visibility;
+        if (mFloatingActionButton != null) {
+            if (visibility == View.VISIBLE) {
+                mFloatingActionButton.setVisibility(mFabTrackerVisibility);
+            } else {
+                mFloatingActionButton.setVisibility(visibility);
+            }
+        }
     }
 
     protected void setFabMode(FloatingActionButtonLayout.FabMode fabMode) {
@@ -1618,7 +1631,8 @@ public class ViewDragHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setFadeOutAnimation();
-                mFloatingActionButton.setVisibility(View.INVISIBLE);
+                mFabTrackerVisibility = View.INVISIBLE;
+                if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -1637,7 +1651,8 @@ public class ViewDragHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setFadeInAnimation();
-                mFloatingActionButton.setVisibility(View.VISIBLE);
+                mFabTrackerVisibility = View.INVISIBLE;
+                if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -1667,11 +1682,13 @@ public class ViewDragHelper {
         int visibility = mFloatingActionButton.getVisibility();
         if (alpha == 0f){
             if (visibility != View.INVISIBLE){
-                mFloatingActionButton.setVisibility(View.INVISIBLE);
+                mFabTrackerVisibility = View.INVISIBLE;
+                if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.INVISIBLE);
             }
         } else {
             if (visibility != View.VISIBLE){
-                mFloatingActionButton.setVisibility(View.VISIBLE);
+                mFabTrackerVisibility = View.VISIBLE;
+                if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.VISIBLE);
             }
         }
     }

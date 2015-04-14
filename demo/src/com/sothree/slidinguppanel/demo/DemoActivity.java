@@ -29,6 +29,7 @@ public class DemoActivity extends ActionBarActivity {
 
     private SlidingUpPanelLayout mLayout;
     private FloatingActionButtonLayout mFabLayout;
+    private View mFAB;
     //private LinearLayout mTitleLayout;
 
     @Override
@@ -41,6 +42,7 @@ public class DemoActivity extends ActionBarActivity {
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mFabLayout = (FloatingActionButtonLayout) findViewById(R.id.fab_layout);
+        mFAB = findViewById(R.id.fab);
         //mTitleLayout = (LinearLayout) findViewById(R.id.titlebar);
         //final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
         mLayout.setPanelState(PanelState.HIDDEN);
@@ -145,6 +147,14 @@ public class DemoActivity extends ActionBarActivity {
                 item_attach.setTitle(R.string.action_attach);
             }
         }
+        MenuItem item_visibility = menu.findItem(R.id.action_toggle_visibility);
+        if (mFAB != null) {
+            if (mFAB.getVisibility() == View.VISIBLE) {
+                item_visibility.setTitle(R.string.action_gone);
+            } else {
+                item_visibility.setTitle(R.string.action_visible);
+            }
+        }
         return true;
     }
 
@@ -176,6 +186,18 @@ public class DemoActivity extends ActionBarActivity {
                     } else {
                         mFabLayout.setFloatingActionButtonAttached(false);
                         item.setTitle(R.string.action_attach);
+                    }
+                }
+                return true;
+            }
+            case R.id.action_toggle_visibility: {
+                if (mFAB != null) {
+                    if (mFAB.getVisibility() != View.VISIBLE) {
+                        mFAB.setVisibility(View.VISIBLE);
+                        item.setTitle(R.string.action_gone);
+                    } else {
+                        mFAB.setVisibility(View.GONE);
+                        item.setTitle(R.string.action_visible);
                     }
                 }
                 return true;
