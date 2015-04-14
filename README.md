@@ -52,6 +52,10 @@ You can choose the kind of animation you want for the Floating Action Button whe
 * `circular_reveal`: This keeps the Floating Action button on top of the panel header and show or hides the Floating Action Button based on a threshold value of how far the panel has been dragged to the top using a circular reveal animation (see the Google Maps Floating Action Button). Thanks to [@flyingtoaster0](https://github.com/flyingtoaster0) for contributing code!
 * `fade`: This animates the alpha value of the Floating Action Button based on how far the panel has been dragged to the top.
 
+There also are some new methods related to the Floating Action Button:
+* `setFloatingActionButtonVisibility(int visibility)`: This is a replacment method for the standard `setVisibility()` which doesn't work as intended as this library handles the visibility while sliding the panel. It takes the normal `View.VISIBLE`, `View.INVISIBLE` or `View.GONE` as input. Use this one instead of the default one whenever you want to change the visibility of the Floating Action Button.
+* `setFloatingActionButtonAttached(boolean attached)`: This can be used to attach or detach the Floating Action Button from the sliding up panel. When `attached` is `true` the library will move the Floating Action Button along, when it is `false` the Floating Action Button will remain at its' position. **Note:** it is currently your responsibility that the transition from detached to attached mode doesn't result in a position jump.
+
 #### New Listeners
 Added new listeners. Here's a list of the new ones along with a explanation:
 * `onPanelCollapsedStateY(View panel, boolean reached)`: This gets called whenever the user reaches or leaves the collapsed state, even while dragging. If boolean reached is true, the panel has just reached the collapsed postion, if it is false, it has just left the collapsed position.
