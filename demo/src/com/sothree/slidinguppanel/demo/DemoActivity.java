@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.animation.ArgbEvaluator;
+import com.sothree.slidinguppanel.FloatingActionButtonLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -27,6 +28,7 @@ public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
 
     private SlidingUpPanelLayout mLayout;
+    private FloatingActionButtonLayout mFabLayout;
     //private LinearLayout mTitleLayout;
 
     @Override
@@ -38,6 +40,7 @@ public class DemoActivity extends ActionBarActivity {
 
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mFabLayout = (FloatingActionButtonLayout) findViewById(R.id.fab_layout);
         //mTitleLayout = (LinearLayout) findViewById(R.id.titlebar);
         //final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
         mLayout.setPanelState(PanelState.HIDDEN);
@@ -134,6 +137,14 @@ public class DemoActivity extends ActionBarActivity {
                 item.setTitle(R.string.action_hide);
             }
         }
+        MenuItem item_attach = menu.findItem(R.id.action_toggle_attach);
+        if (mFabLayout != null) {
+            if (mFabLayout.isFloatingActionButtonAttached()) {
+                item_attach.setTitle(R.string.action_detach);
+            } else {
+                item_attach.setTitle(R.string.action_attach);
+            }
+        }
         return true;
     }
 
@@ -153,6 +164,18 @@ public class DemoActivity extends ActionBarActivity {
                     } else {
                         mLayout.setPanelState(PanelState.COLLAPSED);
                         item.setTitle(R.string.action_hide);
+                    }
+                }
+                return true;
+            }
+            case R.id.action_toggle_attach: {
+                if (mFabLayout != null) {
+                    if (!mFabLayout.isFloatingActionButtonAttached()) {
+                        mFabLayout.setFloatingActionButtonAttached(true);
+                        item.setTitle(R.string.action_detach);
+                    } else {
+                        mFabLayout.setFloatingActionButtonAttached(false);
+                        item.setTitle(R.string.action_attach);
                     }
                 }
                 return true;

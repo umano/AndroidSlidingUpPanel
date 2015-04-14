@@ -621,6 +621,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mDragHelper.setFabExpandedYSpace(expandedYSpace);
     }
 
+    public void setFloatingActionButtonAttached(boolean attached) {
+        mDragHelper.setFabAttached(attached);
+    }
+
     /**
      * Set the draggable view portion. Use to null, to allow the whole panel to be draggable
      *

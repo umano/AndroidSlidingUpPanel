@@ -14,6 +14,7 @@ import com.sothree.slidinguppanel.library.R;
 public class FloatingActionButtonLayout extends ViewGroup {
     SlidingUpPanelLayout mSlidingUpPanelLayout;
     View mFloatingActionButton;
+    private boolean mFloatingActionButtonAttached = true;
     boolean mFirstLayout = true;
 
     public enum FabMode {
@@ -133,6 +134,21 @@ public class FloatingActionButtonLayout extends ViewGroup {
         }
 
         mFirstLayout = false;
+    }
+
+    public void setFloatingActionButtonAttached(boolean attached) {
+        if (mSlidingUpPanelLayout != null) {
+            mFloatingActionButtonAttached = attached;
+            mSlidingUpPanelLayout.setFloatingActionButtonAttached(attached);
+        }
+    }
+
+    public boolean isFloatingActionButtonAttached() {
+        return mFloatingActionButtonAttached;
+    }
+
+    public void setFloatingActionButtonVisibility(int visibility) {
+
     }
 
     @Override

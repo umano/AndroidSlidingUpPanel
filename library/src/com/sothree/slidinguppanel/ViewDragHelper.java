@@ -145,6 +145,7 @@ public class ViewDragHelper {
     private boolean mReleaseInProgress;
     private FloatingActionButtonLayout.FabMode mFabMode;
     private boolean mHasFloatingActionButton;
+    private boolean mIsFabAttached = true;
     private float mFabRatio;
     private int mFabExpandedY;
     private int mFabExpandedYSpace;
@@ -154,8 +155,6 @@ public class ViewDragHelper {
     private int mPanelHeight;
     private boolean mHasAnchor;
     private int mAnchorY;
-    private boolean alreadyInitialY = false;
-    private boolean alreadyCollapsedY = false;
 
     private final ViewGroup mParentView;
 
@@ -421,6 +420,10 @@ public class ViewDragHelper {
 
     protected Interpolator getInterpolator() {
         return sInterpolator;
+    }
+
+    protected void setFabAttached(boolean attached) {
+        mIsFabAttached = attached;
     }
 
     protected void setFabMode(FloatingActionButtonLayout.FabMode fabMode) {
@@ -806,7 +809,7 @@ public class ViewDragHelper {
             }
             if (dy != 0) {
                 mCapturedView.offsetTopAndBottom(dy);
-                if (mHasFloatingActionButton) {
+                if (mHasFloatingActionButton && mIsFabAttached) {
                     int faby;
                     int fabOldTop = mFloatingActionButton.getTop();
                     if (y <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
@@ -1497,7 +1500,7 @@ public class ViewDragHelper {
         if (dy != 0) {
             clampedY = mCallback.clampViewPositionVertical(mCapturedView, top, dy);
             mCapturedView.offsetTopAndBottom(clampedY - oldTop);
-            if (mHasFloatingActionButton) {
+            if (mHasFloatingActionButton && mIsFabAttached) {
                 final int fabclampedY;
                 int faboldTop = mFloatingActionButton.getTop();
                 if (clampedY <= (mSlideRange + mFabExpandedYSpace)) { // Between expanded and collapsed state
