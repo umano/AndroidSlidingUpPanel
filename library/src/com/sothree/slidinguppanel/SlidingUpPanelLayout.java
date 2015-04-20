@@ -161,6 +161,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private PanelState mSlideState = DEFAULT_SLIDE_STATE;
 
     /**
+     * If the current slide state is DRAGGING, this will store the last non dragging state
+     */
+    private PanelState mLastNotDraggingSlideState = null;
+
+    /**
      * How far the panel is offset from its expanded position.
      * range [0, 1] where 0 = collapsed, 1 = expanded.
      */
@@ -1002,6 +1007,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private void onPanelDragged(int newTop) {
+        mLastNotDraggingSlideState = mSlideState;
         mSlideState = PanelState.DRAGGING;
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
@@ -1175,8 +1181,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         Parcelable superState = super.onSaveInstanceState();
 
         SavedState ss = new SavedState(superState);
-        ss.mSlideState = mSlideState;
-
+        if (mSlideState != PanelState.DRAGGING) {
+            ss.mSlideState = mSlideState;
+        } else {
+            ss.mSlideState = mLastNotDraggingSlideState;
+        }
         return ss;
     }
 
