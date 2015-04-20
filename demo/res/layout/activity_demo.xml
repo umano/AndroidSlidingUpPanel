@@ -46,7 +46,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#55eeeeee"
+            android:background="#ffffff"
             android:orientation="vertical"
             android:clickable="true"
             android:focusable="false"
