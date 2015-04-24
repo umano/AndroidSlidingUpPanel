@@ -78,7 +78,7 @@ As this fork of the library currently is not available on Maven Central, you'll 
 
 ##### Gradle dependency
 
-You can now use the library as a gradle dependency thanks to [JitPack](https://github.com/jitpack/jitpack.io). Just add the following to you `build.gradle` of your app module:
+You can now use the library as a gradle dependency thanks to [JitPack](https://github.com/jitpack/jitpack.io). Just add the following to the `build.gradle` of your app module:
 ```gradle
 repositories { 
     maven { url "https://jitpack.io" }
