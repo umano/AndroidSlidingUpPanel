@@ -80,12 +80,12 @@ As this fork of the library currently is not available on Maven Central, you'll 
 
 You can now use the library as a gradle dependency thanks to [JitPack](https://github.com/jitpack/jitpack.io). Just add the following to you `build.gradle` of your app module:
 ```gradle
-   repositories { 
-        maven { url "https://jitpack.io" }
-   }
-   dependencies {
-         compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.0'
-   }
+repositories { 
+    maven { url "https://jitpack.io" }
+}
+dependencies {
+    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.0'
+}
 ```  
 
 Android Sliding Up Panel - Orginal Readme
