@@ -67,12 +67,26 @@ Added new listeners. Here's a list of the new ones along with a explanation:
 #### Importing the library
 As this fork of the library currently is not available on Maven Central, you'll for now have to do some extra steps to include this to your project. I hope to eventually get these changes back into the main library though.
 
+##### Download as Zip File
+
 1. Download the repository as a [.zip file](https://github.com/TR4Android/AndroidSlidingUpPanel/archive/master.zip)
 2. Unzip the .zip file you just downloaded
 3. Copy the `library` folder into your project folder (you can also rename it if you have to because of conflicts)
 4. Add `include ':library'` or `include ':theChangedLibraryName'` if you changed the folder name to your `settings.gradle` of your project folder
 5. Add `compile project(':library')` or `compile project(':theChangedLibraryName')` if you changed the folder name to your dependencies of the `build.gradle` file of your app module
 6. Now you should be able to work with this library
+
+##### Gradle dependency
+
+You can now use the library as a gradle dependency thanks to [JitPack](https://github.com/jitpack/jitpack.io). Just add the following to you `build.gradle` of your app module:
+```gradle
+   repositories { 
+        maven { url "https://jitpack.io" }
+   }
+   dependencies {
+         compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.0'
+   }
+```  
 
 Android Sliding Up Panel - Orginal Readme
 ==========================================
