@@ -1631,7 +1631,6 @@ public class ViewDragHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setFadeOutAnimation();
-                mFabTrackerVisibility = View.INVISIBLE;
                 if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.INVISIBLE);
             }
 
@@ -1651,7 +1650,6 @@ public class ViewDragHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setFadeInAnimation();
-                mFabTrackerVisibility = View.INVISIBLE;
                 if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.VISIBLE);
             }
 
@@ -1665,12 +1663,14 @@ public class ViewDragHelper {
         if (mFadeOutAnimation != null && !mFadeOutAnimation.hasStarted() && mFloatingActionButton.getVisibility() == View.VISIBLE) {
             mFloatingActionButton.startAnimation(mFadeOutAnimation);
         }
+        mFabTrackerVisibility = View.INVISIBLE;
     }
 
     protected void showFloatingActionButton() {
         if (mFadeInAnimation != null && !mFadeInAnimation.hasStarted() && mFloatingActionButton.getVisibility() == View.INVISIBLE) {
             mFloatingActionButton.startAnimation(mFadeInAnimation);
         }
+        mFabTrackerVisibility = View.VISIBLE;
     }
 
     protected void setFloatingActionButtonAlpha(float alpha){
