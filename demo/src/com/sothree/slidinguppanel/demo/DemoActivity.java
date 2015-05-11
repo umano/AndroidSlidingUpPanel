@@ -75,6 +75,12 @@ public class DemoActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
+        findViewById(R.id.collapseBtn).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.collapseNoAnimation();
+            }
+        });
     }
 
     @Override
@@ -123,6 +129,12 @@ public class DemoActivity extends ActionBarActivity {
                         mLayout.setPanelState(PanelState.COLLAPSED);
                         item.setTitle(R.string.action_anchor_enable);
                     }
+                }
+                return true;
+            }
+            case R.id.action_expand: {
+                if (mLayout != null) {
+                    mLayout.expandNoAnimation();
                 }
                 return true;
             }

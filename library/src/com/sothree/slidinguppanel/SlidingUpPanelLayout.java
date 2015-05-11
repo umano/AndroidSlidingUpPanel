@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -953,6 +954,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mSlideState;
     }
 
+    public void expandNoAnimation() {
+        onPanelDragged(0);
+        mMainView.requestLayout();
+        mSlideState = PanelState.EXPANDED;
+        if (mSlideableView.getVisibility() != View.VISIBLE) {
+            mSlideableView.setVisibility(View.VISIBLE);
+        }
+        dispatchOnPanelExpanded(mSlideableView);
+    }
+
     /**
      * Change panel state to the given state with
      * @param state - new panel state
@@ -989,6 +1000,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     break;
             }
         }
+    }
+
+    public void collapseNoAnimation() {
+        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - mPanelHeight;
+        onPanelDragged(defaultHeight);
+        mMainView.requestLayout();
+        mSlideState = PanelState.COLLAPSED;
+        dispatchOnPanelCollapsed(mSlideableView);
     }
 
     /**
