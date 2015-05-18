@@ -13,4 +13,10 @@
         sothree:showAsAction="never"
         android:title="@string/action_anchor_enable"/>    
 
+    <item
+        android:id="@+id/action_expand"
+        android:orderInCategory="300"
+        sothree:showAsAction="never"
+        android:title="@string/expand_no_animation"/>
+
 </menu>

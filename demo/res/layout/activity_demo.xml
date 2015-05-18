@@ -75,6 +75,12 @@
                     android:paddingRight="10dp"
                     android:paddingLeft="10dp"/>
 
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/collapse_no_animation"
+                    android:id="@+id/collapseBtn"/>
+
             </LinearLayout>
 
             <ImageView
