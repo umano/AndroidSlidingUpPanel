@@ -84,7 +84,7 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.0'
+    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.1'
 }
 ```  
 
