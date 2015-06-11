@@ -32,4 +32,8 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="FloatingActionButtonLayout_LayoutParams">
+        <attr name="android:layout_gravity"/>
+    </declare-styleable>
+
 </resources>

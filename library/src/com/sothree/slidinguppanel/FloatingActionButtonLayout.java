@@ -2,7 +2,10 @@ package com.sothree.slidinguppanel;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,9 +39,9 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
     public FloatingActionButtonLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (attrs != null){
+        if (attrs != null) {
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButtonLayout);
-            if (ta != null){
+            if (ta != null) {
                 mFabMode = FabMode.values()[ta.getInt(R.styleable.FloatingActionButtonLayout_umanoFabMode, DEFAULT_FAB_MODE.ordinal())];
             }
             ta.recycle();
@@ -91,11 +94,27 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
         if (mFirstLayout) {
             int expandedYSpace = getMeasuredHeight() - mSlidingUpPanelLayout.getChildAt(1).getMeasuredHeight();
-            MarginLayoutParams lp = (MarginLayoutParams) mFloatingActionButton.getLayoutParams();
+            LayoutParams lp = (LayoutParams) mFloatingActionButton.getLayoutParams();
             SlidingUpPanelLayout.PanelState state = mSlidingUpPanelLayout.getPanelState();
             // First get Left and Right (independent of slide state)
-            int fabRight = r - lp.rightMargin;
-            int fabLeft = fabRight - mFloatingActionButton.getMeasuredWidth();
+            int fabRight;
+            int fabLeft;
+            int horizontalGravity = lp.gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
+            horizontalGravity = GravityCompat.getAbsoluteGravity(horizontalGravity, ViewCompat.getLayoutDirection(this));
+            switch (horizontalGravity) {
+                case Gravity.LEFT:
+                    fabLeft = l + lp.leftMargin;
+                    fabRight = fabLeft + mFloatingActionButton.getMeasuredWidth();
+                    break;
+                case Gravity.CENTER:
+                case Gravity.CENTER_HORIZONTAL:
+                    fabLeft = l + (r - l) / 2 - mFloatingActionButton.getMeasuredWidth() / 2;
+                    fabRight = fabLeft + mFloatingActionButton.getMeasuredWidth();
+                    break;
+                default:
+                    fabRight = r - lp.rightMargin;
+                    fabLeft = fabRight - mFloatingActionButton.getMeasuredWidth();
+            }
             // Then calculate Top and Bottom values
             int initialfabBottom = b - lp.bottomMargin;
             int initialfabTop = initialfabBottom - mFloatingActionButton.getMeasuredHeight();
@@ -112,7 +131,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     break;
                 case ANCHORED:
                     float anchor = mSlidingUpPanelLayout.getAnchorPoint();
-                    if(anchor != 1.0f) {
+                    if (anchor != 1.0f) {
                         fabBottom = t + Math.round((getMeasuredHeight() - mSlidingUpPanelLayout.getPanelHeight()) * (1f - anchor) + mFloatingActionButton.getMeasuredHeight() / 2);
                         fabTop = fabBottom - mFloatingActionButton.getMeasuredHeight();
                         break;
@@ -186,28 +205,21 @@ public class FloatingActionButtonLayout extends ViewGroup {
     }
 
     public static class LayoutParams extends MarginLayoutParams {
+        public int gravity = Gravity.RIGHT;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
+
+            TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.FloatingActionButtonLayout_LayoutParams);
+            gravity = a.getInt(R.styleable.FloatingActionButtonLayout_LayoutParams_android_layout_gravity, gravity);
+            a.recycle();
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
         }
 
-        public LayoutParams(int width, int height, int gravity) {
-            super(width, height);
-        }
-
         public LayoutParams(ViewGroup.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(ViewGroup.MarginLayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(LayoutParams source) {
             super(source);
         }
     }
