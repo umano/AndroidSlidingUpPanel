@@ -882,7 +882,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final int dragSlop = mDragHelper.getTouchSlop();
 
                 // Handle any horizontal scrolling on the drag view.
-                if (mIsUsingDragViewTouchEvents && adx > dragSlop && ady < dragSlop) {
+                if (mIsUsingDragViewTouchEvents && adx < dragSlop && ady > dragSlop) {
                     return super.onInterceptTouchEvent(ev);
                 }
 
