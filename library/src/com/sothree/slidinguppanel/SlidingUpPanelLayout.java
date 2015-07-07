@@ -212,6 +212,37 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private final Rect mTmpRect = new Rect();
 
+    TouchInterceptNegotiator negotiator;
+
+    public void setNegotiator(TouchInterceptNegotiator negotiator) {
+        this.negotiator = negotiator;
+    }
+
+
+    /**
+     * Created by chang@hyper.no on 06/07/15.
+     *
+     * Negotiate with the child view, to determine if parent SlidingUpPanelLayout could take the onTouchEvent.
+     *
+     * Assume a sliding-up-menu child is also a Scrollable (e.g. ListView/RecyclerView/ScrollView). A common requirement is
+     * if the child has scroll to topmost, then any scroll-down should be handled by SlidingUpPanelLayout, i.e. when the
+     * menu is on its topmost position, any scroll-down gesture would close the menu.
+     *
+     * To achieve this, The parent SlidingUpPanelLayout needs to consult if the child has been on its topmost position. If
+     * yes, the parent would **INTERCEPT** the whole gesture. Otherwise the parent would simply have the child to handle it.
+     */
+    public interface TouchInterceptNegotiator {
+        /**
+         *
+         * @param mInitialMotionX
+         * @param mInitialMotionY
+         * @param dragSlop
+         * @param ev - the ACTION_MOVE event
+         *
+         **/
+        public boolean allowed(float mInitialMotionX, float mInitialMotionY, int dragSlop, MotionEvent ev);
+    }
+
     /**
      * Listener for monitoring events about sliding panes.
      */
@@ -343,7 +374,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 1f, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -881,9 +912,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
 
-                // Handle any horizontal scrolling on the drag view.
-                if (mIsUsingDragViewTouchEvents && adx > dragSlop && ady < dragSlop) {
-                    return super.onInterceptTouchEvent(ev);
+
+                if (mIsUsingDragViewTouchEvents) {
+                    if (negotiator != null /*&& adx < dragSlop*/ /*&& ady > dragSlop*/) {
+                        if (!negotiator.allowed(mInitialMotionX, mInitialMotionY, dragSlop, ev)) {
+                            return super.onInterceptTouchEvent(ev);
+                        }
+
+                    } else if ( adx < dragSlop && ady > dragSlop) {
+                        // Handle any horizontal scrolling on the drag view.
+                        return super.onInterceptTouchEvent(ev);
+                    }
                 }
 
                 if ((ady > dragSlop && adx > ady) || !isDragViewUnder((int)mInitialMotionX, (int)mInitialMotionY)) {
