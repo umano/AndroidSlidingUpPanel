@@ -233,11 +233,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public interface TouchInterceptNegotiator {
         /**
-         * @param deltaY = ActionDown.Y - ActionMove.Y - dragSlop
-         * @return indicates whether allow parent to intercept.
+         *
+         * @param mInitialMotionX
+         * @param mInitialMotionY
+         * @param dragSlop
+         * @param ev - the ACTION_MOVE event
          *
          **/
-        public boolean allowed(float deltaY);
+        public boolean allowed(float mInitialMotionX, float mInitialMotionY, int dragSlop, MotionEvent ev);
     }
 
     /**
@@ -371,7 +374,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 1f, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -909,17 +912,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
 
-                // Handle any horizontal scrolling on the drag view.
-                if (mIsUsingDragViewTouchEvents && adx < dragSlop && ady > dragSlop) {
-                    if (negotiator == null) {
+
+                if (mIsUsingDragViewTouchEvents) {
+                    if (negotiator != null /*&& adx < dragSlop*/ /*&& ady > dragSlop*/) {
+                        if (!negotiator.allowed(mInitialMotionX, mInitialMotionY, dragSlop, ev)) {
+                            return super.onInterceptTouchEvent(ev);
+                        }
+
+                    } else if ( adx < dragSlop && ady > dragSlop) {
+                        // Handle any horizontal scrolling on the drag view.
                         return super.onInterceptTouchEvent(ev);
                     }
-
-                    /* Child doesn't allow me to take over the onTouch events*/
-                    if (negotiator != null && !negotiator.allowed(mInitialMotionY - y - dragSlop)) {
-                        return super.onInterceptTouchEvent(ev);
-                    }
-
                 }
 
                 if ((ady > dragSlop && adx > ady) || !isDragViewUnder((int)mInitialMotionX, (int)mInitialMotionY)) {

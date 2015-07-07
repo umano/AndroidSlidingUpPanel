@@ -1,0 +1,40 @@
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    sothree:umanoFadeColor="@android:color/transparent"
+    sothree:umanoFlingVelocity="2000"
+    sothree:umanoInitialState="expanded"
+    sothree:umanoOverlay="true"
+    sothree:umanoPanelHeight="80dp">
+
+
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffff8800"
+        android:paddingTop="80dp">
+
+        <ListView
+            android:id="@+id/list1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/top_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffff4444">
+
+        <com.sothree.slidinguppanel.demo.MenuListView
+            android:id="@+id/list2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
