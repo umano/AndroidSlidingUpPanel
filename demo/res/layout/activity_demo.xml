@@ -14,7 +14,8 @@
         sothree:umanoShadowHeight="4dp"
         sothree:umanoParalaxOffset="100dp"
         sothree:umanoDragView="@+id/dragView"
-        sothree:umanoOverlay="true">
+        sothree:umanoOverlay="true"
+        sothree:umanoScrollableView="@+id/list">
 
         <!-- MAIN CONTENT -->
         <FrameLayout
@@ -77,13 +78,12 @@
 
             </LinearLayout>
 
-            <ImageView
+            <ListView
+                android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"
-                android:src="@drawable/graphic" >
-            </ImageView>
+                android:layout_weight="1">
+            </ListView>
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

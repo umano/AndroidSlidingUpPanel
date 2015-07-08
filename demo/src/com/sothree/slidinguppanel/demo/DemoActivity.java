@@ -12,12 +12,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
@@ -31,6 +36,45 @@ public class DemoActivity extends ActionBarActivity {
 
         setSupportActionBar((Toolbar)findViewById(R.id.main_toolbar));
 
+        ListView lv = (ListView) findViewById(R.id.list);
+        // Instanciating an array list (you don't need to do this,
+        // you already have yours).
+        List<String> your_array_list = Arrays.asList(
+                "This",
+                "Is",
+                "An",
+                "Example",
+                "ListView",
+                "That",
+                "You",
+                "Can",
+                "Scroll",
+                ".",
+                "It",
+                "Shows",
+                "How",
+                "Any",
+                "Scrollable",
+                "View",
+                "Can",
+                "Be",
+                "Included",
+                "As",
+                "A",
+                "Child",
+                "Of",
+                "SlidingUpPanelLayout"
+        );
+
+        // This is the array adapter, it takes the context of the activity as a
+        // first parameter, the type of list view as a second parameter and your
+        // array as a third parameter.
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                your_array_list );
+
+        lv.setAdapter(arrayAdapter);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLayout.setPanelSlideListener(new PanelSlideListener() {
