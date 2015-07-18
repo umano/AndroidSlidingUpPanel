@@ -1362,6 +1362,10 @@ public class ViewDragHelper {
         return isPointerDown(pointerId) && (mInitialEdgesTouched[pointerId] & edges) != 0;
     }
 
+    public boolean isDragging() {
+        return mDragState == STATE_DRAGGING;
+    }
+
     private void releaseViewForPointerUp() {
         mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);
         final float xvel = clampMag(
