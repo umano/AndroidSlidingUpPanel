@@ -97,7 +97,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * Drawable used to draw the shadow between panes.
      */
-    private final Drawable mShadowDrawable;
+    private Drawable mShadowDrawable;
 
     /**
      * The size of the overhang in pixels.
@@ -435,6 +435,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     protected void smoothToBottom(){
         smoothSlideTo(0, 0);
+    }
+
+    /**
+     * Set the shadow drawable
+     *
+     * @param shadow A drawable to use as the shadow
+     */
+    public void setShadowDrawable(Drawable shadow) {
+        mShadowDrawable = shadow;
     }
 
     /**
