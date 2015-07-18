@@ -863,13 +863,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
-
-        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP || mIsScrollableViewHandlingTouch) {
+        // If the scrollable view is handling touch, never intercept
+        if (mIsScrollableViewHandlingTouch) {
             mDragHelper.cancel();
             return false;
         }
 
+        final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
 
@@ -893,8 +893,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
                 break;
             }
-        }
 
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                // If the dragView is still dragging when we get here, we need to call processTouchEvent
+                // so that the view is settled
+                // Added to make scrollable views work (tokudu)
+                if (mDragHelper.isDragging()) {
+                    mDragHelper.processTouchEvent(ev);
+                    return true;
+                }
+                break;
+        }
         return mDragHelper.shouldInterceptTouchEvent(ev);
     }
 
@@ -903,11 +913,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (!isEnabled() || !isTouchEnabled()) {
             return super.onTouchEvent(ev);
         }
+        final int action = MotionEventCompat.getActionMasked(ev);
         try {
             mDragHelper.processTouchEvent(ev);
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            // Ignore the pointer out of range exception
             return false;
         }
     }
@@ -938,8 +949,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             // Which direction (up or down) is the drag moving?
-            if (dy > 0) { // DOWN
-                Log.i(TAG, dy + "");
+            if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
                 if (getScrollableViewScrollPosition() > 0) {
@@ -964,7 +974,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mIsScrollableViewHandlingTouch = false;
                 return this.onTouchEvent(ev);
-            } else if (dy < 0) { // UP
+            } else if (dy * (mIsSlidingUp ? 1 : -1) < 0) { // Expanding
                 // Is the panel less than fully expanded?
                 // Then we'll handle the drag here.
                 if (mSlideOffset < 1.0f) {
@@ -1004,12 +1014,25 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int getScrollableViewScrollPosition() {
         if (mScrollableView == null) return 0;
         if (mScrollableView instanceof ScrollView) {
-            return mScrollableView.getScrollY();
+            if (mIsSlidingUp) {
+                return mScrollableView.getScrollY();
+            } else {
+                ScrollView sv = ((ScrollView)mScrollableView);
+                View child = sv.getChildAt(0);
+                return (child.getBottom() - (sv.getHeight() + sv.getScrollY()));
+            }
         } else if (mScrollableView instanceof ListView && ((ListView)mScrollableView).getChildCount() > 0) {
             ListView lv = ((ListView)mScrollableView);
-            View firstChild = lv.getChildAt(0);
-            // Approximate the scroll position based on the top child and the first visible item
-            return lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
+            if (lv.getAdapter() == null) return 0;
+            if (mIsSlidingUp) {
+                View firstChild = lv.getChildAt(0);
+                // Approximate the scroll position based on the top child and the first visible item
+                return lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
+            } else {
+                View lastChild = lv.getChildAt(lv.getChildCount() - 1);
+                // Approximate the scroll position based on the bottom child and the last visible item
+                return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
+            }
         } else {
             return 0;
         }
@@ -1289,7 +1312,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void onRestoreInstanceState(Parcelable state) {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
-        mSlideState = ss.mSlideState;
+        mSlideState = ss.mSlideState != null ? ss.mSlideState : DEFAULT_SLIDE_STATE;
     }
 
     private class DragHelperCallback extends ViewDragHelper.Callback {
