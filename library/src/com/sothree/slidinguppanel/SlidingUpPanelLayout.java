@@ -526,17 +526,26 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 @Override
                 public void onClick(View v) {
                     if (!isEnabled() || !isTouchEnabled()) return;
-                    if (mSlideState != PanelState.EXPANDED  && mSlideState != PanelState.ANCHORED) {
-                        if (mAnchorPoint < 1.0f) {
-                            setPanelState(PanelState.ANCHORED);
-                        } else {
-                            setPanelState(PanelState.EXPANDED);
-                        }
-                    } else {
-                        setPanelState(PanelState.COLLAPSED);
-                    }
+                    togglePanelState();
                 }
             });;
+        }
+    }
+
+    /**
+     * Switch the panel state among {@link PanelState#ANCHORED}, {@link PanelState#EXPANDED}
+     * and {@link PanelState#COLLAPSED}.
+     */
+    public void togglePanelState(){
+
+        if (mSlideState != PanelState.EXPANDED  && mSlideState != PanelState.ANCHORED) {
+            if (mAnchorPoint < 1.0f) {
+                setPanelState(PanelState.ANCHORED);
+            } else {
+                setPanelState(PanelState.EXPANDED);
+            }
+        } else {
+            setPanelState(PanelState.COLLAPSED);
         }
     }
 
@@ -598,7 +607,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     /**
      * Sets whether or not the main content is clipped to the top of the panel
-     * @param overlayed
+     * @param clip
      */
     public void setClipPanel(boolean clip) {
         mClipPanel = clip;
