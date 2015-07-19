@@ -422,19 +422,22 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         mPanelHeight = val;
+        boolean onCollapsedMode = getPanelState() == PanelState.COLLAPSED;
         if (!mFirstLayout) {
-            requestLayout();
+            if (!onCollapsedMode) {
+                requestLayout();
+                return;
+            }
         }
 
-        if (getPanelState() == PanelState.COLLAPSED) {
-            smoothToBottom();
+        if (onCollapsedMode && !smoothToBottom()){
+            // Only invalidating when animation was not done
             invalidate();
-            return;
         }
     }
 
-    protected void smoothToBottom(){
-        smoothSlideTo(0, 0);
+    protected boolean smoothToBottom(){
+        return smoothSlideTo(0, 0);
     }
 
     /**
