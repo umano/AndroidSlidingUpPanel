@@ -177,6 +177,9 @@ public class DemoActivity extends ActionBarActivity {
                 }
                 return true;
             }
+            case R.id.action_recyclerdemo:
+                startActivity(new Intent(this, RecyclerDemoActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

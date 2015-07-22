@@ -6,11 +6,17 @@
         android:orderInCategory="100"
         sothree:showAsAction="never"
         android:title="@string/action_hide"/>
-    
+
     <item
         android:id="@+id/action_anchor"
         android:orderInCategory="200"
         sothree:showAsAction="never"
-        android:title="@string/action_anchor_enable"/>    
+        android:title="@string/action_anchor_enable"/>
+
+    <item
+        android:id="@+id/action_recyclerdemo"
+        android:orderInCategory="300"
+        sothree:showAsAction="never"
+        android:title="@string/action_recycler_demo"/>
 
 </menu>

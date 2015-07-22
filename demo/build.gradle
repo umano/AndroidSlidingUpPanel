@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
   compileSdkVersion 21
-  buildToolsVersion "21.0.1"
+  buildToolsVersion "21.1.2"
 
   lintOptions {
     abortOnError false
@@ -24,7 +24,8 @@ android {
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:21.0.0'
-  compile 'com.android.support:appcompat-v7:21.0.0'
+  compile 'com.android.support:support-v4:22.2.1'
+  compile 'com.android.support:appcompat-v7:22.2.1'
+  compile 'com.android.support:recyclerview-v7:22.2.1'
   compile project(':library')
 }
