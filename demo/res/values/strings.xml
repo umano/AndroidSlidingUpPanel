@@ -8,5 +8,5 @@
     <string name="action_anchor_disable">Disable Anchor Point</string>
     <string name="hello"><![CDATA[<b>The Awesome Sliding Up Panel</b><br/> Brought to you by<br/><a href="http://umanoapp.com">http://umanoapp.com</a>]]></string>
     <string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>
-    <string name="action_recycler_demo">Got To Recycler demo</string>
+    <string name="action_recycler_demo">Go To Recycler demo</string>
 </resources>
