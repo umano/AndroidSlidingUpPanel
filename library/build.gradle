@@ -14,13 +14,14 @@ repositories {
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:19.1.0'
+  compile 'com.android.support:support-v4:22.2.1'
+  compile 'com.android.support:recyclerview-v7:22.2.1'
   compile 'com.nineoldandroids:library:2.4.0'
 }
 
 android {
   compileSdkVersion 21
-  buildToolsVersion "21.0.1"
+  buildToolsVersion "21.1.2"
   lintOptions {
     abortOnError false
   }
@@ -35,4 +36,4 @@ android {
   }
 }
 
-apply from: '../maven_push.gradle'
+//apply from: '../maven_push.gradle'
