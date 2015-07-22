@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
@@ -28,9 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RecyclerDemoActivity extends AppCompatActivity {
-	private static final String TAG = "DemoActivity";
+	private static final String TAG = "RecyclerDemoActivity";
 
 	private SlidingUpPanelLayout mLayout;
+	private RecyclerView         recyclerView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +41,25 @@ public class RecyclerDemoActivity extends AppCompatActivity {
 
 		setSupportActionBar((Toolbar) findViewById(R.id.main_toolbar));
 
-		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+		recyclerView = (RecyclerView) findViewById(R.id.recycler);
 
 		List<String> your_array_list = Arrays.asList(
 				"This", "Is", "An", "Example", "RecyclerView", "That", "You", "Can", "Scroll", ".",
 				"It", "Shows", "How", "Any", "Scrollable", "View",
-				"Can", "Be", "Included", "As", "A", "Child", "Of", "SlidingUpPanelLayout"
+				"Can", "Be", "Included", "As", "A", "Child", "Of", "SlidingUpPanelLayout",
+				"This", "Is", "An", "Example", "RecyclerView", "That", "You", "Can", "Scroll", ".",
+				"It", "Shows", "How", "Any", "Scrollable", "View",
+				"Can", "Be", "Included", "As", "A", "Child", "Of", "SlidingUpPanelLayout",
+				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pulvinar tellus odio, a accumsan lacus facilisis sed. Fusce vulputate mauris ac convallis congue. Proin pulvinar nulla in dictum ultricies. In erat velit, commodo gravida dui nec, feugiat mollis lacus. Proin eu sem non orci euismod aliquet. Quisque tortor massa, varius ut purus sed, vehicula gravida magna. Phasellus pulvinar nulla eget ipsum dapibus gravida. Ut est libero, aliquet at libero ut, volutpat mollis lacus. Praesent ac gravida eros. Etiam placerat, nibh eu malesuada fringilla, dolor turpis aliquet ipsum, ut tempor nisi turpis non lectus. Vestibulum porta facilisis nisi at sagittis. Pellentesque mattis dui enim, at pellentesque lectus hendrerit hendrerit.\n"
 		);
 
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
 		recyclerView.setHasFixedSize(true);
-		recyclerView.setAdapter(new MyAdapter(your_array_list));
+		recyclerView.setAdapter(
+				new MyAdapter(
+						your_array_list, new MyOnClickListener()
+				)
+		);
 
 		mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mLayout.setPanelSlideListener(
@@ -163,19 +173,23 @@ public class RecyclerDemoActivity extends AppCompatActivity {
 		}
 	}
 
-	private class MyAdapter extends RecyclerView.Adapter<MyAdapter.StringHolder> {
+	public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.StringHolder> {
 		private List<String> dataList = new ArrayList<String>();
+		private OnClickListener listener;
 
-		public MyAdapter(List<String> your_array_list) {
+		public MyAdapter(List<String> your_array_list, OnClickListener listener) {
 			dataList = your_array_list;
+			this.listener = listener;
 		}
 
-		public class StringHolder extends RecyclerView.ViewHolder {
-			TextView data;
+		public static class StringHolder extends RecyclerView.ViewHolder {
+			public TextView data;
+			public Button   button;
 
 			public StringHolder(View v) {
 				super(v);
-				data = (TextView) v.findViewById(android.R.id.text1);
+				data = (TextView) v.findViewById(R.id.card_title);
+				button = (Button) v.findViewById(R.id.button);
 			}
 		}
 
@@ -188,14 +202,23 @@ public class RecyclerDemoActivity extends AppCompatActivity {
 		public void onBindViewHolder(MyAdapter.StringHolder vho, final int pos) {
 			String pi = dataList.get(pos);
 			vho.data.setText(pi);
-
 		}
 
 		@Override
 		public MyAdapter.StringHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-			View v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+			View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview, parent, false);
+			v.setOnClickListener(listener);
 			StringHolder vh = new StringHolder(v);
 			return vh;
+		}
+	}
+
+	class MyOnClickListener implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			int itemPosition = recyclerView.getChildAdapterPosition(v);
+			Log.e(RecyclerDemoActivity.class.getName(), String.valueOf(itemPosition));
+			Toast.makeText(v.getContext(), "onItemClick #" + itemPosition, Toast.LENGTH_SHORT).show();
 		}
 	}
 }
