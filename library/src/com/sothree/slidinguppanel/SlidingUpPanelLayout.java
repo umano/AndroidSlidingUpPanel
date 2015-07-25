@@ -976,7 +976,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (mIsScrollableViewHandlingTouch) {
                     // Send an 'UP' event to the child.
                     MotionEvent up = MotionEvent.obtain(ev);
-                    up.setAction(MotionEvent.ACTION_UP);
+                    up.setAction(MotionEvent.ACTION_CANCEL);
                     super.dispatchTouchEvent(up);
                     up.recycle();
 
