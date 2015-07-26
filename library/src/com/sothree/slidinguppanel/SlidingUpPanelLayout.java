@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -1049,6 +1050,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 View lastChild = lv.getChildAt(lv.getChildCount() - 1);
                 // Approximate the scroll position based on the bottom child and the last visible item
                 return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
+            }
+        }else if (mScrollableView instanceof RecyclerView && ((RecyclerView) mScrollableView).getChildCount() > 0) {
+            RecyclerView rv = ((RecyclerView) mScrollableView);
+            if (rv.getAdapter() == null) return 0;
+            if (mIsSlidingUp) {
+                View firstChild = rv.getChildAt(0);
+                // Approximate the scroll position based on the top child and the first visible item
+                return rv.getChildLayoutPosition(firstChild) * firstChild.getHeight() - firstChild.getTop();
+            } else {
+                View lastChild = rv.getChildAt(rv.getChildCount() - 1);
+                // Approximate the scroll position based on the bottom child and the last visible item
+                return (rv.getAdapter().getItemCount() - 1) * lastChild.getHeight() + lastChild.getBottom() - rv.getBottom();
             }
         } else {
             return 0;
