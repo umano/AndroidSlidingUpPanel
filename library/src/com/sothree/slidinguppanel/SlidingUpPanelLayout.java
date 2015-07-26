@@ -1047,10 +1047,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 			if (mIsSlidingUp) {
 				View firstChild = lv.getChildAt(0);
 				// Approximate the scroll position based on the top child and the first visible item
-				Log.w("listView", lv.getFirstVisiblePosition() + "");
-				int i = lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
-				Log.w("recyclerView", "position: " + i + "");
-				return i;
+				return lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
 			} else {
 				View lastChild = lv.getChildAt(lv.getChildCount() - 1);
 				// Approximate the scroll position based on the bottom child and the last visible item
@@ -1063,12 +1060,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 			if (mIsSlidingUp) {
 				View firstChild = rv.getChildAt(0);
 				// Approximate the scroll position based on the top child and the first visible item
-
-				//not sure
-				Log.w("recyclerView", rv.getChildLayoutPosition(firstChild) + "");
-				int i = rv.getChildLayoutPosition(firstChild) * firstChild.getHeight() - firstChild.getTop();
-				Log.w("recyclerView", "position: " + i + "");
-				return i;
+				return rv.getChildLayoutPosition(firstChild) * firstChild.getHeight() - firstChild.getTop();
 			} else {
 				View lastChild = rv.getChildAt(rv.getChildCount() - 1);
 				// Approximate the scroll position based on the bottom child and the last visible item
