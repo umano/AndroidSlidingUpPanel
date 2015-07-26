@@ -25,7 +25,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.1.0'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
 }
 ```
 
@@ -87,7 +87,6 @@ or `?attr/actionBarSize` to support older API versions.
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
-* If you have a ScrollView or a ListView inside of the panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
 
@@ -112,8 +111,6 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
-* 3.1.0
-  * Added `umanoScrollableView` to supported nested scrolling in children (only ScrollView and ListView are supported for now)
 * 3.0.0
   * Added `umano` prefix for all attributes
   * Added `clipPanel` attribute for supporting transparent panels in non-overlay mode.
