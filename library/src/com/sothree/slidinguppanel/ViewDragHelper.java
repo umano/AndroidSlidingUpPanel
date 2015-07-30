@@ -23,6 +23,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -1490,6 +1491,10 @@ public class ViewDragHelper {
         return isPointerDown(pointerId) && (mInitialEdgesTouched[pointerId] & edges) != 0;
     }
 
+    public boolean isDragging() {
+        return mDragState == STATE_DRAGGING;
+    }
+
     private void releaseViewForPointerUp() {
         mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);
         final float xvel = clampMag(
@@ -1650,6 +1655,7 @@ public class ViewDragHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setFadeInAnimation();
+                Log.i("Android Panel", "Fab should be visible? " + (mFabVisibility == View.VISIBLE));
                 if (mFabVisibility == View.VISIBLE) mFloatingActionButton.setVisibility(View.VISIBLE);
             }
 
