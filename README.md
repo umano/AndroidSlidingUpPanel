@@ -1,5 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library)
-
+[![JitPack](https://img.shields.io/github/release/TR4Android/AndroidSlidingUpPanel.svg?label=JitPack)]()
 
 Android Sliding Up Panel - Material Design
 ===========================================
@@ -84,7 +83,7 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.1'
+    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.2'
 }
 ```  
 
