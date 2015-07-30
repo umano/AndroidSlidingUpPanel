@@ -96,6 +96,8 @@ public class FloatingActionButtonLayout extends ViewGroup {
             int expandedYSpace = getMeasuredHeight() - mSlidingUpPanelLayout.getChildAt(1).getMeasuredHeight();
             LayoutParams lp = (LayoutParams) mFloatingActionButton.getLayoutParams();
             SlidingUpPanelLayout.PanelState state = mSlidingUpPanelLayout.getPanelState();
+            // Retrieve desired fab visibility (before it possibly gets overridden later on)
+            int mFabVisibility = mFloatingActionButton.getVisibility();
             // First get Left and Right (independent of slide state)
             int fabRight;
             int fabLeft;
@@ -149,7 +151,7 @@ public class FloatingActionButtonLayout extends ViewGroup {
                     break;
             }
             mFloatingActionButton.layout(fabLeft, fabTop, fabRight, fabBottom);
-            mSlidingUpPanelLayout.setFloatingActionButtonVisibility(mFloatingActionButton.getVisibility());
+            mSlidingUpPanelLayout.setFloatingActionButtonVisibility(mFabVisibility);
             mSlidingUpPanelLayout.attachFloatingActionButton(mFloatingActionButton, initialfabTop, collapsedfabTop, expandedfabTop, expandedYSpace, mFabMode);
         }
 

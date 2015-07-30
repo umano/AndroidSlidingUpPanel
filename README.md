@@ -112,7 +112,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.0.0'
+    compile 'com.sothree.slidinguppanel:library:3.1.1'
 }
 ```
 
@@ -122,7 +122,7 @@ dependencies {
 * The layout must have `gravity` set to either `top` or `bottom`.
 * Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
-* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent` or the max desireable height.
+* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height.
 * By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute. 
 
 For more information, please refer to the sample code.
@@ -174,6 +174,7 @@ or `?attr/actionBarSize` to support older API versions.
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
+* If you have a ScrollView or a ListView inside of the panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
 
@@ -192,12 +193,14 @@ Tested on Android 2.2+
 * Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
 * Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
 * Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
-* Dec 22, 13 - Vladimir Mironov ([@mironov-nsk](https://github.com/mironov-nsk)) - Custom Expanded Panel Height
+* Dec 22, 13 - Vladimir Mironov ([@MironovNsk](https://github.com/nsk-mironov)) - Custom Expanded Panel Height
 
 If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.1.0
+  * Added `umanoScrollableView` to supported nested scrolling in children (only ScrollView and ListView are supported for now)
 * 3.0.0
   * Added `umano` prefix for all attributes
   * Added `clipPanel` attribute for supporting transparent panels in non-overlay mode.
