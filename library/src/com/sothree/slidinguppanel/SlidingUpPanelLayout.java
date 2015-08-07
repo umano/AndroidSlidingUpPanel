@@ -1029,7 +1029,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
     }
 
-    private int getScrollableViewScrollPosition() {
+    protected int getScrollableViewScrollPosition() {
         if (mScrollableView == null) return 0;
         if (mScrollableView instanceof ScrollView) {
             if (mIsSlidingUp) {
