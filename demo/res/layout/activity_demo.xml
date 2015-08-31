@@ -1,6 +1,6 @@
 <com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fab_layout"
     android:layout_width="match_parent"
@@ -13,13 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:umanoInitialState="expanded"
-        sothree:umanoPanelHeight="68dp"
-        sothree:umanoShadowHeight="4dp"
-        sothree:umanoParalaxOffset="100dp"
         sothree:umanoDragView="@+id/dragView"
+        sothree:umanoInitialState="hidden"
         sothree:umanoOverlay="true"
-        sothree:umanoScrollableView="@+id/list">
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoParalaxOffset="100dp"
+        sothree:umanoScrollableView="@+id/list"
+        sothree:umanoShadowHeight="4dp">
 
         <!-- MAIN CONTENT -->
         <FrameLayout
@@ -54,9 +54,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#ffffff"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="false">
+            android:focusable="false"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/titlebar"
@@ -103,15 +103,13 @@
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:src="@android:drawable/ic_input_add"
-        fab:fab_colorNormal="@color/primary"
-        fab:fab_colorPressed="@color/primary_pressed"
-        fab:fab_colorRipple="@color/ripple" />
+        android:visibility="gone" />
 </com.sothree.slidinguppanel.FloatingActionButtonLayout>

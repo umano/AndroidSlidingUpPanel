@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -30,12 +32,12 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 import java.util.Arrays;
 import java.util.List;
 
-public class DemoActivity extends ActionBarActivity {
+public class DemoActivity extends AppCompatActivity {
     private static final String TAG = "DemoActivity";
 
     private SlidingUpPanelLayout mLayout;
     private FloatingActionButtonLayout mFabLayout;
-    private View mFAB;
+    private FloatingActionButton mFAB;
     //private LinearLayout mTitleLayout;
 
     @Override
@@ -92,7 +94,7 @@ public class DemoActivity extends ActionBarActivity {
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mFabLayout = (FloatingActionButtonLayout) findViewById(R.id.fab_layout);
-        mFAB = findViewById(R.id.fab);
+        mFAB = (FloatingActionButton) findViewById(R.id.fab);
         //mTitleLayout = (LinearLayout) findViewById(R.id.titlebar);
         //final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
         mLayout.setPanelSlideListener(new PanelSlideListener() {
@@ -105,13 +107,11 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelExpanded(View panel) {
                 Log.i(TAG, "onPanelExpanded");
-
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
                 Log.i(TAG, "onPanelCollapsed");
-
             }
 
             @Override
@@ -127,11 +127,13 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelHiddenExecuted");
+                mFAB.hide();
             }
 
             @Override
             public void onPanelShownExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelShownExecuted");
+                mFAB.show();
             }
 
             @Override
@@ -219,9 +221,11 @@ public class DemoActivity extends ActionBarActivity {
                 if (mLayout != null) {
                     if (mLayout.getPanelState() != PanelState.HIDDEN) {
                         mLayout.setPanelState(PanelState.HIDDEN);
+                        //mFAB.hide();
                         item.setTitle(R.string.action_show);
                     } else {
                         mLayout.setPanelState(PanelState.COLLAPSED);
+                        //mFAB.show();
                         item.setTitle(R.string.action_hide);
                     }
                 }
