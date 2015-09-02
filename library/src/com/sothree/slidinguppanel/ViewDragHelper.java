@@ -1144,7 +1144,7 @@ public class ViewDragHelper {
                             break;
                         }
 
-                        final View toCapture = findTopChildUnder((int) x, (int) y);
+                        final View toCapture = findTopChildUnder((int) mInitialMotionX[pointerId], (int) mInitialMotionY[pointerId]);
                         if (checkTouchSlop(toCapture, dx, dy) &&
                                 tryCaptureViewForDrag(toCapture, pointerId)) {
                             break;
