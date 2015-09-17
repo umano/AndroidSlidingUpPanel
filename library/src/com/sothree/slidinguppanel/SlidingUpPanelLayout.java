@@ -503,8 +503,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mPanelHeight = val;
         if (!mFirstLayout) {
+            FloatingActionButtonLayout floatingActionButtonLayout = (FloatingActionButtonLayout) getParent();
+            floatingActionButtonLayout.mFirstLayout = true;
+            floatingActionButtonLayout.requestLayout();
             requestLayout();
         }
+
 
         if (getPanelState() == PanelState.COLLAPSED) {
             smoothToBottom();
