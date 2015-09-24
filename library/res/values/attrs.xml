@@ -4,6 +4,10 @@
     <declare-styleable name="SlidingUpPanelLayout">
         <attr name="umanoPanelHeight" format="dimension" />
         <attr name="umanoShadowHeight" format="dimension" />
+        <attr name="umanoContentHeight" format="dimension" />
+        <attr name="umanoOtherHeight" format="dimension" />
+        <attr name="umanoContentView" format="reference" />
+
         <attr name="umanoParalaxOffset" format="dimension" />
         <attr name="umanoFadeColor" format="color" />
         <attr name="umanoFlingVelocity" format="integer" />
@@ -11,7 +15,12 @@
         <attr name="umanoOverlay" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
         <attr name="umanoAnchorPoint" format="float" />
+        <attr name="umanoInnerScrollView" format="reference" />
+
+
         <attr name="umanoInitialState" format="enum">
+
+
             <enum name="expanded" value="0" />
             <enum name="collapsed" value="1" />
             <enum name="anchored" value="2" />
