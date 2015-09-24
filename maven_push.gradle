@@ -4,10 +4,10 @@ apply plugin: 'signing'
 def sonatypeRepositoryUrl
 if (isReleaseBuild()) {
     println 'RELEASE BUILD'
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    sonatypeRepositoryUrl = "http://nexus.huayu.nd/nexus/content/repositories/releases/"
 } else {
     println 'DEBUG BUILD'
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+    sonatypeRepositoryUrl = "http://nexus.huayu.nd/nexus/content/repositories/snapshots/"
 }
 
 afterEvaluate { project ->
@@ -19,7 +19,7 @@ afterEvaluate { project ->
                 pom.artifactId = POM_ARTIFACT_ID
 
                 repository(url: sonatypeRepositoryUrl) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
+                    authentication(userName: "deployment", password: "deployment123")
                 }
 
                 pom.project {

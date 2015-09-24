@@ -5,7 +5,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.0.0'
+    classpath 'com.android.tools.build:gradle:1.1.0'
   }
 }
 
@@ -20,7 +20,7 @@ dependencies {
 
 android {
   compileSdkVersion 21
-  buildToolsVersion "21.0.1"
+  buildToolsVersion "22.0.1"
   lintOptions {
     abortOnError false
   }
@@ -34,5 +34,5 @@ android {
     }
   }
 }
-
+//
 apply from: '../maven_push.gradle'
