@@ -843,7 +843,9 @@ public class ViewDragHelper {
             final int pointerId = MotionEventCompat.getPointerId(ev, i);
             final float x = MotionEventCompat.getX(ev, i);
             final float y = MotionEventCompat.getY(ev, i);
-            if (mLastMotionX != null && mLastMotionY != null) {
+            // Sometimes we can try and save last motion for a pointer never recorded in initial motion. In this case we just discard it.
+            if (mLastMotionX != null && mLastMotionY != null
+                    && mLastMotionX.length > pointerId && mLastMotionY.length > pointerId) {
                 mLastMotionX[pointerId] = x;
                 mLastMotionY[pointerId] = y;
             }
