@@ -4,7 +4,7 @@
     <declare-styleable name="SlidingUpPanelLayout">
         <attr name="umanoPanelHeight" format="dimension" />
         <attr name="umanoShadowHeight" format="dimension" />
-        <attr name="umanoParalaxOffset" format="dimension" />
+        <attr name="umanoParallaxOffset" format="dimension" />
         <attr name="umanoFadeColor" format="color" />
         <attr name="umanoFlingVelocity" format="integer" />
         <attr name="umanoDragView" format="reference" />
