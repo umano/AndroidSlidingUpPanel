@@ -25,18 +25,18 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.1.1'
+    compile 'com.sothree.slidinguppanel:library:3.2.0'
 }
 ```
 
-### Usage 
+### Usage
 
 * Include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the root element in your activity layout.
 * The layout must have `gravity` set to either `top` or `bottom`.
 * Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
 * The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height.
-* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute. 
+* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute.
 
 For more information, please refer to the sample code.
 
@@ -83,7 +83,7 @@ or `?attr/actionBarSize` to support older API versions.
 * Use `setTouchEnabled(false)` to disables panel's touch responsiveness (drag and click), you can still control the panel programatically
 * Use `getPanelState` to get the current panel state
 * Use `setPanelState` to set the current panel state
-* You can add paralax to the main view by setting `umanoParalaxOffset` attribute (see demo for the example).
+* You can add parallax to the main view by setting `umanoParallaxOffset` attribute (see demo for the example).
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
@@ -112,6 +112,9 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.2.0
+  * Rename `umanoParalaxOffset` to `umanoParallaxOffset`
+  * RecyclerView support.
 * 3.1.0
   * Added `umanoScrollableView` to supported nested scrolling in children (only ScrollView and ListView are supported for now)
 * 3.0.0
