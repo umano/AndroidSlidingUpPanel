@@ -723,6 +723,12 @@ public class ViewDragHelper {
             final int y = mScroller.getCurrY();
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
+            
+            if(!keepGoing && dy != 0) { //fix #525
+                //Invalid drag state
+                mCapturedView.setTop(0);
+                return true;
+            }
 
             if (dx != 0) {
                 mCapturedView.offsetLeftAndRight(dx);
