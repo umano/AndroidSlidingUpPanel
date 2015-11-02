@@ -26,10 +26,12 @@ import android.widget.ScrollView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
+import com.sothree.slidinguppanel.util.ReflectionUtils;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
+    private static final boolean RECYCLER_AVAILABLE = ReflectionUtils.isClassPresent("android.support.v7.widget.RecyclerView");
 
     /**
      * Default peeking out panel height
@@ -1051,7 +1053,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Approximate the scroll position based on the bottom child and the last visible item
                 return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
             }
-        } else if (mScrollableView instanceof RecyclerView && ((RecyclerView) mScrollableView).getChildCount() > 0) {
+        } else if (RECYCLER_AVAILABLE &&
+                mScrollableView instanceof RecyclerView && ((RecyclerView) mScrollableView).getChildCount() > 0) {
             RecyclerView rv = ((RecyclerView) mScrollableView);
             RecyclerView.LayoutManager lm = rv.getLayoutManager();
             if (rv.getAdapter() == null) return 0;
