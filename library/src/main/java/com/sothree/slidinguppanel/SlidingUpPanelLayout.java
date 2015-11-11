@@ -402,7 +402,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             final int screenWidth = size.x;
 
             SlidingUpPanelLayout.LayoutParams params;
-            params = new SlidingUpPanelLayout.LayoutParams(screenWidth, screenHeight + mPanelHeight);
+            params = new SlidingUpPanelLayout.LayoutParams(screenWidth, screenHeight + mPanelHeight - getNotificationBarHeight());
 
             slidingUpPanelLayout.setLayoutParams(params);
         } else {
@@ -839,14 +839,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             child.measure(childWidthSpec, childHeightSpec);
 
-            if (mPanelOffScreen) {
-                // In order to place the panel off the screen,
-                // the sliding distance will be the height of the entire sliding view
-                // minus the panel height and the notification bar
-                mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight - getNotificationBarHeight();
-            } else {
-                mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
-            }
+            mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
         }
 
         setMeasuredDimension(widthSize, heightSize);
