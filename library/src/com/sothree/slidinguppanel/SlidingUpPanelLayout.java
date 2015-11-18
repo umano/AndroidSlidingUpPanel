@@ -1166,19 +1166,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         applyParallaxForCurrentSlideOffset();
         // Dispatch the slide event
         dispatchOnPanelSlide(mSlideableView);
-        // If the slide offset is negative, and overlay is not on, we need to increase the
-        // height of the main content
-        LayoutParams lp = (LayoutParams) mMainView.getLayoutParams();
-        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - mPanelHeight;
-
-        if (mSlideOffset <= 0 && !mOverlayContent) {
-            // expand the main view
-            lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTop);
-            mMainView.requestLayout();
-        } else if (lp.height != defaultHeight && !mOverlayContent) {
-            lp.height = defaultHeight;
-            mMainView.requestLayout();
-        }
+        mMainView.requestLayout();
     }
 
     @Override
@@ -1380,6 +1368,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mSlideState = PanelState.HIDDEN;
                     mSlideableView.setVisibility(View.INVISIBLE);
                     dispatchOnPanelHidden(mSlideableView);
+                    requestLayout();
                 } else if (mSlideState != PanelState.ANCHORED) {
                     updateObscuredViewVisibility();
                     mSlideState = PanelState.ANCHORED;
