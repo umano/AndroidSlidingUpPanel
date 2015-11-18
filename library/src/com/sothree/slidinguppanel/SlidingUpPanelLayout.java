@@ -1481,8 +1481,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         private SavedState(Parcel in) {
             super(in);
+            String panelStateString = in.readString();
             try {
-                mSlideState = Enum.valueOf(PanelState.class, in.readString());
+                mSlideState = panelStateString != null ? Enum.valueOf(PanelState.class, panelStateString)
+                        : PanelState.COLLAPSED;
             } catch (IllegalArgumentException e) {
                 mSlideState = PanelState.COLLAPSED;
             }
@@ -1491,7 +1493,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-            out.writeString(mSlideState.toString());
+            out.writeString(mSlideState == null ? null : mSlideState.toString());
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR =
