@@ -938,6 +938,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    private boolean isOverHorizontalScrollView(View view, int x, int y) {
+        if (isViewUnder(view, x, y)) {
+            if (view instanceof HorizontalScrollView) {
+                return true;
+            }
+            if (view instanceof ViewGroup) {
+                ViewGroup viewGroup = (ViewGroup) view;
+                for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                    View child = viewGroup.getChildAt(i);
+                    if (isOverHorizontalScrollView(child, x, y)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
@@ -959,6 +977,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
             if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                return super.dispatchTouchEvent(ev);
+            }
+
+            if (isOverHorizontalScrollView(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                 return super.dispatchTouchEvent(ev);
             }
 
