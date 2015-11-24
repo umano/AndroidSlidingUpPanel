@@ -29,6 +29,9 @@ import android.widget.ScrollView;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SlidingUpPanelLayout extends ViewGroup {
 
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
@@ -133,10 +136,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private boolean mClipPanel = DEFAULT_CLIP_PANEL_FLAG;
 
     /**
-     * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
+     * If provided, the panel can be dragged by only those views. Otherwise, the entire panel can be
      * used for dragging.
      */
-    private View mDragView;
+    private List<View> mDragViews = new ArrayList<View>();
+
 
     /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
@@ -535,31 +539,52 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param dragView A view that will be used to drag the panel.
      */
     public void setDragView(View dragView) {
-        if (mDragView != null) {
-            mDragView.setOnClickListener(null);
+        clearDragViews();
+
+        if (dragView != null) {
+            setupViewForDragView(dragView);
+            mDragViews.add(dragView);
         }
-        mDragView = dragView;
-        if (mDragView != null) {
-            mDragView.setClickable(true);
-            mDragView.setFocusable(false);
-            mDragView.setFocusableInTouchMode(false);
-            mDragView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!isEnabled() || !isTouchEnabled()) return;
-                    if (mSlideState != PanelState.EXPANDED && mSlideState != PanelState.ANCHORED) {
-                        if (mAnchorPoint < 1.0f) {
-                            setPanelState(PanelState.ANCHORED);
-                        } else {
-                            setPanelState(PanelState.EXPANDED);
-                        }
+    }
+
+    public void setDragViews(List<View> views) {
+        clearDragViews();
+
+        for (View dragView : views) {
+            setupViewForDragView(dragView);
+            mDragViews.add(dragView);
+        }
+    }
+
+    private boolean hasAnyDragViews() {
+        return mDragViews.size() > 0;
+    }
+
+    private void clearDragViews(){
+        for (View oldDragView : mDragViews)
+            oldDragView.setOnClickListener(null);
+        mDragViews.clear();
+    }
+
+    private void setupViewForDragView(View dragView){
+        dragView.setClickable(true);
+        dragView.setFocusable(false);
+        dragView.setFocusableInTouchMode(false);
+        dragView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isEnabled() || !isTouchEnabled()) return;
+                if (mSlideState != PanelState.EXPANDED && mSlideState != PanelState.ANCHORED) {
+                    if (mAnchorPoint < 1.0f) {
+                        setPanelState(PanelState.ANCHORED);
                     } else {
-                        setPanelState(PanelState.COLLAPSED);
+                        setPanelState(PanelState.EXPANDED);
                     }
+                } else {
+                    setPanelState(PanelState.COLLAPSED);
                 }
-            });
-            ;
-        }
+            }
+        });
     }
 
     /**
@@ -751,7 +776,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mMainView = getChildAt(0);
         mSlideableView = getChildAt(1);
-        if (mDragView == null) {
+        if (!hasAnyDragViews()) {
             setDragView(mSlideableView);
         }
 
@@ -910,7 +935,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
 
-                if ((ady > dragSlop && adx > ady) || !isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                int dragViewsUnderCurrentViewCount = 0;
+
+                for (View dragView : mDragViews) {
+                    dragViewsUnderCurrentViewCount += (isViewUnder(dragView, (int)mInitialMotionX, (int)mInitialMotionY)) ? 1 : 0;
+                }
+
+                if ((ady > dragSlop && adx > ady) || dragViewsUnderCurrentViewCount == 0) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
