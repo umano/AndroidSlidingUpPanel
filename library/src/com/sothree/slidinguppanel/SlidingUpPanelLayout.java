@@ -902,6 +902,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
+                if (!isViewUnder(mDragView, (int) x, (int) y)) {
+                    mDragHelper.cancel();
+                    mIsUnableToDrag = true;
+                    return false;
+                }
                 break;
             }
 
@@ -910,7 +915,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
 
-                if ((ady > dragSlop && adx > ady) || !isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                if ((ady > dragSlop && adx > ady)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
