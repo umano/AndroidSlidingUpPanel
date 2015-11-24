@@ -174,7 +174,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * If the current slide state is DRAGGING, this will store the last non dragging state
      */
-    private PanelState mLastNotDraggingSlideState = null;
+    private PanelState mLastNotDraggingSlideState = DEFAULT_SLIDE_STATE;
 
     /**
      * How far the panel is offset from its expanded position.
