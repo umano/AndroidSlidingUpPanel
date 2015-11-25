@@ -30,6 +30,7 @@ public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
 
     private SlidingUpPanelLayout mLayout;
+	private TextView mText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,13 +94,13 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelExpanded(View panel) {
                 Log.i(TAG, "onPanelExpanded");
-
+				mText.setText("Panel is expanded");
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
                 Log.i(TAG, "onPanelCollapsed");
-
+	            mText.setText("Panel is collapsed");
             }
 
             @Override
@@ -110,8 +111,17 @@ public class DemoActivity extends ActionBarActivity {
             @Override
             public void onPanelHidden(View panel) {
                 Log.i(TAG, "onPanelHidden");
+	            mText.setText("Panel is hidden. Click to show panel");
             }
         });
+
+		mText = (TextView) findViewById(R.id.main);
+		mText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLayout.setPanelState(PanelState.COLLAPSED);
+			}
+		});
 
         TextView t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
