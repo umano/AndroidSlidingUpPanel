@@ -159,6 +159,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The main view
      */
     private View mMainView;
+    private View antiDragView;
 
     /**
      * Current state of the slideable view.
@@ -910,7 +911,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 final float ady = Math.abs(y - mInitialMotionY);
                 final int dragSlop = mDragHelper.getTouchSlop();
 
-                if ((ady > dragSlop && adx > ady) || !isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                if ((ady > dragSlop && adx > ady) || !checkTouchingDragView(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
@@ -966,7 +967,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
-            if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+            if (!checkTouchingDragView(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                 return super.dispatchTouchEvent(ev);
             }
 
@@ -1035,6 +1036,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int screenY = parentLocation[1] + y;
         return screenX >= viewLocation[0] && screenX < viewLocation[0] + view.getWidth() &&
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
+    }
+
+    private boolean checkTouchingDragView(View view, int x, int y) {
+        return isViewUnder(view, x, y) && !isViewUnder(antiDragView, x, y);
+    }
+
+    public void setAntiDragView(View antiDragView) {
+        this.antiDragView = antiDragView;
     }
 
     protected int getScrollableViewScrollPosition() {
