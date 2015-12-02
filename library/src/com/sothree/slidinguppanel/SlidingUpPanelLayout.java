@@ -20,8 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
@@ -308,7 +306,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return;
         }
 
-        Interpolator scrollerInterpolator = null;
         if (attrs != null) {
             TypedArray defAttrs = context.obtainStyledAttributes(attrs, DEFAULT_ATTRS);
 
@@ -339,11 +336,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
                 mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
-
-                int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
-                if (interpolatorResId != -1) {
-                    scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
-                }
             }
 
             ta.recycle();
@@ -372,7 +364,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.5f, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
