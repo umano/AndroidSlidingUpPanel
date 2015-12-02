@@ -87,6 +87,7 @@ or `?attr/actionBarSize` to support older API versions.
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
+* You can provide a scroll interpolator for the panel movement by setting `umanoScrollInterpolator` attribute. For instance, if you want a bounce or overshoot effect for the panel.
 * If you have a ScrollView or a ListView inside of the panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
@@ -101,8 +102,9 @@ Tested on Android 2.2+
 
 ### Other Contributors
 
+* Nov 23, 15 - [@kiyeonk](https://github.com/kiyeonk) - umanoScrollInterpolator support
 * Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
-* Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
+* Aug 20, 13 - [@gipi](https://github.com/gipi) - Android Studio Support
 * Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
 * Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
 * Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
@@ -128,6 +130,13 @@ If you have an awesome pull request, send it over!
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
 * 1.0.1 - Initial Release 
+
+### Known Users
+
+* [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
+* Umano Android App (Acquired by Dropbox)
+
+If you are using the library and you would like to have your app listed, simply send us a pull request.
 
 ### Licence
 

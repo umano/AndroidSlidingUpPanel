@@ -8,6 +8,7 @@
         <attr name="umanoFadeColor" format="color" />
         <attr name="umanoFlingVelocity" format="integer" />
         <attr name="umanoDragView" format="reference" />
+        <attr name="umanoAntiDragView" format="reference" />
         <attr name="umanoScrollableView" format="reference" />
         <attr name="umanoOverlay" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
@@ -18,6 +19,7 @@
             <enum name="anchored" value="2" />
             <enum name="hidden" value="3" />
         </attr>
+        <attr name="umanoScrollInterpolator" format="reference" />
     </declare-styleable>
 
 </resources>
