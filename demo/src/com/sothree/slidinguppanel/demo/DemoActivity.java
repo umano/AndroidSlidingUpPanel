@@ -3,7 +3,7 @@ package com.sothree.slidinguppanel.demo;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -26,7 +26,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 import java.util.Arrays;
 import java.util.List;
 
-public class DemoActivity extends AppCompatActivity {
+public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";
 
     private SlidingUpPanelLayout mLayout;
@@ -79,7 +79,7 @@ public class DemoActivity extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                your_array_list);
+                your_array_list );
 
         lv.setAdapter(arrayAdapter);
 
@@ -150,7 +150,7 @@ public class DemoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch (item.getItemId()){
             case R.id.action_toggle: {
                 if (mLayout != null) {
                     if (mLayout.getPanelState() != PanelState.HIDDEN) {
