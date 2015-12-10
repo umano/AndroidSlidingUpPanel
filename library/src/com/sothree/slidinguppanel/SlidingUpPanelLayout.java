@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -149,6 +150,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private View mScrollableView;
     private int mScrollableViewResId;
+
+    /**
+     * If provided, the panel won't hide until it's fully expanded
+     */
+    private AppBarLayout mCollapsingAppBar;
+    private int mCollapsingAppBarResId;
 
     /**
      * The child view that can slide, if any.
@@ -330,6 +337,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoDragView, -1);
                 mScrollableViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollableView, -1);
+                mCollapsingAppBarResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoAppBarView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay, DEFAULT_OVERLAY_FLAG);
                 mClipPanel = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoClipPanel, DEFAULT_CLIP_PANEL_FLAG);
@@ -387,6 +395,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         if (mScrollableViewResId != -1) {
             setScrollableView(findViewById(mScrollableViewResId));
+        }
+        if(mCollapsingAppBarResId != -1) {
+            try {
+                setCollapsingAppBar((AppBarLayout) findViewById(mCollapsingAppBarResId));
+            } catch (ClassCastException ce) {
+                ce.printStackTrace();
+            }
         }
     }
 
@@ -580,6 +595,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setScrollableView(View scrollableView) {
         mScrollableView = scrollableView;
+    }
+
+    /**
+     * Set the appbar that contains the collpasing toolbar. If set, the panel will not hide 
+     * until the toolbar is totally expanded
+     *
+     * @param collapsingAppBar The appbar containing the collapsing toolbar layout
+     */
+    public void setCollapsingAppBar(AppBarLayout collapsingAppBar) {
+        mCollapsingAppBar = collapsingAppBar;
     }
 
     /**
@@ -978,6 +1003,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
+                //Is the AppBar fully expanded?
+                //If not, let the scrolling child handle it
+                if(mCollapsingAppBar != null && !isFullyExpanded(mCollapsingAppBar)) {
+                    mIsScrollableViewHandlingTouch = true;
+                    return super.dispatchTouchEvent(ev);
+                }
 
                 // Was the child handling the touch previously?
                 // Then we need to rejigger things so that the
@@ -1075,6 +1106,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         } else {
             return 0;
         }
+    }
+    
+    private boolean isFullyExpanded(AppBarLayout appBar) {
+        return (appBar.getHeight() - appBar.getBottom()) == 0;
     }
 
     /*
