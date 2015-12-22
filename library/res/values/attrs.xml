@@ -18,6 +18,7 @@
             <enum name="anchored" value="2" />
             <enum name="hidden" value="3" />
         </attr>
+        <attr name="umanoScrollInterpolator" format="reference" />
     </declare-styleable>
 
 </resources>

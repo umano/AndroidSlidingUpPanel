@@ -345,7 +345,19 @@ public class ViewDragHelper {
      * @return a new ViewDragHelper instance
      */
     public static ViewDragHelper create(ViewGroup forParent, Callback cb) {
-        return new ViewDragHelper(forParent.getContext(), forParent, cb);
+        return new ViewDragHelper(forParent.getContext(), forParent, null, cb);
+    }
+
+    /**
+     * Factory method to create a new ViewDragHelper with the specified interpolator.
+     *
+     * @param forParent Parent view to monitor
+     * @param interpolator interpolator for scroller
+     * @param cb Callback to provide information and receive events
+     * @return a new ViewDragHelper instance
+     */
+    public static ViewDragHelper create(ViewGroup forParent, Interpolator interpolator, Callback cb) {
+        return new ViewDragHelper(forParent.getContext(), forParent, interpolator, cb);
     }
 
     /**
@@ -364,14 +376,32 @@ public class ViewDragHelper {
     }
 
     /**
+     * Factory method to create a new ViewDragHelper with the specified interpolator.
+     *
+     * @param forParent Parent view to monitor
+     * @param sensitivity Multiplier for how sensitive the helper should be about detecting
+     *                    the start of a drag. Larger values are more sensitive. 1.0f is normal.
+     * @param interpolator interpolator for scroller
+     * @param cb Callback to provide information and receive events
+     * @return a new ViewDragHelper instance
+     */
+    public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Interpolator interpolator, Callback cb) {
+        final ViewDragHelper helper = create(forParent, interpolator, cb);
+        helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
+        return helper;
+    }
+
+    /**
      * Apps should use ViewDragHelper.create() to get a new instance.
      * This will allow VDH to use internal compatibility implementations for different
      * platform versions.
+     * If the interpolator is null, the default interpolator will be used.
      *
      * @param context Context to initialize config-dependent params from
      * @param forParent Parent view to monitor
+     * @param interpolator interpolator for scroller
      */
-    private ViewDragHelper(Context context, ViewGroup forParent, Callback cb) {
+    private ViewDragHelper(Context context, ViewGroup forParent, Interpolator interpolator, Callback cb) {
         if (forParent == null) {
             throw new IllegalArgumentException("Parent view may not be null");
         }
@@ -389,7 +419,7 @@ public class ViewDragHelper {
         mTouchSlop = vc.getScaledTouchSlop();
         mMaxVelocity = vc.getScaledMaximumFlingVelocity();
         mMinVelocity = vc.getScaledMinimumFlingVelocity();
-        mScroller = ScrollerCompat.create(context, sInterpolator);
+        mScroller = ScrollerCompat.create(context, interpolator != null ? interpolator : sInterpolator);
     }
 
     /**
@@ -723,6 +753,12 @@ public class ViewDragHelper {
             final int y = mScroller.getCurrY();
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
+            
+            if(!keepGoing && dy != 0) { //fix #525
+                //Invalid drag state
+                mCapturedView.setTop(0);
+                return true;
+            }
 
             if (dx != 0) {
                 mCapturedView.offsetLeftAndRight(dx);
