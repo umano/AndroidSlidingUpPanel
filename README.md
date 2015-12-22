@@ -35,7 +35,7 @@ dependencies {
 * The layout must have `gravity` set to either `top` or `bottom`.
 * Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
-* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height.
+* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height. If you would like to define the height as the percetange of the screen, set it to `match_parent` and also define a `layout_weight` attribute for the sliding view.
 * By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute.
 
 For more information, please refer to the sample code.
