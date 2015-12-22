@@ -805,10 +805,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int childHeightSpec;
             if (lp.height == LayoutParams.WRAP_CONTENT) {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
-            } else if (lp.height == LayoutParams.MATCH_PARENT) {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             } else {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+                // Modify the height based on the weight.
+                if (lp.weight > 0 && lp.weight < 1) {
+                    height = (int) (height * lp.weight);
+                } else if (lp.height != LayoutParams.MATCH_PARENT) {
+                    height = lp.height;
+                }
+                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             }
 
             child.measure(childWidthSpec, childHeightSpec);
@@ -1432,12 +1436,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 android.R.attr.layout_weight
         };
 
+        public float weight = 0;
+
         public LayoutParams() {
             super(MATCH_PARENT, MATCH_PARENT);
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
+        }
+
+        public LayoutParams(int width, int height, float weight) {
+            super(width, height);
+            this.weight = weight;
         }
 
         public LayoutParams(android.view.ViewGroup.LayoutParams source) {
@@ -1455,8 +1466,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
 
-            final TypedArray a = c.obtainStyledAttributes(attrs, ATTRS);
-            a.recycle();
+            final TypedArray ta = c.obtainStyledAttributes(attrs, ATTRS);
+            if (ta != null) {
+                this.weight = ta.getFloat(0, 0);
+            }
+
+            ta.recycle();
         }
     }
 
