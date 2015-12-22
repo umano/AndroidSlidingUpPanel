@@ -14,7 +14,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,8 +22,6 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.ListView;
-import android.widget.ScrollView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
@@ -149,6 +146,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private View mScrollableView;
     private int mScrollableViewResId;
+    private ScrollableViewHelper mScrollableViewHelper = new ScrollableViewHelper();
 
     /**
      * The child view that can slide, if any.
@@ -583,6 +581,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     * @param helper
+     */
+    public void setScrollableViewHelper(ScrollableViewHelper helper) {
+        mScrollableViewHelper = helper;
+    }
+
+    /**
      * Set an anchor point where the panel can stop during sliding
      *
      * @param anchorPoint A value between 0 and 1, determining the position of the anchor point
@@ -974,7 +980,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
-                if (getScrollableViewScrollPosition() > 0) {
+                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mIsSlidingUp) > 0) {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -1035,46 +1041,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int screenY = parentLocation[1] + y;
         return screenX >= viewLocation[0] && screenX < viewLocation[0] + view.getWidth() &&
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
-    }
-
-    protected int getScrollableViewScrollPosition() {
-        if (mScrollableView == null) return 0;
-        if (mScrollableView instanceof ScrollView) {
-            if (mIsSlidingUp) {
-                return mScrollableView.getScrollY();
-            } else {
-                ScrollView sv = ((ScrollView) mScrollableView);
-                View child = sv.getChildAt(0);
-                return (child.getBottom() - (sv.getHeight() + sv.getScrollY()));
-            }
-        } else if (mScrollableView instanceof ListView && ((ListView) mScrollableView).getChildCount() > 0) {
-            ListView lv = ((ListView) mScrollableView);
-            if (lv.getAdapter() == null) return 0;
-            if (mIsSlidingUp) {
-                View firstChild = lv.getChildAt(0);
-                // Approximate the scroll position based on the top child and the first visible item
-                return lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
-            } else {
-                View lastChild = lv.getChildAt(lv.getChildCount() - 1);
-                // Approximate the scroll position based on the bottom child and the last visible item
-                return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
-            }
-        } else if (mScrollableView instanceof RecyclerView && ((RecyclerView) mScrollableView).getChildCount() > 0) {
-            RecyclerView rv = ((RecyclerView) mScrollableView);
-            RecyclerView.LayoutManager lm = rv.getLayoutManager();
-            if (rv.getAdapter() == null) return 0;
-            if (mIsSlidingUp) {
-                View firstChild = rv.getChildAt(0);
-                // Approximate the scroll position based on the top child and the first visible item
-                return rv.getChildLayoutPosition(firstChild) * lm.getDecoratedMeasuredHeight(firstChild) - lm.getDecoratedTop(firstChild);
-            } else {
-                View lastChild = rv.getChildAt(rv.getChildCount() - 1);
-                // Approximate the scroll position based on the bottom child and the last visible item
-                return (rv.getAdapter().getItemCount() - 1) * lm.getDecoratedMeasuredHeight(lastChild) + lm.getDecoratedBottom(lastChild) - rv.getBottom();
-            }
-        } else {
-            return 0;
-        }
     }
 
     /*
