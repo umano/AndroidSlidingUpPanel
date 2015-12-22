@@ -137,6 +137,10 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.2.1
+  * Add support for `umanoScrollInterpolator`
+  * Add upport for percentage-based sliding panel height using `layout_weight` attribute
+  * Add `ScrollableViewHelper` to allow users extend support for new types of scrollable views.
 * 3.2.0
   * Rename `umanoParalaxOffset` to `umanoParallaxOffset`
   * RecyclerView support.
