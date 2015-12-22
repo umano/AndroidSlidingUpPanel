@@ -88,9 +88,32 @@ or `?attr/actionBarSize` to support older API versions.
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
 * You can provide a scroll interpolator for the panel movement by setting `umanoScrollInterpolator` attribute. For instance, if you want a bounce or overshoot effect for the panel.
-* If you have a ScrollView or a ListView inside of the panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+
+### Scrollable Sliding Views
+
+If you have a scrollable view inside of the sliding panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling. The panel supports `ListView`, `ScrollView` and `RecyclerView` out of the box, but you can add support for any type of a scrollable view by setting a custom `ScrollableViewHelper`. Here is an example for `NestedScrollView`
+
+```
+public class NestedScrollableViewHelper extends ScrollableViewHelper {
+  public int getScrollableViewScrollPosition(View scrollableView, boolean isSlidingUp) {
+    if (mScrollableView instanceof NestedScrollView) {
+      if(isSlidingUp){
+        return mScrollableView.getScrollY();
+      } else {
+        NestedScrollView nsv = ((NestedScrollView) mScrollableView);
+        View child = nsv.getChildAt(0);
+        return (child.getBottom() - (nsv.getHeight() + nsv.getScrollY()));
+      }
+    } else {
+      return 0;
+    }
+  }
+}
+```
+
+Once you define your helper, you can set it using `setScrollableViewHelper` on the sliding panel.
 
 ### Implementation
 
