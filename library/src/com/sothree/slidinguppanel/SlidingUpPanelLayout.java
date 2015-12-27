@@ -157,7 +157,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The main view
      */
     private View mMainView;
-    private View antiDragView;
+    private View mAntiDragView;
 
     /**
      * Current state of the slideable view.
@@ -583,6 +583,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     /**
      * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     *
      * @param helper
      */
     public void setScrollableViewHelper(ScrollableViewHelper helper) {
@@ -1049,11 +1050,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean checkTouchingDragView(View view, int x, int y) {
-        return isViewUnder(view, x, y) && !isViewUnder(antiDragView, x, y);
+        return isViewUnder(view, x, y) && !isViewUnder(mAntiDragView, x, y);
     }
 
     public void setAntiDragView(View antiDragView) {
-        this.antiDragView = antiDragView;
+        mAntiDragView = antiDragView;
     }
 
     /*
