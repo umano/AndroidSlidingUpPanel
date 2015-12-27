@@ -14,7 +14,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,8 +22,6 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.ListView;
-import android.widget.ScrollView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
@@ -149,6 +146,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private View mScrollableView;
     private int mScrollableViewResId;
+    private ScrollableViewHelper mScrollableViewHelper = new ScrollableViewHelper();
 
     /**
      * The child view that can slide, if any.
@@ -584,6 +582,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     * @param helper
+     */
+    public void setScrollableViewHelper(ScrollableViewHelper helper) {
+        mScrollableViewHelper = helper;
+    }
+
+    /**
      * Set an anchor point where the panel can stop during sliding
      *
      * @param anchorPoint A value between 0 and 1, determining the position of the anchor point
@@ -800,10 +806,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int childHeightSpec;
             if (lp.height == LayoutParams.WRAP_CONTENT) {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
-            } else if (lp.height == LayoutParams.MATCH_PARENT) {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             } else {
-                childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+                // Modify the height based on the weight.
+                if (lp.weight > 0 && lp.weight < 1) {
+                    height = (int) (height * lp.weight);
+                } else if (lp.height != LayoutParams.MATCH_PARENT) {
+                    height = lp.height;
+                }
+                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             }
 
             child.measure(childWidthSpec, childHeightSpec);
@@ -975,7 +985,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
-                if (getScrollableViewScrollPosition() > 0) {
+                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mIsSlidingUp) > 0) {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -1044,46 +1054,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public void setAntiDragView(View antiDragView) {
         this.antiDragView = antiDragView;
-    }
-
-    protected int getScrollableViewScrollPosition() {
-        if (mScrollableView == null) return 0;
-        if (mScrollableView instanceof ScrollView) {
-            if (mIsSlidingUp) {
-                return mScrollableView.getScrollY();
-            } else {
-                ScrollView sv = ((ScrollView) mScrollableView);
-                View child = sv.getChildAt(0);
-                return (child.getBottom() - (sv.getHeight() + sv.getScrollY()));
-            }
-        } else if (mScrollableView instanceof ListView && ((ListView) mScrollableView).getChildCount() > 0) {
-            ListView lv = ((ListView) mScrollableView);
-            if (lv.getAdapter() == null) return 0;
-            if (mIsSlidingUp) {
-                View firstChild = lv.getChildAt(0);
-                // Approximate the scroll position based on the top child and the first visible item
-                return lv.getFirstVisiblePosition() * firstChild.getHeight() - firstChild.getTop();
-            } else {
-                View lastChild = lv.getChildAt(lv.getChildCount() - 1);
-                // Approximate the scroll position based on the bottom child and the last visible item
-                return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
-            }
-        } else if (mScrollableView instanceof RecyclerView && ((RecyclerView) mScrollableView).getChildCount() > 0) {
-            RecyclerView rv = ((RecyclerView) mScrollableView);
-            RecyclerView.LayoutManager lm = rv.getLayoutManager();
-            if (rv.getAdapter() == null) return 0;
-            if (mIsSlidingUp) {
-                View firstChild = rv.getChildAt(0);
-                // Approximate the scroll position based on the top child and the first visible item
-                return rv.getChildLayoutPosition(firstChild) * lm.getDecoratedMeasuredHeight(firstChild) - lm.getDecoratedTop(firstChild);
-            } else {
-                View lastChild = rv.getChildAt(rv.getChildCount() - 1);
-                // Approximate the scroll position based on the bottom child and the last visible item
-                return (rv.getAdapter().getItemCount() - 1) * lm.getDecoratedMeasuredHeight(lastChild) + lm.getDecoratedBottom(lastChild) - rv.getBottom();
-            }
-        } else {
-            return 0;
-        }
     }
 
     /*
@@ -1475,12 +1445,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 android.R.attr.layout_weight
         };
 
+        public float weight = 0;
+
         public LayoutParams() {
             super(MATCH_PARENT, MATCH_PARENT);
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
+        }
+
+        public LayoutParams(int width, int height, float weight) {
+            super(width, height);
+            this.weight = weight;
         }
 
         public LayoutParams(android.view.ViewGroup.LayoutParams source) {
@@ -1498,8 +1475,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
 
-            final TypedArray a = c.obtainStyledAttributes(attrs, ATTRS);
-            a.recycle();
+            final TypedArray ta = c.obtainStyledAttributes(attrs, ATTRS);
+            if (ta != null) {
+                this.weight = ta.getFloat(0, 0);
+            }
+
+            ta.recycle();
         }
     }
 
