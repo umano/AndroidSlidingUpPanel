@@ -21,4 +21,21 @@
         <attr name="umanoScrollInterpolator" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="FloatingActionButtonLayout">
+        <attr name="umanoFabMode" format="enum">
+            <enum name="leave_behind" value="0" />
+            <enum name="circular_reveal" value="1" />
+            <enum name="fade" value="2" />
+        </attr>
+        <attr name="umanoFabHideMode" format="enum">
+            <enum name="leave_behind" value="0" />
+            <enum name="circular_reveal" value="1" />
+            <enum name="fade" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FloatingActionButtonLayout_LayoutParams">
+        <attr name="android:layout_gravity"/>
+    </declare-styleable>
+
 </resources>

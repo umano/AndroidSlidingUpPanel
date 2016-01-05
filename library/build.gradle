@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.TR4Android'
 
 repositories {
     mavenCentral()
@@ -28,4 +31,4 @@ android {
     }
 }
 
-apply from: '../maven_push.gradle'
+//apply from: '../maven_push.gradle'
