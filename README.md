@@ -111,18 +111,18 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.1.1'
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
 }
 ```
 
-### Usage 
+### Usage
 
 * Include `com.sothree.slidinguppanel.SlidingUpPanelLayout` as the root element in your activity layout.
 * The layout must have `gravity` set to either `top` or `bottom`.
 * Make sure that it has two children. The first child is your main layout. The second child is your layout for the sliding up panel.
 * The main layout should have the width and the height set to `match_parent`.
-* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height.
-* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute. 
+* The sliding layout should have the width set to `match_parent` and the height set to either `match_parent`, `wrap_content` or the max desireable height. If you would like to define the height as the percetange of the screen, set it to `match_parent` and also define a `layout_weight` attribute for the sliding view.
+* By default, the whole panel will act as a drag region and will intercept clicks and drag events. You can restrict the drag area to a specific view by using the `setDragView` method or `umanoDragView` attribute.
 
 For more information, please refer to the sample code.
 
@@ -169,13 +169,37 @@ or `?attr/actionBarSize` to support older API versions.
 * Use `setTouchEnabled(false)` to disables panel's touch responsiveness (drag and click), you can still control the panel programatically
 * Use `getPanelState` to get the current panel state
 * Use `setPanelState` to set the current panel state
-* You can add paralax to the main view by setting `umanoParalaxOffset` attribute (see demo for the example).
+* You can add parallax to the main view by setting `umanoParallaxOffset` attribute (see demo for the example).
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.
-* If you have a ScrollView or a ListView inside of the panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling.
+* You can provide a scroll interpolator for the panel movement by setting `umanoScrollInterpolator` attribute. For instance, if you want a bounce or overshoot effect for the panel.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+
+### Scrollable Sliding Views
+
+If you have a scrollable view inside of the sliding panel, make sure to set `umanoScrollableView` attribute on the panel to supported nested scrolling. The panel supports `ListView`, `ScrollView` and `RecyclerView` out of the box, but you can add support for any type of a scrollable view by setting a custom `ScrollableViewHelper`. Here is an example for `NestedScrollView`
+
+```
+public class NestedScrollableViewHelper extends ScrollableViewHelper {
+  public int getScrollableViewScrollPosition(View scrollableView, boolean isSlidingUp) {
+    if (mScrollableView instanceof NestedScrollView) {
+      if(isSlidingUp){
+        return mScrollableView.getScrollY();
+      } else {
+        NestedScrollView nsv = ((NestedScrollView) mScrollableView);
+        View child = nsv.getChildAt(0);
+        return (child.getBottom() - (nsv.getHeight() + nsv.getScrollY()));
+      }
+    } else {
+      return 0;
+    }
+  }
+}
+```
+
+Once you define your helper, you can set it using `setScrollableViewHelper` on the sliding panel.
 
 ### Implementation
 
@@ -187,8 +211,9 @@ Tested on Android 2.2+
 
 ### Other Contributors
 
+* Nov 23, 15 - [@kiyeonk](https://github.com/kiyeonk) - umanoScrollInterpolator support
 * Jan 21, 14 - ChaYoung You ([@yous](https://github.com/yous)) - Slide from the top support
-* Aug 20, 13 - ([@gipi](https://github.com/gipi)) - Android Studio Support
+* Aug 20, 13 - [@gipi](https://github.com/gipi) - Android Studio Support
 * Jul 24, 13 - Philip Schiffer ([@hameno](https://github.com/hameno)) - Maven Support
 * Oct 20, 13 - Irina Preșa ([@iriina](https://github.com/iriina)) - Anchor Support
 * Dec 1, 13 - ([@youchy](https://github.com/youchy)) - XML Attributes Support
@@ -198,6 +223,13 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.2.1
+  * Add support for `umanoScrollInterpolator`
+  * Add upport for percentage-based sliding panel height using `layout_weight` attribute
+  * Add `ScrollableViewHelper` to allow users extend support for new types of scrollable views.
+* 3.2.0
+  * Rename `umanoParalaxOffset` to `umanoParallaxOffset`
+  * RecyclerView support.
 * 3.1.0
   * Added `umanoScrollableView` to supported nested scrolling in children (only ScrollView and ListView are supported for now)
 * 3.0.0
@@ -211,6 +243,13 @@ If you have an awesome pull request, send it over!
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
 * 1.0.1 - Initial Release 
+
+### Known Users
+
+* [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
+* Umano Android App (Acquired by Dropbox)
+
+If you are using the library and you would like to have your app listed, simply send us a pull request.
 
 ### Licence
 

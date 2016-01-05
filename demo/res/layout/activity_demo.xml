@@ -14,10 +14,10 @@
         android:layout_height="match_parent"
         android:gravity="bottom"
         sothree:umanoDragView="@+id/dragView"
-        sothree:umanoInitialState="hidden"
+        sothree:umanoInitialState="collapsed"
         sothree:umanoOverlay="true"
         sothree:umanoPanelHeight="68dp"
-        sothree:umanoParalaxOffset="100dp"
+        sothree:umanoParallaxOffset="100dp"
         sothree:umanoScrollableView="@+id/list"
         sothree:umanoShadowHeight="4dp">
 
