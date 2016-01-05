@@ -186,6 +186,19 @@ public class FloatingActionButtonLayout extends ViewGroup {
         }
     }
 
+    /**
+     * method to get the visibility of the Floating Action Button
+     * as previously set with {@link #setFloatingActionButtonVisibility(int)}
+     *
+     * @return integer with the desired visibility (is one of either View.VISIBLE, View.INVISIBLE or View.GONE)
+     */
+    public int getFloatingActionButtonVisibility() {
+        if (mSlidingUpPanelLayout != null) {
+            return mSlidingUpPanelLayout.getFloatingActionButtonVisibility();
+        }
+        return -1; // This shouldn't happen in real life
+    }
+
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new FloatingActionButtonLayout.LayoutParams(getContext(), attrs);

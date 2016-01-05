@@ -470,6 +470,10 @@ public class ViewDragHelper {
         }
     }
 
+    protected int getFabVisibility() {
+        return mFabVisibility;
+    }
+
     protected void setFabMode(FloatingActionButtonLayout.FabMode fabMode) {
         mFabMode = fabMode;
     }

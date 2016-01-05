@@ -645,6 +645,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mDragHelper.setFabVisibility(visibility);
     }
 
+    public int getFloatingActionButtonVisibility() {
+        return mDragHelper.getFabVisibility();
+    }
+
     /**
      * Set the draggable view portion. Use to null, to allow the whole panel to be draggable
      *

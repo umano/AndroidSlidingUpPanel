@@ -127,13 +127,13 @@ public class DemoActivity extends AppCompatActivity {
             @Override
             public void onPanelHiddenExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelHiddenExecuted");
-                mFAB.hide();
+                if (mFabLayout.getFloatingActionButtonVisibility() == View.VISIBLE) mFAB.hide();
             }
 
             @Override
             public void onPanelShownExecuted(View panel, Interpolator interpolator, int duration) {
                 Log.i(TAG, "onPanelShownExecuted");
-                mFAB.show();
+                if (mFabLayout.getFloatingActionButtonVisibility() == View.VISIBLE) mFAB.show();
             }
 
             @Override
@@ -200,7 +200,7 @@ public class DemoActivity extends AppCompatActivity {
         }
         MenuItem item_visibility = menu.findItem(R.id.action_toggle_visibility);
         if (mFAB != null) {
-            if (mFAB.getVisibility() == View.VISIBLE) {
+            if (mFabLayout.getFloatingActionButtonVisibility() == View.VISIBLE) {
                 item_visibility.setTitle(R.string.action_gone);
             } else {
                 item_visibility.setTitle(R.string.action_visible);
@@ -245,11 +245,11 @@ public class DemoActivity extends AppCompatActivity {
             }
             case R.id.action_toggle_visibility: {
                 if (mFAB != null) {
-                    if (mFAB.getVisibility() != View.VISIBLE) {
-                        mFAB.setVisibility(View.VISIBLE);
+                    if (mFabLayout.getFloatingActionButtonVisibility() != View.VISIBLE) {
+                        mFabLayout.setFloatingActionButtonVisibility(View.VISIBLE);
                         item.setTitle(R.string.action_gone);
                     } else {
-                        mFAB.setVisibility(View.GONE);
+                        mFabLayout.setFloatingActionButtonVisibility(View.GONE);
                         item.setTitle(R.string.action_visible);
                     }
                 }
