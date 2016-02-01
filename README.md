@@ -1,9 +1,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library)
-
+[![Badge](http://www.libtastic.com/static/osbadges/30.png)](http://www.libtastic.com/technology/30/)
 
 Android Sliding Up Panel
 =========================
-[![Badge](http://www.libtastic.com/static/osbadges/30.png)](http://www.libtastic.com/technology/30/)
 
 This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
 
