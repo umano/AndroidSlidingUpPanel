@@ -26,6 +26,9 @@ import android.view.animation.Interpolator;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SlidingUpPanelLayout extends ViewGroup {
 
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
@@ -208,7 +211,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionY;
     private boolean mIsScrollableViewHandlingTouch = false;
 
-    private PanelSlideListener mPanelSlideListener;
+    private List<PanelSlideListener> mPanelSlideListeners = new ArrayList<>();
 
     private final ViewDragHelper mDragHelper;
 
@@ -519,13 +522,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Sets the panel slide listener
+     * Adds a panel slide listener
      *
      * @param listener
      */
-    public void setPanelSlideListener(PanelSlideListener listener) {
-        mPanelSlideListener = listener;
+    public void addPanelSlideListener(PanelSlideListener listener) {
+        mPanelSlideListeners.add(listener);
     }
+
+    /**
+     * Removes a panel slide listener
+     *
+     * @param listener
+     */
+    public void removePanelSlideListener(PanelSlideListener listener) {
+        mPanelSlideListeners.remove(listener);
+    }
+
 
     /**
      * Set the draggable view portion. Use to null, to allow the whole panel to be draggable
@@ -644,35 +657,35 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     void dispatchOnPanelSlide(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelSlide(panel, mSlideOffset);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelSlide(panel, mSlideOffset);
         }
     }
 
     void dispatchOnPanelExpanded(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelExpanded(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelExpanded(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelCollapsed(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelCollapsed(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelCollapsed(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelAnchored(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelAnchored(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelAnchored(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelHidden(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelHidden(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelHidden(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
