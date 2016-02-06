@@ -410,7 +410,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setCoveredFadeColor(int color) {
         mCoveredFadeColor = color;
-        invalidate();
+        requestLayout();
     }
 
     /**
