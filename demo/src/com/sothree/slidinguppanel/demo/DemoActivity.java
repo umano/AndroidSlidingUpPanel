@@ -112,6 +112,12 @@ public class DemoActivity extends ActionBarActivity {
                 Log.i(TAG, "onPanelHidden");
             }
         });
+        mLayout.setFadeOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.setPanelState(PanelState.COLLAPSED);
+            }
+        });
 
         TextView t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));

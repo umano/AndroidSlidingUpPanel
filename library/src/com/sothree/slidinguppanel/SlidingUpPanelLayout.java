@@ -212,6 +212,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private boolean mIsScrollableViewHandlingTouch = false;
 
     private List<PanelSlideListener> mPanelSlideListeners = new ArrayList<>();
+    private View.OnClickListener mFadeOnClickListener;
 
     private final ViewDragHelper mDragHelper;
 
@@ -539,6 +540,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mPanelSlideListeners.remove(listener);
     }
 
+    /**
+     * Provides an on click for the portion of the main view that is dimmed. The listener is not
+     * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
+     * not provided, the clicks on the dimmed area are passed through to the main layout.
+     * @param listener
+     */
+    public void setFadeOnClickListener(View.OnClickListener listener) {
+        mFadeOnClickListener = listener;
+    }
 
     /**
      * Set the draggable view portion. Use to null, to allow the whole panel to be draggable
@@ -921,6 +931,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
+        final float adx = Math.abs(x - mInitialMotionX);
+        final float ady = Math.abs(y - mInitialMotionY);
+        final int dragSlop = mDragHelper.getTouchSlop();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
@@ -931,10 +944,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                final float adx = Math.abs(x - mInitialMotionX);
-                final float ady = Math.abs(y - mInitialMotionY);
-                final int dragSlop = mDragHelper.getTouchSlop();
-
                 if ((ady > dragSlop && adx > ady) || !isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
@@ -950,6 +959,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Added to make scrollable views work (tokudu)
                 if (mDragHelper.isDragging()) {
                     mDragHelper.processTouchEvent(ev);
+                    return true;
+                }
+                // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
+                if (ady <= dragSlop
+                        && adx <= dragSlop
+                        && mSlideOffset >=0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                    playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    mFadeOnClickListener.onClick(this);
                     return true;
                 }
                 break;
@@ -1040,10 +1057,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsScrollableViewHandlingTouch = true;
                 return super.dispatchTouchEvent(ev);
             }
-        } else if (action == MotionEvent.ACTION_UP && mIsScrollableViewHandlingTouch) {
+        } else if (action == MotionEvent.ACTION_UP) {
             // If the scrollable view was handling the touch and we receive an up
             // we want to clear any previous dragging state so we don't intercept a touch stream accidentally
-            mDragHelper.setDragState(ViewDragHelper.STATE_IDLE);
+            if (mIsScrollableViewHandlingTouch) {
+                mDragHelper.setDragState(ViewDragHelper.STATE_IDLE);
+            }
         }
 
         // In all other cases, just let the default behavior take over.
