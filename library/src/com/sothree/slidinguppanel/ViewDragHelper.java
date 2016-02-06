@@ -822,7 +822,7 @@ public class ViewDragHelper {
     }
 
     private void clearMotionHistory(int pointerId) {
-        if (mInitialMotionX == null) {
+        if (mInitialMotionX == null || mInitialMotionX.length <= pointerId) {
             return;
         }
         mInitialMotionX[pointerId] = 0;
