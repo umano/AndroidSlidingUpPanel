@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -173,6 +174,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private PanelState mSlideState = DEFAULT_SLIDE_STATE;
+    private PanelState mTargetSlideState = DEFAULT_SLIDE_STATE;
 
     /**
      * If the current slide state is DRAGGING, this will store the last non dragging state
@@ -235,35 +237,54 @@ public class SlidingUpPanelLayout extends ViewGroup {
          * @param panel       The child view that was moved
          * @param slideOffset The new offset of this sliding pane within its range, from 0-1
          */
-        public void onPanelSlide(View panel, float slideOffset);
+        void onPanelSlide(View panel, float slideOffset);
 
         /**
          * Called when a sliding panel becomes slid completely collapsed.
          *
          * @param panel The child view that was slid to an collapsed position
          */
-        public void onPanelCollapsed(View panel);
+        void onPanelCollapsed(View panel);
+
+        /**
+         * Called when a sliding panel starts going from expanded to collapsed position.
+         * This does not guarantee, that the sliding panel will be collapsed (for example
+         * when the user starts dragging, but drags up again).
+         *
+         * @param panel The child view that is sliding to a collapsed position
+         * @param toHidden Whether the child view is slid to hidden state instead of collapsed state
+         */
+        void onStartPanelCollapseFromExpanded(View panel, boolean toHidden);
 
         /**
          * Called when a sliding panel becomes slid completely expanded.
          *
          * @param panel The child view that was slid to a expanded position
          */
-        public void onPanelExpanded(View panel);
+        void onPanelExpanded(View panel);
+
+        /**
+         * Called when a sliding panel starts going from collapsed to expanded position.
+         * This does not guarantee, that the sliding panel will be expanded (for example
+         * when the user starts dragging, but drags down again).
+         *
+         * @param panel The child view that is sliding to a expanded position
+         */
+        void onStartPanelExpandFromCollapsed(View panel);
 
         /**
          * Called when a sliding panel becomes anchored.
          *
          * @param panel The child view that was slid to a anchored position
          */
-        public void onPanelAnchored(View panel);
+        void onPanelAnchored(View panel);
 
         /**
          * Called when a sliding panel becomes completely hidden.
          *
          * @param panel The child view that was slid to a hidden position
          */
-        public void onPanelHidden(View panel);
+        void onPanelHidden(View panel);
     }
 
     /**
@@ -280,7 +301,64 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         @Override
+        public void onStartPanelCollapseFromExpanded(View panel, boolean toHidden) {
+        }
+
+        @Override
         public void onPanelExpanded(View panel) {
+        }
+
+        @Override
+        public void onStartPanelExpandFromCollapsed(View panel) {
+        }
+
+        @Override
+        public void onPanelAnchored(View panel) {
+        }
+
+        @Override
+        public void onPanelHidden(View panel) {
+        }
+    }
+
+    /**
+     * A PanelSlideListener, which checks whether state changes for start expand
+     * and collapse were successful, and if not, calls the opposite start callback
+     * for restoring the other state.
+     */
+    public static class StartPanelSlideListener implements PanelSlideListener {
+
+        private PanelState assumedPanelState = PanelState.HIDDEN;
+
+        @Override
+        public void onPanelSlide(View panel, float slideOffset) { }
+
+        @Override
+        public final void onPanelCollapsed(View panel) {
+            if(assumedPanelState == PanelState.EXPANDED) {
+                assumedPanelState = PanelState.COLLAPSED;
+                onStartPanelCollapseFromExpanded(panel, false);
+            }
+        }
+
+        @Override
+        @CallSuper
+        public void onStartPanelCollapseFromExpanded(View panel, boolean toHidden) {
+            assumedPanelState = PanelState.COLLAPSED;
+        }
+
+        @Override
+        public final void onPanelExpanded(View panel) {
+            if(assumedPanelState == PanelState.COLLAPSED) {
+                assumedPanelState = PanelState.EXPANDED;
+                onStartPanelExpandFromCollapsed(panel);
+            }
+        }
+
+        @Override
+        @CallSuper
+        public void onStartPanelExpandFromCollapsed(View panel) {
+            assumedPanelState = PanelState.EXPANDED;
         }
 
         @Override
@@ -339,6 +417,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
                 mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
+                mTargetSlideState = mSlideState;
 
                 int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
                 if (interpolatorResId != -1) {
@@ -675,6 +754,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
     void dispatchOnPanelExpanded(View panel) {
         for (PanelSlideListener l : mPanelSlideListeners) {
             l.onPanelExpanded(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnStartPanelCollapseFromExpanded(View panel, boolean toHidden) {
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onStartPanelCollapseFromExpanded(panel, toHidden);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchonStartPanelExpandFromCollapsed(View panel) {
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onStartPanelExpandFromCollapsed(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -1139,15 +1232,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
             switch (state) {
                 case ANCHORED:
+                    mTargetSlideState = PanelState.ANCHORED;
                     smoothSlideTo(mAnchorPoint, 0);
                     break;
                 case COLLAPSED:
+                    mTargetSlideState = PanelState.COLLAPSED;
                     smoothSlideTo(0, 0);
                     break;
                 case EXPANDED:
+                    mTargetSlideState = PanelState.EXPANDED;
                     smoothSlideTo(1.0f, 0);
                     break;
                 case HIDDEN:
+                    mTargetSlideState = PanelState.HIDDEN;
                     int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
                     smoothSlideTo(computeSlideOffset(newTop), 0);
                     break;
@@ -1361,6 +1458,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         mSlideState = ss.mSlideState != null ? ss.mSlideState : DEFAULT_SLIDE_STATE;
+        mTargetSlideState = mSlideState;
     }
 
     private class DragHelperCallback extends ViewDragHelper.Callback {
@@ -1384,21 +1482,33 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     if (mSlideState != PanelState.EXPANDED) {
                         updateObscuredViewVisibility();
                         mSlideState = PanelState.EXPANDED;
+                        mTargetSlideState = PanelState.EXPANDED;
                         dispatchOnPanelExpanded(mSlideableView);
                     }
                 } else if (mSlideOffset == 0) {
                     if (mSlideState != PanelState.COLLAPSED) {
                         mSlideState = PanelState.COLLAPSED;
+                        mTargetSlideState = PanelState.COLLAPSED;
                         dispatchOnPanelCollapsed(mSlideableView);
                     }
                 } else if (mSlideOffset < 0) {
                     mSlideState = PanelState.HIDDEN;
+                    mTargetSlideState = PanelState.HIDDEN;
                     mSlideableView.setVisibility(View.INVISIBLE);
                     dispatchOnPanelHidden(mSlideableView);
                 } else if (mSlideState != PanelState.ANCHORED) {
                     updateObscuredViewVisibility();
                     mSlideState = PanelState.ANCHORED;
+                    mTargetSlideState = PanelState.ANCHORED;
                     dispatchOnPanelAnchored(mSlideableView);
+                }
+            } else {
+                if (mSlideState == PanelState.EXPANDED && mSlideOffset > 0) {
+                    dispatchOnStartPanelCollapseFromExpanded(mSlideableView, mTargetSlideState == PanelState.HIDDEN);
+                    mTargetSlideState = PanelState.COLLAPSED;
+                } else if (mSlideState == PanelState.COLLAPSED && mSlideOffset < 1 && mTargetSlideState != PanelState.HIDDEN) {
+                    dispatchonStartPanelExpandFromCollapsed(mSlideableView);
+                    mTargetSlideState = PanelState.EXPANDED;
                 }
             }
         }
