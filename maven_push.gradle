@@ -19,7 +19,9 @@ afterEvaluate { project ->
                 pom.artifactId = POM_ARTIFACT_ID
 
                 repository(url: sonatypeRepositoryUrl) {
+                  if(project.hasProperty('nexusUsername')) {
                     authentication(userName: nexusUsername, password: nexusPassword)
+                  }
                 }
 
                 pom.project {
