@@ -108,6 +108,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int mPanelHeight = -1;
 
     /**
+     * The size offset of the overhang relative to height in pixels.
+     */
+    private int mPanelHeightOffset = -1;
+
+    /**
      * The size of the shadow in pixels.
      */
     private int mShadowHeight = -1;
@@ -324,6 +329,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (ta != null) {
                 mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_umanoPanelHeight, -1);
+                mPanelHeightOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_umanoPanelHeightOffset, -1);
                 mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_umanoShadowHeight, -1);
                 mParallaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_umanoParallaxOffset, -1);
 
@@ -444,6 +450,30 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         mPanelHeight = val;
+        mPanelHeightOffset = -1;
+        if (!mFirstLayout) {
+            requestLayout();
+        }
+
+        if (getPanelState() == PanelState.COLLAPSED) {
+            smoothToBottom();
+            invalidate();
+            return;
+        }
+    }
+
+    /**
+     * Set the collapsed panel height offset in pixels
+     *
+     * @param val A height offset in pixels
+     */
+    public void setPanelHeightOffset(int val) {
+        if (getPanelHeightOffset() == val) {
+            return;
+        }
+
+        mPanelHeightOffset = val;
+        mPanelHeight = -1;
         if (!mFirstLayout) {
             requestLayout();
         }
@@ -483,6 +513,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public int getPanelHeight() {
         return mPanelHeight;
+    }
+
+    /**
+     * @return The current collapsed panel height offset
+     */
+    public int getPanelHeightOffset() {
+        return mPanelHeightOffset;
     }
 
     /**
@@ -808,7 +845,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int width = layoutWidth;
             if (child == mMainView) {
                 if (!mOverlayContent && mSlideState != PanelState.HIDDEN) {
-                    height -= mPanelHeight;
+                    height -= calculatePanelHeight(heightSize);
                 }
 
                 width -= lp.leftMargin + lp.rightMargin;
@@ -843,7 +880,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             child.measure(childWidthSpec, childHeightSpec);
 
             if (child == mSlideableView) {
-                mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
+                mSlideRange = mSlideableView.getMeasuredHeight() - calculatePanelHeight(heightSize);
             }
         }
 
@@ -866,7 +903,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mSlideOffset = mAnchorPoint;
                     break;
                 case HIDDEN:
-                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+                    final int panelHeight = calculatePanelHeight(getMeasuredHeight());
+                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +panelHeight : -panelHeight);
                     mSlideOffset = computeSlideOffset(newTop);
                     break;
                 default:
@@ -1089,8 +1127,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int slidePixelOffset = (int) (slideOffset * mSlideRange);
         // Compute the top of the panel if its collapsed
         return mIsSlidingUp
-                ? getMeasuredHeight() - getPaddingBottom() - mPanelHeight - slidePixelOffset
-                : getPaddingTop() - slidingViewHeight + mPanelHeight + slidePixelOffset;
+                ? getMeasuredHeight() - getPaddingBottom() - calculatePanelHeight(getMeasuredHeight()) - slidePixelOffset
+                : getPaddingTop() - slidingViewHeight + calculatePanelHeight(getMeasuredHeight()) + slidePixelOffset;
     }
 
     /*
@@ -1148,7 +1186,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     smoothSlideTo(1.0f, 0);
                     break;
                 case HIDDEN:
-                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+                    final int panelHeight = calculatePanelHeight(getHeight());
+                    int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +panelHeight : -panelHeight);
                     smoothSlideTo(computeSlideOffset(newTop), 0);
                     break;
             }
@@ -1181,7 +1220,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         // If the slide offset is negative, and overlay is not on, we need to increase the
         // height of the main content
         LayoutParams lp = (LayoutParams) mMainView.getLayoutParams();
-        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - mPanelHeight;
+        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - calculatePanelHeight(getHeight());
 
         if (mSlideOffset <= 0 && !mOverlayContent) {
             // expand the main view
@@ -1361,6 +1400,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         mSlideState = ss.mSlideState != null ? ss.mSlideState : DEFAULT_SLIDE_STATE;
+    }
+
+    private int calculatePanelHeight(int heightSize) {
+        if (mPanelHeightOffset != -1) return heightSize - mPanelHeightOffset;
+        return mPanelHeight;
     }
 
     private class DragHelperCallback extends ViewDragHelper.Callback {

@@ -78,6 +78,7 @@ or `?attr/actionBarSize` to support older API versions.
 
 * If you are using a custom `umanoDragView`, the panel will pass through the click events to the main layout. Make your second layout `clickable` to prevent this.
 * You can change the panel height by using the `setPanelHeight` method or `umanoPanelHeight` attribute.
+* You can change the panel height relative to container height by using the `setPanelHeightOffset` method or `umanoPanelHeightOffset` attribute.
 * If you would like to hide the shadow above the sliding panel, set `shadowHeight` attribute to 0.
 * Use `setEnabled(false)` to completely disable the sliding panel (including touch and programmatic sliding)
 * Use `setTouchEnabled(false)` to disables panel's touch responsiveness (drag and click), you can still control the panel programatically

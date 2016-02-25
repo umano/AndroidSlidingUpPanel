@@ -3,6 +3,7 @@
 
     <declare-styleable name="SlidingUpPanelLayout">
         <attr name="umanoPanelHeight" format="dimension" />
+        <attr name="umanoPanelHeightOffset" format="dimension" />
         <attr name="umanoShadowHeight" format="dimension" />
         <attr name="umanoParallaxOffset" format="dimension" />
         <attr name="umanoFadeColor" format="color" />
