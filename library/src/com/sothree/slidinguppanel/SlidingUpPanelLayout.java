@@ -145,13 +145,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int mDragViewResId = -1;
 
     /**
-     * If provided, the panel will transfer the scroll from this view to itself when needed.
-     */
-    private View mScrollableView;
-    private int mScrollableViewResId;
-    private ScrollableViewHelper mScrollableViewHelper = new ScrollableViewHelper();
-
-    /**
      * The child view that can slide, if any.
      */
     private View mSlideableView;
@@ -331,7 +324,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_umanoFadeColor, DEFAULT_FADE_COLOR);
 
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoDragView, -1);
-                mScrollableViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollableView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay, DEFAULT_OVERLAY_FLAG);
                 mClipPanel = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoClipPanel, DEFAULT_CLIP_PANEL_FLAG);
@@ -386,9 +378,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super.onFinishInflate();
         if (mDragViewResId != -1) {
             setDragView(findViewById(mDragViewResId));
-        }
-        if (mScrollableViewResId != -1) {
-            setScrollableView(findViewById(mScrollableViewResId));
         }
     }
 
@@ -591,24 +580,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setDragView(int dragViewResId) {
         mDragViewResId = dragViewResId;
         setDragView(findViewById(dragViewResId));
-    }
-
-    /**
-     * Set the scrollable child of the sliding layout. If set, scrolling will be transfered between
-     * the panel and the view when necessary
-     *
-     * @param scrollableView The scrollable view
-     */
-    public void setScrollableView(View scrollableView) {
-        mScrollableView = scrollableView;
-    }
-
-    /**
-     * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
-     * @param helper
-     */
-    public void setScrollableViewHelper(ScrollableViewHelper helper) {
-        mScrollableViewHelper = helper;
     }
 
     /**
@@ -1006,9 +977,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
             float dy = y - mPrevMotionY;
             mPrevMotionY = y;
 
-            // If the scroll view isn't under the touch, pass the
-            // event along to the dragView.
-            if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+            // If the slidable view isn't under the touch, pass the event.
+            if (!isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                 return super.dispatchTouchEvent(ev);
             }
 
@@ -1016,7 +986,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
-                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mIsSlidingUp) > 0) {
+                if (canScrollVertically(mSlideableView, mInitialMotionX, mInitialMotionY, mIsSlidingUp ? -1 : 1)) {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -1067,6 +1037,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         // In all other cases, just let the default behavior take over.
         return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean canScrollVertically(View view, float x, float y, int direction) {
+        if (view instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) view;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View child = vg.getChildAt(i);
+                int childLeft = child.getLeft();
+                int childTop = child.getTop();
+                int childRight = child.getRight();
+                int childBottom = child.getBottom();
+                boolean intersects = x > childLeft && x < childRight && y > childTop && y < childBottom;
+                if (intersects && canScrollVertically(child, x - childLeft, y - childTop, direction)) {
+                    return true;
+                }
+            }
+        }
+        return ViewCompat.canScrollVertically(view, direction);
     }
 
     private boolean isViewUnder(View view, int x, int y) {
