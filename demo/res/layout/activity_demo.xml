@@ -15,7 +15,8 @@
         sothree:umanoParallaxOffset="100dp"
         sothree:umanoDragView="@+id/dragView"
         sothree:umanoOverlay="true"
-        sothree:umanoScrollableView="@+id/list">
+        sothree:umanoScrollableView="@+id/list"
+        sothree:umanoHideWithFling="true">
 
         <!-- MAIN CONTENT -->
         <FrameLayout

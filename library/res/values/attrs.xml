@@ -12,6 +12,7 @@
         <attr name="umanoOverlay" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
         <attr name="umanoAnchorPoint" format="float" />
+        <attr name="umanoHideWithFling" format="boolean" />
         <attr name="umanoInitialState" format="enum">
             <enum name="expanded" value="0" />
             <enum name="collapsed" value="1" />
