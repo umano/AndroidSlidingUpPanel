@@ -910,7 +910,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
                 if (ady <= dragSlop
                         && adx <= dragSlop
-                        && mSlideOffset >=0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                        && mSlideOffset > 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     mFadeOnClickListener.onClick(this);
                     return true;
