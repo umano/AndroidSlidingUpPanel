@@ -4,7 +4,7 @@
 Android Sliding Up Panel
 =========================
 
-This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
+This library provides a simple way to add a draggable sliding up panel (popularized by Google Music and Google Maps) to your Android application.
 
 As seen in Umano Android App (now acquired by Dropbox):
 
