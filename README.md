@@ -25,7 +25,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.2.1'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
 }
 ```
 
@@ -137,6 +137,10 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.3.0
+  * You can now set a `FadeOnClickListener`, for when the faded area of the main content is clicked.
+  * `PanelSlideListener` has a new format (multiple of them can be set now
+  * Fixed the setTouchEnabled bug
 * 3.2.1
   * Add support for `umanoScrollInterpolator`
   * Add support for percentage-based sliding panel height using `layout_weight` attribute
