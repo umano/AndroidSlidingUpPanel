@@ -91,25 +91,8 @@ public class DemoActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onPanelExpanded(View panel) {
-                Log.i(TAG, "onPanelExpanded");
-
-            }
-
-            @Override
-            public void onPanelCollapsed(View panel) {
-                Log.i(TAG, "onPanelCollapsed");
-
-            }
-
-            @Override
-            public void onPanelAnchored(View panel) {
-                Log.i(TAG, "onPanelAnchored");
-            }
-
-            @Override
-            public void onPanelHidden(View panel) {
-                Log.i(TAG, "onPanelHidden");
+            public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
+                Log.i(TAG, "onPanelStateChanged " + newState);
             }
         });
         mLayout.setFadeOnClickListener(new OnClickListener() {

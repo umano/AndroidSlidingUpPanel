@@ -238,32 +238,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public void onPanelSlide(View panel, float slideOffset);
 
         /**
-         * Called when a sliding panel becomes slid completely collapsed.
+         * Called when a sliding panel state changes
          *
          * @param panel The child view that was slid to an collapsed position
          */
-        public void onPanelCollapsed(View panel);
-
-        /**
-         * Called when a sliding panel becomes slid completely expanded.
-         *
-         * @param panel The child view that was slid to a expanded position
-         */
-        public void onPanelExpanded(View panel);
-
-        /**
-         * Called when a sliding panel becomes anchored.
-         *
-         * @param panel The child view that was slid to a anchored position
-         */
-        public void onPanelAnchored(View panel);
-
-        /**
-         * Called when a sliding panel becomes completely hidden.
-         *
-         * @param panel The child view that was slid to a hidden position
-         */
-        public void onPanelHidden(View panel);
+        public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState);
     }
 
     /**
@@ -276,19 +255,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         @Override
-        public void onPanelCollapsed(View panel) {
-        }
-
-        @Override
-        public void onPanelExpanded(View panel) {
-        }
-
-        @Override
-        public void onPanelAnchored(View panel) {
-        }
-
-        @Override
-        public void onPanelHidden(View panel) {
+        public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
         }
     }
 
@@ -672,30 +639,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
-    void dispatchOnPanelExpanded(View panel) {
+    void dispatchOnPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
         for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelExpanded(panel);
-        }
-        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-    }
-
-    void dispatchOnPanelCollapsed(View panel) {
-        for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelCollapsed(panel);
-        }
-        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-    }
-
-    void dispatchOnPanelAnchored(View panel) {
-        for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelAnchored(panel);
-        }
-        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-    }
-
-    void dispatchOnPanelHidden(View panel) {
-        for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelHidden(panel);
+            l.onPanelStateChanged(panel, previousState, newState);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -1131,7 +1077,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 || mSlideState == PanelState.DRAGGING) return;
 
         if (mFirstLayout) {
-            mSlideState = state;
+            setPanelStateInternal(state);
         } else {
             if (mSlideState == PanelState.HIDDEN) {
                 mSlideableView.setVisibility(View.VISIBLE);
@@ -1155,6 +1101,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    private void setPanelStateInternal(PanelState state) {
+        if (mSlideState == state) return;
+        PanelState oldState = mSlideState;
+        mSlideState = state;
+        dispatchOnPanelStateChanged(this, oldState, state);
+    }
+
     /**
      * Update the parallax based on the current slide offset.
      */
@@ -1172,7 +1125,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private void onPanelDragged(int newTop) {
         mLastNotDraggingSlideState = mSlideState;
-        mSlideState = PanelState.DRAGGING;
+        setPanelStateInternal(PanelState.DRAGGING);
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
         applyParallaxForCurrentSlideOffset();
@@ -1381,24 +1334,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 applyParallaxForCurrentSlideOffset();
 
                 if (mSlideOffset == 1) {
-                    if (mSlideState != PanelState.EXPANDED) {
-                        updateObscuredViewVisibility();
-                        mSlideState = PanelState.EXPANDED;
-                        dispatchOnPanelExpanded(mSlideableView);
-                    }
+                    updateObscuredViewVisibility();
+                    setPanelStateInternal(PanelState.EXPANDED);
                 } else if (mSlideOffset == 0) {
-                    if (mSlideState != PanelState.COLLAPSED) {
-                        mSlideState = PanelState.COLLAPSED;
-                        dispatchOnPanelCollapsed(mSlideableView);
-                    }
+                    setPanelStateInternal(PanelState.COLLAPSED);
                 } else if (mSlideOffset < 0) {
-                    mSlideState = PanelState.HIDDEN;
+                    setPanelStateInternal(PanelState.HIDDEN);
                     mSlideableView.setVisibility(View.INVISIBLE);
-                    dispatchOnPanelHidden(mSlideableView);
                 } else if (mSlideState != PanelState.ANCHORED) {
                     updateObscuredViewVisibility();
-                    mSlideState = PanelState.ANCHORED;
-                    dispatchOnPanelAnchored(mSlideableView);
+                    setPanelStateInternal(PanelState.ANCHORED);
                 }
             }
         }
