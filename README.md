@@ -12,12 +12,6 @@ As seen in Umano Android App (now acquired by Dropbox):
 
 ### Importing the library
 
-#### Eclipse 
-
-Download the [latest release](https://github.com/umano/AndroidSlidingUpPanel/releases) and include the `library` project as a dependency in Eclipse.
-
-#### Android Studio 
-
 Simply add the following dependency to your `build.gradle` file to use the latest version:
 
 ```groovy
