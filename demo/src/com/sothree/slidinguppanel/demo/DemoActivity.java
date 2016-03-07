@@ -97,9 +97,19 @@ public class DemoActivity extends ActionBarActivity {
             }
 
             @Override
+            public void onStartPanelExpandFromCollapsed(View panel) {
+                Log.i(TAG, "onStartPanelExpandFromCollapsed");
+            }
+
+            @Override
             public void onPanelCollapsed(View panel) {
                 Log.i(TAG, "onPanelCollapsed");
 
+            }
+
+            @Override
+            public void onStartPanelCollapseFromExpanded(View panel, boolean toHidden) {
+                Log.i(TAG, "onStartPanelCollapseFromExpanded: toHidden="+toHidden);
             }
 
             @Override
