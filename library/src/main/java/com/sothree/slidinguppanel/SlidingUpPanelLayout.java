@@ -870,7 +870,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         // If the scrollable view is handling touch, never intercept
         if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
-            mDragHelper.cancel();
+            mDragHelper.abort();
             return false;
         }
 
@@ -939,7 +939,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int action = MotionEventCompat.getActionMasked(ev);
 
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
-            mDragHelper.cancel();
+            mDragHelper.abort();
             return super.dispatchTouchEvent(ev);
         }
 
@@ -1341,7 +1341,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 } else if (mSlideOffset < 0) {
                     setPanelStateInternal(PanelState.HIDDEN);
                     mSlideableView.setVisibility(View.INVISIBLE);
-                } else if (mSlideState != PanelState.ANCHORED) {
+                } else {
                     updateObscuredViewVisibility();
                     setPanelStateInternal(PanelState.ANCHORED);
                 }
