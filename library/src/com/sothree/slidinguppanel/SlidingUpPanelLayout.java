@@ -869,7 +869,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         // If the scrollable view is handling touch, never intercept
-        if (mIsScrollableViewHandlingTouch) {
+        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
             mDragHelper.cancel();
             return false;
         }
