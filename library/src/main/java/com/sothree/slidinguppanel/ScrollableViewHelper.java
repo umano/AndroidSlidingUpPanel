@@ -7,7 +7,7 @@ import android.widget.ScrollView;
 
 /**
  * Helper class for determining the current scroll positions for scrollable views. Currently works
- * for ListView, ScrollView & RecyclerView, but the library users can override it to add support
+ * for ListView, ScrollView and RecyclerView, but the library users can override it to add support
  * for other views.
  */
 public class ScrollableViewHelper {

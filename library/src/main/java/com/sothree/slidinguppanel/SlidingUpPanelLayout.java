@@ -921,7 +921,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     @Override
-    public boolean onTouchEvent(@NonNull MotionEvent ev) {
+    public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled() || !isTouchEnabled()) {
             return super.onTouchEvent(ev);
         }
@@ -935,7 +935,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     @Override
-    public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
