@@ -11,10 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,8 +21,6 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.ListView;
-import android.widget.ScrollView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
@@ -515,6 +511,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Provides an on click for the portion of the main view that is dimmed. The listener is not
      * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
      * not provided, the clicks on the dimmed area are passed through to the main layout.
+     *
      * @param listener
      */
     public void setFadeOnClickListener(View.OnClickListener listener) {
@@ -576,6 +573,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     /**
      * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     *
      * @param helper
      */
     public void setScrollableViewHelper(ScrollableViewHelper helper) {
@@ -894,7 +892,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if ((ady > dragSlop && adx > ady) || !checkTouchingDragView(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                if ((ady > dragSlop && adx > ady) || !isViewUnderAndDraggable(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
@@ -958,7 +956,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
-            if (!checkTouchingDragView(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+            if (!isViewUnderAndDraggable(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                 return super.dispatchTouchEvent(ev);
             }
 
@@ -1031,7 +1029,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
     }
 
-    private boolean checkTouchingDragView(View view, int x, int y) {
+    private boolean isViewUnderAndDraggable(View view, int x, int y) {
         return isViewUnder(view, x, y) && !isViewUnder(antiDragView, x, y);
     }
 
