@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 21
-  buildToolsVersion "21.0.1"
+  compileSdkVersion 23
+  buildToolsVersion "23.0.2"
 
   lintOptions {
     abortOnError false
@@ -10,21 +10,12 @@ android {
 
   defaultConfig {
     minSdkVersion 11
-    targetSdkVersion 21
-  }
-  sourceSets {
-    main {
-      manifest.srcFile 'AndroidManifest.xml'
-      java.srcDirs = ['src']
-      resources.srcDirs = ['src']
-      res.srcDirs = ['res']
-      assets.srcDirs = ['assets']
-    }
+    targetSdkVersion 23
   }
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:21.0.0'
-  compile 'com.android.support:appcompat-v7:21.0.0'
+  compile 'com.android.support:support-v4:23.1.1'
+  compile 'com.android.support:appcompat-v7:23.1.1'
   compile project(':library')
 }
