@@ -30,7 +30,7 @@ import java.util.List;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
-    private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
+    public static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
 
     /**
      * Default peeking out panel height
@@ -159,7 +159,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The main view
      */
     private View mMainView;
-    private View antiDragView;
+    private View mAntiDragView;
 
     /**
      * Current state of the slideable view.
@@ -777,6 +777,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             int childHeightSpec;
             if (lp.height == LayoutParams.WRAP_CONTENT) {
+                //noinspection Range
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
             } else {
                 // Modify the height based on the weight.
@@ -785,6 +786,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 } else if (lp.height != LayoutParams.MATCH_PARENT) {
                     height = lp.height;
                 }
+                //noinspection Range
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             }
 
@@ -1030,11 +1032,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean isViewUnderAndDraggable(View view, int x, int y) {
-        return isViewUnder(view, x, y) && !isViewUnder(antiDragView, x, y);
+        return isViewUnder(view, x, y) && !isViewUnder(mAntiDragView, x, y);
     }
 
     public void setAntiDragView(View antiDragView) {
-        this.antiDragView = antiDragView;
+        mAntiDragView = antiDragView;
     }
 
     /*
