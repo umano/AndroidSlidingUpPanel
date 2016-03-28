@@ -899,14 +899,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if ((ady > dragSlop && adx > ady)) {
-                    mDragHelper.cancel();
-//                    mIsUnableToDrag = true;
-//                    return false;
-                } else if (!isViewUnderAndDraggable(mDragView, (int) x, (int) y)) {
+                if (!isViewUnderAndDraggable(mDragView, (int) x, (int) y)) {
                     mDragHelper.cancel();
 //                    mIsUnableToDrag = true;
                     return false;
+                } else if ((ady > dragSlop && adx > ady)) {
+                    mDragHelper.cancel();
+//                    mIsUnableToDrag = true;
+//                    return false;
                 }
                 break;
             }
