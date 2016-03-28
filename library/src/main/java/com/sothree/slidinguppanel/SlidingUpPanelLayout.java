@@ -13,6 +13,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -310,6 +311,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
                 if (interpolatorResId != -1) {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    scrollerInterpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in);
+                } else {
+                    scrollerInterpolator = new LinearOutSlowInInterpolator();
                 }
             }
 
