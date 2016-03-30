@@ -13,7 +13,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -873,12 +872,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        // If the scrollable view is handling touch, never intercept
-        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
-            mDragHelper.abort();
-            return false;
-        }
-
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
@@ -886,16 +879,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final float ady = Math.abs(y - mInitialMotionY);
         final int dragSlop = mDragHelper.getTouchSlop();
 
+        // If the scrollable view is handling touch, never intercept
+        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
+            mDragHelper.abort();
+            return false;
+        }
+
         switch (action) {
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
 //                mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
                 break;
-            }
 
             case MotionEvent.ACTION_MOVE: {
-                if (!isViewUnderAndDraggable(mDragView, (int) x, (int) y)) {
+                if (!isViewUnderAndDraggable(mDragView, (int) x, (int) y) && !isViewUnderAndDraggable(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     mDragHelper.cancel();
 //                    mIsUnableToDrag = true;
                     return false;
@@ -917,9 +915,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     return true;
                 }
                 // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
-                if (ady <= dragSlop
-                        && adx <= dragSlop
-                        && mSlideOffset > 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                if (mFadeOnClickListener != null
+                        && ady <= dragSlop && adx <= dragSlop && mSlideOffset > 0
+                        && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     mFadeOnClickListener.onClick(this);
                     return true;
