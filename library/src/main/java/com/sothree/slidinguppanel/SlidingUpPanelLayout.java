@@ -872,18 +872,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // If the scrollable view is handling touch, never intercept
+        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
+            mDragHelper.abort();
+            return false;
+        }
+
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
         final float adx = Math.abs(x - mInitialMotionX);
         final float ady = Math.abs(y - mInitialMotionY);
         final int dragSlop = mDragHelper.getTouchSlop();
-
-        // If the scrollable view is handling touch, never intercept
-        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
-            mDragHelper.abort();
-            return false;
-        }
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -893,7 +893,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_MOVE: {
-                if (!isViewUnderAndDraggable(mDragView, (int) x, (int) y) && !isViewUnderAndDraggable(mDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                if (!(isViewUnder(mDragView, (int) x, (int) y) || isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY))
+                        || isViewUnder(mAntiDragView, (int) x, (int) y) || isViewUnder(mAntiDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     mDragHelper.cancel();
 //                    mIsUnableToDrag = true;
                     return false;
@@ -1033,10 +1034,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int screenY = parentLocation[1] + y;
         return screenX >= viewLocation[0] && screenX < viewLocation[0] + view.getWidth() &&
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
-    }
-
-    private boolean isViewUnderAndDraggable(View view, int x, int y) {
-        return isViewUnder(view, x, y) && !isViewUnder(mAntiDragView, x, y);
     }
 
     public void setAntiDragView(View antiDragView) {
