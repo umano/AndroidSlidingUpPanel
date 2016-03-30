@@ -311,10 +311,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
                 if (interpolatorResId != -1) {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    scrollerInterpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in);
-                } else {
-                    scrollerInterpolator = new LinearOutSlowInInterpolator();
                 }
             }
 
