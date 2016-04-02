@@ -18,6 +18,7 @@
 package com.sothree.slidinguppanel;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
@@ -756,7 +757,10 @@ public class ViewDragHelper {
             
             if(!keepGoing && dy != 0) { //fix #525
                 //Invalid drag state
-                mCapturedView.setTop(0);
+                // fix #694 catch SDK for backwards compatibility, View.setTop(int) is an API 11 call
+                if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    mCapturedView.setTop(0);
+                }
                 return true;
             }
 

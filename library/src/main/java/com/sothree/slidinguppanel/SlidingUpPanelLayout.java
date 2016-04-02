@@ -896,6 +896,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     return false;
                 }
                 break;
+
+
             }
 
             case MotionEvent.ACTION_CANCEL:
@@ -1033,10 +1035,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int computePanelTopPosition(float slideOffset) {
         int slidingViewHeight = mSlideableView != null ? mSlideableView.getMeasuredHeight() : 0;
         int slidePixelOffset = (int) (slideOffset * mSlideRange);
+
+        // fix for issue #694
+        int bottomPanelValue = getMeasuredHeight() - getPaddingBottom() - mPanelHeight - slidePixelOffset;
+        int topPanelValue = getPaddingTop() - slidingViewHeight + mPanelHeight + slidePixelOffset;
+
+
         // Compute the top of the panel if its collapsed
-        return mIsSlidingUp
-                ? getMeasuredHeight() - getPaddingBottom() - mPanelHeight - slidePixelOffset
-                : getPaddingTop() - slidingViewHeight + mPanelHeight + slidePixelOffset;
+        return mIsSlidingUp ? bottomPanelValue : topPanelValue;
     }
 
     /*
