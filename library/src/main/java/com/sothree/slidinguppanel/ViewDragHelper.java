@@ -64,7 +64,7 @@ public class ViewDragHelper {
     /**
      * Edge flag indicating that the left edge should be affected.
      */
-    public static final int EDGE_LEFT = 1 << 0;
+    public static final int EDGE_LEFT = 1;
 
     /**
      * Edge flag indicating that the right edge should be affected.
@@ -89,7 +89,7 @@ public class ViewDragHelper {
     /**
      * Indicates that a check should occur along the horizontal axis
      */
-    public static final int DIRECTION_HORIZONTAL = 1 << 0;
+    public static final int DIRECTION_HORIZONTAL = 1;
 
     /**
      * Indicates that a check should occur along the vertical axis
