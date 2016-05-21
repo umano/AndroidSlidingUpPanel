@@ -6,23 +6,28 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import com.ms.square.android.glassview.GlassView;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
@@ -42,6 +47,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default anchor point height
      */
     private static final float DEFAULT_ANCHOR_POINT = 1.0f; // In relative %
+
+    /**
+     * Default position of the panel
+     */
+    private static final boolean DEFAULT_PANEL_OFF_SCREEN = false;
+
+    /**
+     * No blur by default
+     */
+    private static final boolean DEFAULT_BLUR_BACKGROUND = false;
 
     /**
      * Default initial state for the component
@@ -106,6 +121,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The size of the overhang in pixels.
      */
     private int mPanelHeight = -1;
+
+    /**
+     * True if we want to slide the visible panel off screen; false by default
+     */
+    private boolean mPanelOffScreen;
+
+    /**
+     * If true, view behind sliding panel will be blurred while sliding
+     */
+    private boolean mBlurBackground;
 
     /**
      * The size of the shadow in pixels.
@@ -216,6 +241,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private final ViewDragHelper mDragHelper;
 
+    private GlassView mBlurView;
+
+    private Context mContext;
+
     /**
      * Stores whether or not the pane was expanded the last time it was slideable.
      * If expand/collapse operations are invoked this state is modified. Used by
@@ -270,6 +299,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        mContext = context;
+
         if (isInEditMode()) {
             mShadowDrawable = null;
             mDragHelper = null;
@@ -311,6 +342,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (interpolatorResId != -1) {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
                 }
+
+                mPanelOffScreen = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoPanelOffScreen, DEFAULT_PANEL_OFF_SCREEN);
+
+                mBlurBackground = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoBlurBackground, DEFAULT_BLUR_BACKGROUND);
             }
 
             ta.recycle();
@@ -351,11 +386,68 @@ public class SlidingUpPanelLayout extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
+        if (mPanelOffScreen) {
+            // Get scrollable view (always second child) and expand its size in order to put
+            // the panel above the screen
+            View slidingUpPanelLayout = getChildAt(1);
+            setExpandedPanelOffScreen(slidingUpPanelLayout);
+        }
+
+        if (mBlurBackground) {
+            // Add blur view as the last child of the slidingUpPanelLayout's first child, with
+            // both height and width math_parent to blur the whole screen
+            setBlurBackground();
+        }
+
         if (mDragViewResId != -1) {
             setDragView(findViewById(mDragViewResId));
         }
         if (mScrollableViewResId != -1) {
             setScrollableView(findViewById(mScrollableViewResId));
+        }
+    }
+
+    public void setBlurBackground() {
+        LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View blurView = vi.inflate(R.layout.blur, null);
+
+        ViewGroup insertPoint = (ViewGroup) getChildAt(0);
+        insertPoint.addView(blurView, insertPoint.getChildCount(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        mBlurView = (GlassView) findViewById(R.id.glass_view);
+        mBlurView.setBlurRadius(0f);
+    }
+
+    /**
+     * Expands the height of the SlidingUpPanelLayout by 'mPanelHeight' so that there's no
+     * empty space at the bottom when the view is expanded
+     *
+     * @param slidingUpPanelLayout (SlidingUpPanelLayout)
+     */
+    public void setExpandedPanelOffScreen(View slidingUpPanelLayout) {
+        if (slidingUpPanelLayout != null) {
+            // Get screen dimensions
+            int screenHeight;
+            int screenWidth;
+
+            if (Build.VERSION.SDK_INT >= 13) {
+                final Point size = new Point();
+                ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(size);
+                screenHeight = size.y;
+                screenWidth = size.x;
+            } else {
+                Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                screenHeight = display.getHeight();
+                screenWidth = display.getWidth();
+            }
+
+            SlidingUpPanelLayout.LayoutParams params;
+            params = new SlidingUpPanelLayout.LayoutParams(screenWidth, screenHeight + mPanelHeight - getNotificationBarHeight());
+
+            slidingUpPanelLayout.setLayoutParams(params);
+        } else {
+            Log.e(TAG, "slidingUpPanelLayout is null in setExpandedPanelOffScreen");
         }
     }
 
@@ -788,12 +880,20 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             child.measure(childWidthSpec, childHeightSpec);
 
-            if (child == mSlideableView) {
-                mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
-            }
+            mSlideRange = mSlideableView.getMeasuredHeight() - mPanelHeight;
         }
 
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    // Returns the height of the notification bar
+    private int getNotificationBarHeight() {
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -1178,6 +1278,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadePaint.setColor(color);
                 canvas.drawRect(mTmpRect, mCoveredFadePaint);
             }
+
+            if (mBlurBackground && mSlideOffset > 0) {
+                mBlurView.setVisibility(View.VISIBLE);
+                mBlurView.setBlurRadius(mSlideOffset * 25);
+            } else if (mBlurView != null) {
+                mBlurView.setVisibility(View.INVISIBLE);
+            }
+
+
         } else {
             result = super.drawChild(canvas, child, drawingTime);
         }
