@@ -12,7 +12,8 @@
         <attr name="umanoOverlay" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
         <attr name="umanoAnchorPoint" format="float" />
-        <attr name="panelOffScreen" format="boolean" />
+        <attr name="umanoPanelOffScreen" format="boolean" />
+        <attr name="umanoBlurBackground" format="boolean" />
         <attr name="umanoInitialState" format="enum">
             <enum name="expanded" value="0" />
             <enum name="collapsed" value="1" />

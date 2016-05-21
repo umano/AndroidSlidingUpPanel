@@ -111,4 +111,5 @@ afterEvaluate { project ->
         archives androidSourcesJar
         archives androidJavadocsJar
     }
+
 }

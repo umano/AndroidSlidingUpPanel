@@ -1,7 +1,6 @@
 package com.sothree.slidinguppanel;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -13,12 +12,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +27,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import com.ms.square.android.glassview.GlassView;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
@@ -51,6 +52,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default position of the panel
      */
     private static final boolean DEFAULT_PANEL_OFF_SCREEN = false;
+
+    /**
+     * No blur by default
+     */
+    private static final boolean DEFAULT_BLUR_BACKGROUND = false;
 
     /**
      * Default initial state for the component
@@ -120,6 +126,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * True if we want to slide the visible panel off screen; false by default
      */
     private boolean mPanelOffScreen;
+
+    /**
+     * If true, view behind sliding panel will be blurred while sliding
+     */
+    private boolean mBlurBackground;
 
     /**
      * The size of the shadow in pixels.
@@ -230,6 +241,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     private final ViewDragHelper mDragHelper;
 
+    private GlassView mBlurView;
+
     private Context mContext;
 
     /**
@@ -330,7 +343,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
                 }
 
-                mPanelOffScreen = ta.getBoolean(R.styleable.SlidingUpPanelLayout_panelOffScreen, DEFAULT_PANEL_OFF_SCREEN);
+                mPanelOffScreen = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoPanelOffScreen, DEFAULT_PANEL_OFF_SCREEN);
+
+                mBlurBackground = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoBlurBackground, DEFAULT_BLUR_BACKGROUND);
             }
 
             ta.recycle();
@@ -378,6 +393,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
             View slidingUpPanelLayout = getChildAt(1);
             setExpandedPanelOffScreen(slidingUpPanelLayout);
         }
+
+        if (mBlurBackground) {
+            // Add blur view as the last child of the slidingUpPanelLayout's first child, with
+            // both height and width math_parent to blur the whole screen
+            setBlurBackground();
+        }
+
         if (mDragViewResId != -1) {
             setDragView(findViewById(mDragViewResId));
         }
@@ -386,20 +408,39 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    public void setBlurBackground() {
+        LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View blurView = vi.inflate(R.layout.blur, null);
+
+        ViewGroup insertPoint = (ViewGroup) getChildAt(0);
+        insertPoint.addView(blurView, insertPoint.getChildCount(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        mBlurView = (GlassView) findViewById(R.id.glass_view);
+        mBlurView.setBlurRadius(0f);
+    }
+
     /**
      * Expands the height of the SlidingUpPanelLayout by 'mPanelHeight' so that there's no
      * empty space at the bottom when the view is expanded
      *
      * @param slidingUpPanelLayout (SlidingUpPanelLayout)
      */
-    @TargetApi(13)
     public void setExpandedPanelOffScreen(View slidingUpPanelLayout) {
         if (slidingUpPanelLayout != null) {
             // Get screen dimensions
-            final Point size = new Point();
-            ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(size);
-            final int screenHeight = size.y;
-            final int screenWidth = size.x;
+            int screenHeight;
+            int screenWidth;
+
+            if (Build.VERSION.SDK_INT >= 13) {
+                final Point size = new Point();
+                ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(size);
+                screenHeight = size.y;
+                screenWidth = size.x;
+            } else {
+                Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                screenHeight = display.getHeight();
+                screenWidth = display.getWidth();
+            }
 
             SlidingUpPanelLayout.LayoutParams params;
             params = new SlidingUpPanelLayout.LayoutParams(screenWidth, screenHeight + mPanelHeight - getNotificationBarHeight());
@@ -1237,6 +1278,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadePaint.setColor(color);
                 canvas.drawRect(mTmpRect, mCoveredFadePaint);
             }
+
+            if (mBlurBackground && mSlideOffset > 0) {
+                mBlurView.setVisibility(View.VISIBLE);
+                mBlurView.setBlurRadius(mSlideOffset * 25);
+            } else if (mBlurView != null) {
+                mBlurView.setVisibility(View.INVISIBLE);
+            }
+
+
         } else {
             result = super.drawChild(canvas, child, drawingTime);
         }

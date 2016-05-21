@@ -1,8 +1,12 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven { url 'http://Manabu-GT.github.com/GlassView/mvn-repo' }
+}
+
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.2"
+  buildToolsVersion "23.0.3"
 
   lintOptions {
     abortOnError false
@@ -11,11 +15,16 @@ android {
   defaultConfig {
     minSdkVersion 11
     targetSdkVersion 23
+
+    renderscriptTargetApi 21
+    renderscriptSupportModeEnabled true
   }
 }
 
+
 dependencies {
-  compile 'com.android.support:support-v4:23.1.1'
-  compile 'com.android.support:appcompat-v7:23.1.1'
-  compile project(':library')
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+
+    compile project(':library')
 }
