@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>es.uji.geotec.slidinguppanel</groupId>
+  <artifactId>library</artifactId>
+  <version>3.3.1</version>
+  <packaging>aar</packaging>
+  <name>Android Sliding Up Panel Library</name>
+  <description>Android Sliding Up Panel Library</description>
+  <url>https://github.com/jose-gil/AndroidSlidingUpPanel</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>tokudu</id>
+      <name>Anton Lopyrev</name>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git@github.com:jose-gil/AndroidSlidingUpPanel.git</connection>
+    <developerConnection>scm:git@github.com:jose-gil/AndroidSlidingUpPanel.git</developerConnection>
+    <url>https://github.com/jose-gil/AndroidSlidingUpPanel</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>com.android.support</groupId>
+      <artifactId>support-v4</artifactId>
+      <version>23.1.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.android.support</groupId>
+      <artifactId>recyclerview-v7</artifactId>
+      <version>23.1.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.nineoldandroids</groupId>
+      <artifactId>library</artifactId>
+      <version>2.4.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.android.support</groupId>
+      <artifactId>support-annotations</artifactId>
+      <version>23.1.1</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
