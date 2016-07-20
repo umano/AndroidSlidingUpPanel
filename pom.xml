@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>es.uji.geotec.slidinguppanel</groupId>
   <artifactId>library</artifactId>
-  <version>3.3.1</version>
+  <version>3.3.3</version>
   <packaging>aar</packaging>
   <name>Android Sliding Up Panel Library</name>
   <description>Android Sliding Up Panel Library</description>
