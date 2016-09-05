@@ -927,7 +927,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         try {
             mDragHelper.processTouchEvent(ev);
-            return true;
+            return super.onTouchEvent(ev);
         } catch (Exception ex) {
             // Ignore the pointer out of range exception
             return false;
