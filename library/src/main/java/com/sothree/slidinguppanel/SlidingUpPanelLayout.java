@@ -1125,7 +1125,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private void onPanelDragged(int newTop) {
-        mLastNotDraggingSlideState = mSlideState;
+        if (mSlideState != PanelState.DRAGGING) {
+            mLastNotDraggingSlideState = mSlideState;
+        }
         setPanelStateInternal(PanelState.DRAGGING);
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
