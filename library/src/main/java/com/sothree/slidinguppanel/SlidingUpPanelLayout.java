@@ -500,7 +500,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param listener
      */
     public void addPanelSlideListener(PanelSlideListener listener) {
-        mPanelSlideListeners.add(listener);
+        synchronized (mPanelSlideListeners) {
+            mPanelSlideListeners.add(listener);
+        }
     }
 
     /**
@@ -509,7 +511,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param listener
      */
     public void removePanelSlideListener(PanelSlideListener listener) {
-        mPanelSlideListeners.remove(listener);
+        synchronized (mPanelSlideListeners) {
+            mPanelSlideListeners.remove(listener);
+        }
     }
 
     /**
@@ -638,15 +642,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mClipPanel;
     }
 
+
     void dispatchOnPanelSlide(View panel) {
-        for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelSlide(panel, mSlideOffset);
+        synchronized (mPanelSlideListeners) {
+            for (PanelSlideListener l : mPanelSlideListeners) {
+                l.onPanelSlide(panel, mSlideOffset);
+            }
         }
     }
 
+
     void dispatchOnPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
-        for (PanelSlideListener l : mPanelSlideListeners) {
-            l.onPanelStateChanged(panel, previousState, newState);
+        synchronized (mPanelSlideListeners) {
+            for (PanelSlideListener l : mPanelSlideListeners) {
+                l.onPanelStateChanged(panel, previousState, newState);
+            }
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
