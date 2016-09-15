@@ -10,13 +10,13 @@ As seen in Umano Android App (now acquired by Dropbox):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
-### Other Known Users
+### Known Uses in Popular apps
 
 * [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
 * [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
 * [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
 
-If you are using the library and you would like to have your app listed, simply send us a pull request.
+If you are using the library and you would like to have your app listed, simply let us know.
 
 ### Importing the library
 
