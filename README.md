@@ -162,6 +162,8 @@ If you have an awesome pull request, send it over!
 ### Known Users
 
 * [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
+* [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
+* [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
 * Umano Android App (Acquired by Dropbox)
 
 If you are using the library and you would like to have your app listed, simply send us a pull request.
