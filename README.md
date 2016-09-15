@@ -10,6 +10,14 @@ As seen in Umano Android App (now acquired by Dropbox):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
+### Other Known Users
+
+* [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
+* [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
+* [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
+
+If you are using the library and you would like to have your app listed, simply send us a pull request.
+
 ### Importing the library
 
 Simply add the following dependency to your `build.gradle` file to use the latest version:
@@ -158,15 +166,6 @@ If you have an awesome pull request, send it over!
 * 2.0.1 - Bug fixes. 
 * 2.0.0 - Cleaned up various public method calls. Added animated `showPanel`/`hidePanel` methods. 
 * 1.0.1 - Initial Release 
-
-### Known Users
-
-* [Soundcloud Android App] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
-* [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
-* [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
-* Umano Android App (Acquired by Dropbox)
-
-If you are using the library and you would like to have your app listed, simply send us a pull request.
 
 ### Licence
 
