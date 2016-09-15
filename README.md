@@ -10,7 +10,7 @@ As seen in Umano Android App (now acquired by Dropbox):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
-### Known Uses in Popular apps
+### Known uses in popular apps
 
 * [Soundcloud] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
 * [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
