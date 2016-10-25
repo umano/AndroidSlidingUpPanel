@@ -27,8 +27,8 @@ import android.view.animation.Interpolator;
 
 import com.sothree.slidinguppanel.library.R;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -216,7 +216,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionY;
     private boolean mIsScrollableViewHandlingTouch = false;
 
-    private List<PanelSlideListener> mPanelSlideListeners = new ArrayList<>();
+    private List<PanelSlideListener> mPanelSlideListeners = new CopyOnWriteArrayList<>();
     private View.OnClickListener mFadeOnClickListener;
 
     private final ViewDragHelper mDragHelper;
