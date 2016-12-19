@@ -11,8 +11,19 @@ dependencies {
 }
 
 android {
+
 	compileSdkVersion 24
 	buildToolsVersion "24.0.3"
+
+	lintOptions {
+		abortOnError false
+	}
+
+	defaultConfig {
+		minSdkVersion 16
+		versionCode 16
+		versionName "3.3.1"
+	}
 
 	buildTypes {
 		release {
