@@ -139,6 +139,8 @@ public class ViewDragHelper {
 
     private final ViewGroup mParentView;
 
+    private View slideableView;
+
     /**
      * A Callback is used as a communication channel with the ViewDragHelper back to the
      * parent view using it. <code>on*</code>methods are invoked on siginficant events and several
@@ -420,6 +422,10 @@ public class ViewDragHelper {
         mMaxVelocity = vc.getScaledMaximumFlingVelocity();
         mMinVelocity = vc.getScaledMinimumFlingVelocity();
         mScroller = ScrollerCompat.create(context, interpolator != null ? interpolator : sInterpolator);
+    }
+
+    public void setSlideableView(View slideableView) {
+        this.slideableView = slideableView;
     }
 
     /**
@@ -753,7 +759,7 @@ public class ViewDragHelper {
             final int y = mScroller.getCurrY();
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
-            
+
             if(!keepGoing && dy != 0) { //fix #525
                 //Invalid drag state
                 mCapturedView.setTop(0);
@@ -1058,7 +1064,11 @@ public class ViewDragHelper {
                         break;
                     }
 
-                    final View toCapture = findTopChildUnder((int)mInitialMotionX[pointerId], (int)mInitialMotionY[pointerId]);
+//                    final View toCapture = findTopChildUnder((int)mInitialMotionX[pointerId], (int)mInitialMotionY[pointerId]);
+                    if (slideableView == null){
+                        break;
+                    }
+                    final View toCapture = slideableView;
                     if (toCapture != null && checkTouchSlop(toCapture, dx, dy) &&
                             tryCaptureViewForDrag(toCapture, pointerId)) {
                         break;

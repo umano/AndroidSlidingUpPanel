@@ -743,6 +743,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         mMainView = getChildAt(0);
         mSlideableView = getChildAt(1);
+        mDragHelper.setSlideableView(mSlideableView);
         if (mDragView == null) {
             setDragView(mSlideableView);
         }
@@ -901,11 +902,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
-                if (!isViewUnder(mDragView, (int) x, (int) y)) {
-                    mDragHelper.cancel();
-                    mIsUnableToDrag = true;
-                    return false;
-                }
+//                if (!isViewUnder(mDragView, (int) x, (int) y)) {
+//                    mDragHelper.cancel();
+//                    mIsUnableToDrag = true;
+//                    return false;
+//                }
 
                 break;
             }
