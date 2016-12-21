@@ -990,52 +990,65 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 return super.dispatchTouchEvent(ev);
             }
 
-
-            // Which direction (up or down) is the drag moving?
-            if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
-                // Is the child less than fully scrolled?
-                // Then let the child handle it.
-                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mIsSlidingUp) > 0) {
-                    mIsScrollableViewHandlingTouch = true;
-                    return super.dispatchTouchEvent(ev);
-                }
-
-                // Was the child handling the touch previously?
-                // Then we need to rejigger things so that the
-                // drag panel gets a proper down event.
-                if (mIsScrollableViewHandlingTouch) {
-                    // Send an 'UP' event to the child.
-                    MotionEvent up = MotionEvent.obtain(ev);
-                    up.setAction(MotionEvent.ACTION_CANCEL);
-                    super.dispatchTouchEvent(up);
-                    up.recycle();
-
-                    // Send a 'DOWN' event to the panel. (We'll cheat
-                    // and hijack this one)
-                    ev.setAction(MotionEvent.ACTION_DOWN);
-                }
-
-                mIsScrollableViewHandlingTouch = false;
+            if (mDragHelper.isDragging()) {
                 return this.onTouchEvent(ev);
-            } else if (dy * (mIsSlidingUp ? 1 : -1) < 0) { // Expanding
-                // Is the panel less than fully expanded?
-                // Then we'll handle the drag here.
-                if (mSlideOffset < 1.0f) {
-                    mIsScrollableViewHandlingTouch = false;
-                    return this.onTouchEvent(ev);
-                }
-
-                // Was the panel handling the touch previously?
-                // Then we need to rejigger things so that the
-                // child gets a proper down event.
-                if (!mIsScrollableViewHandlingTouch && mDragHelper.isDragging()) {
-                    mDragHelper.cancel();
-                    ev.setAction(MotionEvent.ACTION_DOWN);
-                }
-
-                mIsScrollableViewHandlingTouch = true;
-                return super.dispatchTouchEvent(ev);
             }
+
+            if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, ady)) {
+                    mIsScrollableViewHandlingTouch = true;
+                    mIsUnableToDrag = true;
+                    return super.dispatchTouchEvent(ev);
+            }
+//            // Which direction (up or down) is the drag moving?
+//            if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
+//                // Is the child less than fully scrolled?
+//                // Then let the child handle it.
+//                if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, dy)) {
+//                    mIsScrollableViewHandlingTouch = true;
+//                    return super.dispatchTouchEvent(ev);
+//                }
+//
+//                // Was the child handling the touch previously?
+//                // Then we need to rejigger things so that the
+//                // drag panel gets a proper down event.
+//                if (mIsScrollableViewHandlingTouch) {
+//                    // Send an 'UP' event to the child.
+//                    MotionEvent up = MotionEvent.obtain(ev);
+//                    up.setAction(MotionEvent.ACTION_CANCEL);
+//                    super.dispatchTouchEvent(up);
+//                    up.recycle();
+//
+//                    // Send a 'DOWN' event to the panel. (We'll cheat
+//                    // and hijack this one)
+//                    ev.setAction(MotionEvent.ACTION_DOWN);
+//                }
+//
+//                mIsScrollableViewHandlingTouch = false;
+//                return this.onTouchEvent(ev);
+//            } else if (dy * (mIsSlidingUp ? 1 : -1) < 0) { // Expanding
+//                if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, dy)) {
+//                    mIsScrollableViewHandlingTouch = true;
+//                    return super.dispatchTouchEvent(ev);
+//                }
+//
+//                // Is the panel less than fully expanded?
+//                // Then we'll handle the drag here.
+//                if (mSlideOffset < 1.0f) {
+//                    mIsScrollableViewHandlingTouch = false;
+//                    return this.onTouchEvent(ev);
+//                }
+//
+//                // Was the panel handling the touch previously?
+//                // Then we need to rejigger things so that the
+//                // child gets a proper down event.
+//                if (!mIsScrollableViewHandlingTouch && mDragHelper.isDragging()) {
+//                    mDragHelper.cancel();
+//                    ev.setAction(MotionEvent.ACTION_DOWN);
+//                }
+//
+//                mIsScrollableViewHandlingTouch = true;
+//                return super.dispatchTouchEvent(ev);
+//            }
         } else if (action == MotionEvent.ACTION_UP) {
             // If the scrollable view was handling the touch and we receive an up
             // we want to clear any previous dragging state so we don't intercept a touch stream accidentally
@@ -1349,12 +1362,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private class DragHelperCallback extends ViewDragHelper.Callback {
 
         @Override
-        public boolean tryCaptureView(View child, int pointerId) {
+        public boolean tryCaptureView(View child,int pointerID, float dy) {
             if (mIsUnableToDrag) {
                 return false;
             }
 
-            return child == mSlideableView;
+           return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
         }
 
         @Override

@@ -60,4 +60,8 @@ public class ScrollableViewHelper {
             return 0;
         }
     }
+
+    public boolean isVerticalScrollEnabled(View scrollableView,float dy){
+        return false;
+    }
 }

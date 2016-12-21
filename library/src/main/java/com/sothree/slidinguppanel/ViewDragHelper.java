@@ -287,10 +287,10 @@ public class ViewDragHelper {
          * will follow if the capture is successful.</p>
          *
          * @param child Child the user is attempting to capture
-         * @param pointerId ID of the pointer attempting the capture
+         * @param dy dy
          * @return true if capture should be allowed, false otherwise
          */
-        public abstract boolean tryCaptureView(View child, int pointerId);
+        public abstract boolean tryCaptureView(View child,int pointerID, float dy);
 
         /**
          * Restrict the motion of the dragged child view along the horizontal axis.
@@ -487,7 +487,7 @@ public class ViewDragHelper {
 
     /**
      * Capture a specific child view for dragging within the parent. The callback will be notified
-     * but {@link Callback#tryCaptureView(android.view.View, int)} will not be asked permission to
+     * but {@link Callback#tryCaptureView(android.view.View, int,float)} will not be asked permission to
      * capture this view.
      *
      * @param childView Child view to capture
@@ -930,12 +930,12 @@ public class ViewDragHelper {
      * @param pointerId Pointer to capture with
      * @return true if capture was successful
      */
-    boolean tryCaptureViewForDrag(View toCapture, int pointerId) {
+    boolean tryCaptureViewForDrag(View toCapture, int pointerId, float dy) {
         if (toCapture == mCapturedView && mActivePointerId == pointerId) {
             // Already done!
             return true;
         }
-        if (toCapture != null && mCallback.tryCaptureView(toCapture, pointerId)) {
+        if (toCapture != null && mCallback.tryCaptureView(toCapture, pointerId,dy)) {
             mActivePointerId = pointerId;
             captureChildView(toCapture, pointerId);
             return true;
@@ -1012,7 +1012,7 @@ public class ViewDragHelper {
 
                 // Catch a settling view if possible.
                 if (toCapture == mCapturedView && mDragState == STATE_SETTLING) {
-                    tryCaptureViewForDrag(toCapture, pointerId);
+                    tryCaptureViewForDrag(toCapture, pointerId,0);
                 }
 
                 final int edgesTouched = mInitialEdgesTouched[pointerId];
@@ -1039,7 +1039,7 @@ public class ViewDragHelper {
                     // Catch a settling view if possible.
                     final View toCapture = findTopChildUnder((int) x, (int) y);
                     if (toCapture == mCapturedView) {
-                        tryCaptureViewForDrag(toCapture, pointerId);
+                        tryCaptureViewForDrag(toCapture, pointerId,0);
                     }
                 }
                 break;
@@ -1070,7 +1070,7 @@ public class ViewDragHelper {
                     }
                     final View toCapture = slideableView;
                     if (toCapture != null && checkTouchSlop(toCapture, dx, dy) &&
-                            tryCaptureViewForDrag(toCapture, pointerId)) {
+                            tryCaptureViewForDrag(toCapture, pointerId, dy)) {
                         break;
                     }
                 }
@@ -1127,7 +1127,7 @@ public class ViewDragHelper {
                 // Since the parent is already directly processing this touch event,
                 // there is no reason to delay for a slop before dragging.
                 // Start immediately if possible.
-                tryCaptureViewForDrag(toCapture, pointerId);
+                tryCaptureViewForDrag(toCapture, pointerId,0);
 
                 final int edgesTouched = mInitialEdgesTouched[pointerId];
                 if ((edgesTouched & mTrackingEdges) != 0) {
@@ -1148,7 +1148,7 @@ public class ViewDragHelper {
                     // If we're idle we can do anything! Treat it like a normal down event.
 
                     final View toCapture = findTopChildUnder((int) x, (int) y);
-                    tryCaptureViewForDrag(toCapture, pointerId);
+                    tryCaptureViewForDrag(toCapture, pointerId,0);
 
                     final int edgesTouched = mInitialEdgesTouched[pointerId];
                     if ((edgesTouched & mTrackingEdges) != 0) {
@@ -1159,7 +1159,7 @@ public class ViewDragHelper {
                     // point, we'll swap to controlling it with this pointer instead.
                     // (This will still work if we're "catching" a settling view.)
 
-                    tryCaptureViewForDrag(mCapturedView, pointerId);
+                    tryCaptureViewForDrag(mCapturedView, pointerId,0);
                 }
                 break;
             }
@@ -1195,7 +1195,7 @@ public class ViewDragHelper {
 //                        final View toCapture = findTopChildUnder((int) mInitialMotionX[pointerId], (int) mInitialMotionY[pointerId]);
                         final View toCapture = slideableView;
                         if (checkTouchSlop(toCapture, dx, dy) &&
-                                tryCaptureViewForDrag(toCapture, pointerId)) {
+                                tryCaptureViewForDrag(toCapture, pointerId, dy)) {
                             break;
                         }
                     }
@@ -1220,7 +1220,7 @@ public class ViewDragHelper {
                         final float x = MotionEventCompat.getX(ev, i);
                         final float y = MotionEventCompat.getY(ev, i);
                         if (findTopChildUnder((int) x, (int) y) == mCapturedView &&
-                                tryCaptureViewForDrag(mCapturedView, id)) {
+                                tryCaptureViewForDrag(mCapturedView, id,0)) {
                             newActivePointer = mActivePointerId;
                             break;
                         }
