@@ -966,6 +966,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         final float y = ev.getY();
+        final float x = ev.getX();
 
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
@@ -974,11 +975,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
             float dy = y - mPrevMotionY;
             mPrevMotionY = y;
 
+            final float adx = Math.abs(x - mInitialMotionX);
+            final float ady = Math.abs(y - mInitialMotionY);
+            final int dragSlop = mDragHelper.getTouchSlop();
+
+
+            if (ady < dragSlop || adx > ady) {
+                return super.dispatchTouchEvent(ev);
+            }
+
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
             if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                 return super.dispatchTouchEvent(ev);
             }
+
 
             // Which direction (up or down) is the drag moving?
             if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
