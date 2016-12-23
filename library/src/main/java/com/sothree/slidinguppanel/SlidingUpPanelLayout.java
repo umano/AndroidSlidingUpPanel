@@ -1367,7 +1367,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 return false;
             }
 
-           return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
+            if (mIsSlidingUp){
+	            if ((mSlideState == PanelState.EXPANDED && dy>0) || (dy<0 && mSlideState == PanelState.COLLAPSED || mSlideState
+			            == PanelState.HIDDEN)){
+                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
+                }
+            } else{
+                if ((mSlideState == PanelState.EXPANDED && dy<0) || (dy>0 && mSlideState == PanelState.COLLAPSED || mSlideState
+                        == PanelState.HIDDEN)){
+                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
+                }
+            }
+
+           return false;
         }
 
         @Override
