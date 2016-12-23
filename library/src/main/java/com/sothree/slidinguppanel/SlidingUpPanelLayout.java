@@ -30,7 +30,7 @@ import com.sothree.slidinguppanel.library.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SlidingUpPanelLayout extends ViewGroup {
+public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
 
@@ -972,11 +972,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mIsScrollableViewHandlingTouch = false;
             mPrevMotionY = y;
         } else if (action == MotionEvent.ACTION_MOVE) {
-            float dy = y - mPrevMotionY;
+            float dy = y - mInitialMotionY;
             mPrevMotionY = y;
 
             final float adx = Math.abs(x - mInitialMotionX);
-            final float ady = Math.abs(y - mInitialMotionY);
+            final float ady = Math.abs(dy);
             final int dragSlop = mDragHelper.getTouchSlop();
 
 
@@ -994,7 +994,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 return this.onTouchEvent(ev);
             }
 
-            if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, ady)) {
+            boolean up = dy<0;
+            final int pointerId = MotionEventCompat.getPointerId(ev, 0);
+
+            if (mIsSlidingUp){
+                if (mSlideState == PanelState.EXPANDED  && !up){
+                    mDragHelper.captureChildView(mSlideableView,pointerId);
+                    return super.dispatchTouchEvent(ev);
+                }
+            }
+            else{
+                if (mSlideState == PanelState.EXPANDED  && up){
+                    mDragHelper.captureChildView(mSlideableView,pointerId);
+                    return super.dispatchTouchEvent(ev);
+                }
+            }
+
+            if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, dy)) {
                     mIsScrollableViewHandlingTouch = true;
                     mIsUnableToDrag = true;
                     return super.dispatchTouchEvent(ev);
@@ -1368,14 +1384,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             if (mIsSlidingUp){
-	            if ((mSlideState == PanelState.EXPANDED && dy>0) || (dy<0 && mSlideState == PanelState.COLLAPSED || mSlideState
-			            == PanelState.HIDDEN)){
-                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
+	            if ((mSlideState == PanelState.EXPANDED && dy>0) || (dy<0 && (mSlideState == PanelState.COLLAPSED || mSlideState
+			            == PanelState.HIDDEN))){
+                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView,dy);
                 }
             } else{
-                if ((mSlideState == PanelState.EXPANDED && dy<0) || (dy>0 && mSlideState == PanelState.COLLAPSED || mSlideState
-                        == PanelState.HIDDEN)){
-                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(child,dy);
+                if ((mSlideState == PanelState.EXPANDED && dy<0) || (dy>0 && (mSlideState == PanelState.COLLAPSED || mSlideState
+                        == PanelState.HIDDEN))){
+                    return child == mSlideableView && !mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView,dy);
                 }
             }
 
@@ -1465,6 +1481,42 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
+    @Override
+    public boolean canScrollVertically(boolean up) {
+        if (mIsSlidingUp){
+            if (mSlideState == PanelState.EXPANDED  && !up){
+                return true;
+            }
+        }
+        else{
+            if (mSlideState == PanelState.EXPANDED  && up){
+                return true;
+            }
+        }
+
+        if (mScrollableView instanceof ScrollableChild){
+            ScrollableChild scrollableChild = (ScrollableChild) mScrollableView;
+            if (scrollableChild.canScrollVertically(up)) {
+                return true;
+            }
+        }
+
+        if (mIsSlidingUp){
+            if ((mSlideState == PanelState.COLLAPSED || mSlideState == PanelState.HIDDEN) && up){
+                return true;
+            }
+        }
+        else{
+            if ((mSlideState == PanelState.COLLAPSED || mSlideState == PanelState.HIDDEN) && !up){
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
         private static final int[] ATTRS = new int[]{
                 android.R.attr.layout_weight
@@ -1508,4 +1560,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             ta.recycle();
         }
     }
+
+
 }
