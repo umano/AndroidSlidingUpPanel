@@ -994,6 +994,12 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                 return this.onTouchEvent(ev);
             }
 
+            if (mScrollableViewHelper.isVerticalScrollEnabled(mSlideableView, dy)) {
+                mIsScrollableViewHandlingTouch = true;
+                mIsUnableToDrag = true;
+                return super.dispatchTouchEvent(ev);
+            }
+
             boolean up = dy<0;
             final int pointerId = MotionEventCompat.getPointerId(ev, 0);
 
