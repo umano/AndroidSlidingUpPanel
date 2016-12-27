@@ -1415,6 +1415,10 @@ public class ViewDragHelper {
         return mDragState == STATE_DRAGGING;
     }
 
+    public boolean isSettling() {
+        return mDragState == STATE_SETTLING;
+    }
+
     private void releaseViewForPointerUp() {
         mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);
         final float xvel = clampMag(

@@ -960,6 +960,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
+        if (mDragHelper.isSettling()){
+            return true;
+        }
+
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.abort();
             return super.dispatchTouchEvent(ev);
@@ -1489,6 +1493,11 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
     @Override
     public boolean canScrollVertically(boolean up) {
+
+        if (mDragHelper.isSettling()){
+            return true;
+        }
+
         if (mIsSlidingUp){
             if (mSlideState == PanelState.EXPANDED  && !up){
                 return true;
