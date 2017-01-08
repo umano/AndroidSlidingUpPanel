@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+//@formatter:off
 
 package com.sothree.slidinguppanel;
 
@@ -122,6 +122,7 @@ public class ViewDragHelper {
     private int[] mEdgeDragsInProgress;
     private int[] mEdgeDragsLocked;
     private int mPointersDown;
+    private int mPointersCount;
 
     private VelocityTracker mVelocityTracker;
     private float mMaxVelocity;
@@ -320,6 +321,10 @@ public class ViewDragHelper {
          */
         public int clampViewPositionVertical(View child, int top, int dy) {
             return 0;
+        }
+
+        public boolean isMultiPointerCanBeHandled(){
+            return true;
         }
     }
 
@@ -825,6 +830,7 @@ public class ViewDragHelper {
         Arrays.fill(mEdgeDragsInProgress, 0);
         Arrays.fill(mEdgeDragsLocked, 0);
         mPointersDown = 0;
+        mPointersCount = 0;
     }
 
     private void clearMotionHistory(int pointerId) {
@@ -839,6 +845,7 @@ public class ViewDragHelper {
         mEdgeDragsInProgress[pointerId] = 0;
         mEdgeDragsLocked[pointerId] = 0;
         mPointersDown &= ~(1 << pointerId);
+        mPointersCount--;
     }
 
     private void ensureMotionHistorySizeForId(int pointerId) {
@@ -877,6 +884,7 @@ public class ViewDragHelper {
         mInitialMotionY[pointerId] = mLastMotionY[pointerId] = y;
         mInitialEdgesTouched[pointerId] = getEdgesTouched((int) x, (int) y);
         mPointersDown |= 1 << pointerId;
+        mPointersCount++;
     }
 
     private void saveLastMotion(MotionEvent ev) {
@@ -911,6 +919,9 @@ public class ViewDragHelper {
         return (mPointersDown & 1 << pointerId) != 0;
     }
 
+    public int getPointersCount() {
+        return mPointersCount;
+    }
     void setDragState(int state) {
         if (mDragState != state) {
             mDragState = state;
@@ -1005,7 +1016,7 @@ public class ViewDragHelper {
             case MotionEvent.ACTION_DOWN: {
                 final float x = ev.getX();
                 final float y = ev.getY();
-                final int pointerId = MotionEventCompat.getPointerId(ev, 0);
+                final int pointerId = ev.getPointerId(0);
                 saveInitialMotion(x, y, pointerId);
 
                 final View toCapture = findTopChildUnder((int) x, (int) y);
@@ -1023,38 +1034,49 @@ public class ViewDragHelper {
             }
 
             case MotionEventCompat.ACTION_POINTER_DOWN: {
-                final int pointerId = MotionEventCompat.getPointerId(ev, actionIndex);
-                final float x = MotionEventCompat.getX(ev, actionIndex);
-                final float y = MotionEventCompat.getY(ev, actionIndex);
+                final int pointerId = ev.getPointerId(actionIndex);
+                final float x = ev.getX(actionIndex);
+                final float y = ev.getY(actionIndex);
 
                 saveInitialMotion(x, y, pointerId);
 
-                // A ViewDragHelper can only manipulate one view at a time.
-                if (mDragState == STATE_IDLE) {
-                    final int edgesTouched = mInitialEdgesTouched[pointerId];
-                    if ((edgesTouched & mTrackingEdges) != 0) {
-                        mCallback.onEdgeTouched(edgesTouched & mTrackingEdges, pointerId);
-                    }
-                } else if (mDragState == STATE_SETTLING) {
-                    // Catch a settling view if possible.
-                    final View toCapture = findTopChildUnder((int) x, (int) y);
-                    if (toCapture == mCapturedView) {
-                        tryCaptureViewForDrag(toCapture, pointerId,0);
-                    }
+                if (!isDragging() || !mCallback.isMultiPointerCanBeHandled()){
+                    break;
                 }
+
+                // A ViewDragHelper can only manipulate one view at a time.
+//                if (mDragState == STATE_IDLE) {
+//                    final int edgesTouched = mInitialEdgesTouched[pointerId];
+//                    if ((edgesTouched & mTrackingEdges) != 0) {
+//                        mCallback.onEdgeTouched(edgesTouched & mTrackingEdges, pointerId);
+//                    }
+//                } else if (mDragState == STATE_SETTLING) {
+//                    // Catch a settling view if possible.
+//                    final View toCapture = findTopChildUnder((int) x, (int) y);
+//                    if (toCapture == mCapturedView) {
+//                        tryCaptureViewForDrag(toCapture, pointerId,0);
+//                    }
+//                }
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
                 // First to cross a touch slop over a draggable view wins. Also report edge drags.
-                final int pointerCount = MotionEventCompat.getPointerCount(ev);
+                final int pointerCount = ev.getPointerCount();
+
+                if (pointerCount > 1){
+                    if (!isDragging() || !mCallback.isMultiPointerCanBeHandled()){
+                        break;
+                    }
+                }
+
                 for (int i = 0; i < pointerCount && mInitialMotionX != null && mInitialMotionY != null; i++) {
-                    final int pointerId = MotionEventCompat.getPointerId(ev, i);
+                    final int pointerId = ev.getPointerId(i);
                     if (pointerId >= mInitialMotionX.length || pointerId >= mInitialMotionY.length) {
                         continue;
                     }
-                    final float x = MotionEventCompat.getX(ev, i);
-                    final float y = MotionEventCompat.getY(ev, i);
+                    final float x = ev.getX(i);
+                    final float y = ev.getY(i);
                     final float dx = x - mInitialMotionX[pointerId];
                     final float dy = y - mInitialMotionY[pointerId];
 
@@ -1079,7 +1101,7 @@ public class ViewDragHelper {
             }
 
             case MotionEventCompat.ACTION_POINTER_UP: {
-                final int pointerId = MotionEventCompat.getPointerId(ev, actionIndex);
+                final int pointerId = ev.getPointerId(actionIndex);
                 clearMotionHistory(pointerId);
                 break;
             }

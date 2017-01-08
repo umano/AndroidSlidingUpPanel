@@ -1,3 +1,4 @@
+//@formatter:off
 package com.sothree.slidinguppanel;
 
 import android.annotation.SuppressLint;
@@ -8,12 +9,8 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.BundleCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -211,6 +208,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
      */
     private boolean mIsTouchEnabled;
 
+    private int mInitialPointer;
+
     private float mPrevMotionY;
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -310,7 +309,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
-                mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
+                mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE
+                        .ordinal())];
 
                 int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
                 if (interpolatorResId != -1) {
@@ -885,7 +885,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         // If the scrollable view is handling touch, never intercept
-        if (mIsScrollableViewHandlingTouch || !isTouchEnabled()) {
+        if (mIsScrollableViewHandlingTouch || !isTouchEnabled() || mDragHelper.getPointersCount() > 1) {
             mDragHelper.abort();
             return false;
         }
@@ -899,6 +899,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
+                mInitialPointer = ev.getPointerId(0);
                 mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
@@ -932,7 +933,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                 // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
                 if (ady <= dragSlop
                         && adx <= dragSlop
-                        && mSlideOffset > 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                        && mSlideOffset > 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) &&
+                        mFadeOnClickListener != null) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     mFadeOnClickListener.onClick(this);
                     return true;
@@ -960,12 +962,18 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
+        if (mDragHelper.getPointersCount() > 1 && !isMultiTouchCanBeHandled()){
+            mDragHelper.abort();
+            setPanelState(PanelState.COLLAPSED);
+            return super.dispatchTouchEvent(ev);
+        }
+
         if (mDragHelper.isSettling()){
-            return true;
+            mDragHelper.abort();
+            return super.dispatchTouchEvent(ev);
         }
 
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
-            mDragHelper.abort();
             return super.dispatchTouchEvent(ev);
         }
 
@@ -1025,56 +1033,6 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                     mIsUnableToDrag = true;
                     return super.dispatchTouchEvent(ev);
             }
-//            // Which direction (up or down) is the drag moving?
-//            if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
-//                // Is the child less than fully scrolled?
-//                // Then let the child handle it.
-//                if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, dy)) {
-//                    mIsScrollableViewHandlingTouch = true;
-//                    return super.dispatchTouchEvent(ev);
-//                }
-//
-//                // Was the child handling the touch previously?
-//                // Then we need to rejigger things so that the
-//                // drag panel gets a proper down event.
-//                if (mIsScrollableViewHandlingTouch) {
-//                    // Send an 'UP' event to the child.
-//                    MotionEvent up = MotionEvent.obtain(ev);
-//                    up.setAction(MotionEvent.ACTION_CANCEL);
-//                    super.dispatchTouchEvent(up);
-//                    up.recycle();
-//
-//                    // Send a 'DOWN' event to the panel. (We'll cheat
-//                    // and hijack this one)
-//                    ev.setAction(MotionEvent.ACTION_DOWN);
-//                }
-//
-//                mIsScrollableViewHandlingTouch = false;
-//                return this.onTouchEvent(ev);
-//            } else if (dy * (mIsSlidingUp ? 1 : -1) < 0) { // Expanding
-//                if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, dy)) {
-//                    mIsScrollableViewHandlingTouch = true;
-//                    return super.dispatchTouchEvent(ev);
-//                }
-//
-//                // Is the panel less than fully expanded?
-//                // Then we'll handle the drag here.
-//                if (mSlideOffset < 1.0f) {
-//                    mIsScrollableViewHandlingTouch = false;
-//                    return this.onTouchEvent(ev);
-//                }
-//
-//                // Was the panel handling the touch previously?
-//                // Then we need to rejigger things so that the
-//                // child gets a proper down event.
-//                if (!mIsScrollableViewHandlingTouch && mDragHelper.isDragging()) {
-//                    mDragHelper.cancel();
-//                    ev.setAction(MotionEvent.ACTION_DOWN);
-//                }
-//
-//                mIsScrollableViewHandlingTouch = true;
-//                return super.dispatchTouchEvent(ev);
-//            }
         } else if (action == MotionEvent.ACTION_UP) {
             // If the scrollable view was handling the touch and we receive an up
             // we want to clear any previous dragging state so we don't intercept a touch stream accidentally
@@ -1085,6 +1043,23 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         // In all other cases, just let the default behavior take over.
         return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean isMultiTouchCanBeHandled(){
+        if (!mDragHelper.isDragging()){
+            return false;
+        }
+
+        if (mSlideOffset > 0.1f){
+            if (mScrollableView instanceof ScrollableChild){
+                ScrollableChild scrollableChild = (ScrollableChild) mScrollableView;
+                if (scrollableChild.canBePinched()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean isViewUnder(View view, int x, int y) {
@@ -1208,7 +1183,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         if (mSlideOffset <= 0 && !mOverlayContent) {
             // expand the main view
-            lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTop);
+            lp.height = mIsSlidingUp ? (newTop - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView
+                    .getMeasuredHeight() - newTop);
             if (lp.height == defaultHeight) {
                 lp.height = LayoutParams.MATCH_PARENT;
             }
@@ -1388,6 +1364,11 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     private class DragHelperCallback extends ViewDragHelper.Callback {
 
         @Override
+        public boolean isMultiPointerCanBeHandled() {
+            return SlidingUpPanelLayout.this.isMultiTouchCanBeHandled();
+        }
+
+        @Override
         public boolean tryCaptureView(View child,int pointerID, float dy) {
             if (mIsUnableToDrag) {
                 return false;
@@ -1490,6 +1471,11 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
         }
     }
+
+    @Override
+	public boolean canBePinched() {
+		return isMultiTouchCanBeHandled();
+	}
 
     @Override
     public boolean canScrollVertically(boolean up) {
