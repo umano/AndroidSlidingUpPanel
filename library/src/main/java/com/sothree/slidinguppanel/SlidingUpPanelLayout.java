@@ -960,16 +960,23 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
 
         if (mDragHelper.getPointersCount() > 1 && !isMultiTouchCanBeHandled()){
             mDragHelper.abort();
+            mIsUnableToDrag = true;
+
+            MotionEvent cancel = MotionEvent.obtain(ev);
+            cancel.setAction(MotionEvent.ACTION_CANCEL);
+            onTouchEvent(cancel);
+            cancel.recycle();
+
             setPanelState(PanelState.COLLAPSED);
-            return super.dispatchTouchEvent(ev);
+            return true;
         }
 
         if (mDragHelper.isSettling()){
-            mDragHelper.abort();
+            mDragHelper.cancel();
             return super.dispatchTouchEvent(ev);
         }
 
@@ -1046,20 +1053,30 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     }
 
     private boolean isMultiTouchCanBeHandled(){
-        if (!mDragHelper.isDragging()){
-            return false;
-        }
 
-        if (mSlideOffset > 0.1f){
-            if (mScrollableView instanceof ScrollableChild){
-                ScrollableChild scrollableChild = (ScrollableChild) mScrollableView;
-                if (scrollableChild.canBePinched()) {
+        if (mDragHelper.isDragging()){
+            if (mSlideOffset < 0.4f){
+                 if (isScrollableCanBePinched()) {
                     return false;
-                }
+                 }
+            }
+            return true;
+        }
+        else {
+            if (isScrollableCanBePinched()){
+                return false;
             }
         }
 
-        return true;
+        return false;
+    }
+
+    private boolean isScrollableCanBePinched(){
+        if (mScrollableView instanceof ScrollableChild){
+            ScrollableChild scrollableChild = (ScrollableChild) mScrollableView;
+            return scrollableChild.canBePinched();
+        }
+        return false;
     }
 
     private boolean isViewUnder(View view, int x, int y) {
@@ -1474,7 +1491,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
     @Override
 	public boolean canBePinched() {
-		return isMultiTouchCanBeHandled();
+		return !isMultiTouchCanBeHandled();
 	}
 
     @Override
