@@ -847,7 +847,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
 
             final int childHeight = child.getMeasuredHeight();
-            int childTop = paddingTop;
+            int childTop = paddingTop + lp.topMargin;
 
             if (child == mSlideableView) {
                 childTop = computePanelTopPosition(mSlideOffset);
