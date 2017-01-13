@@ -466,6 +466,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         return mIsSlidingUp ? -offset : offset;
     }
 
+    public View getSlideableView() {
+        return mSlideableView;
+    }
+
     /**
      * Set parallax offset for the panel
      *
