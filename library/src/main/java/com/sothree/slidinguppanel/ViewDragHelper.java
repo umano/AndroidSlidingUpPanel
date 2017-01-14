@@ -584,6 +584,25 @@ public class ViewDragHelper {
         return forceSettleCapturedViewAt(finalLeft, finalTop, 0, 0);
     }
 
+    public void slideViewTo(View child, int finalLeft, int finalTop){
+        mScroller.abortAnimation();
+        setDragState(STATE_IDLE);
+
+        final int dx = finalLeft - child.getLeft();
+        final int dy = finalTop - child.getTop();
+
+        if (dx != 0) {
+            child.offsetLeftAndRight(dx);
+        }
+        if (dy != 0) {
+            child.offsetTopAndBottom(dy);
+        }
+
+        if (dx != 0 || dy != 0) {
+            mCallback.onViewPositionChanged(child, finalLeft, finalTop, dx, dy);
+        }
+    }
+
     /**
      * Settle the captured view at the given (left, top) position.
      * The appropriate velocity from prior motion will be taken into account.

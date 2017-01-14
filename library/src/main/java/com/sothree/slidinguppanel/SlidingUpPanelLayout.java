@@ -1130,12 +1130,16 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         return mSlideState;
     }
 
+    public void setPanelState(PanelState state){
+        setPanelState(state,false);
+    }
+
     /**
      * Change panel state to the given state with
      *
      * @param state - new panel state
      */
-    public void setPanelState(PanelState state) {
+    public void setPanelState(PanelState state, boolean immediately) {
         if (state == null || state == PanelState.DRAGGING) {
             throw new IllegalArgumentException("Panel state cannot be null or DRAGGING.");
         }
@@ -1153,18 +1157,42 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
             switch (state) {
                 case ANCHORED:
-                    smoothSlideTo(mAnchorPoint, 0);
+                    if (immediately){
+                        slideTo(mAnchorPoint);
+                    }
+                    else {
+                        smoothSlideTo(mAnchorPoint, 0);
+                    }
                     break;
                 case COLLAPSED:
-                    smoothSlideTo(0, 0);
+                    if (immediately){
+                        slideTo(0);
+                    }
+                    else {
+                        smoothSlideTo(0, 0);
+                    }
                     break;
                 case EXPANDED:
-                    smoothSlideTo(1.0f, 0);
+                    if (immediately){
+                        slideTo(1.0f);
+                    }
+                    else {
+                        smoothSlideTo(1.0f, 0);
+                    }
                     break;
                 case HIDDEN:
                     int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
-                    smoothSlideTo(computeSlideOffset(newTop), 0);
+                    float offset = computeSlideOffset(newTop);
+                    if (immediately){
+                        slideTo(offset);
+                    }
+                    else {
+                        smoothSlideTo(offset, 0);
+                    }
                     break;
+            }
+            if (immediately){
+                setPanelStateInternal(state);
             }
         }
     }
@@ -1273,6 +1301,15 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             return true;
         }
         return false;
+    }
+
+    void slideTo(float slideOffset){
+         if (!isEnabled() || mSlideableView == null) {
+            // Nothing to do.
+            return;
+        }
+        int panelTop = computePanelTopPosition(slideOffset);
+        mDragHelper.slideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop);
     }
 
     @Override
