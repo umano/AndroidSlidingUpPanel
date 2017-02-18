@@ -642,6 +642,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mClipPanel;
     }
 
+    /**
+     * Check if panel expanded or not
+     *
+     * @return true if expanded false if collapsed
+     */
+    public boolean isExpanded() {
+        return getPanelState() == PanelState.EXPANDED;
+    }
+
+    /**
+     * Expand panel
+     */
+    public void expand() {
+        setPanelState(PanelState.EXPANDED);
+    }
+
+    /**
+     * Collapse panel
+     */
+    public void collapse() {
+        setPanelState(PanelState.COLLAPSED);
+    }
 
     void dispatchOnPanelSlide(View panel) {
         synchronized (mPanelSlideListeners) {
