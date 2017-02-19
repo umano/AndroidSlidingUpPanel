@@ -665,6 +665,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
         setPanelState(PanelState.COLLAPSED);
     }
 
+    /**
+     * Slide panel to anchor
+     */
+    public void slideToAnchor() {
+        setPanelState(PanelState.ANCHORED);
+    }
+
     void dispatchOnPanelSlide(View panel) {
         synchronized (mPanelSlideListeners) {
             for (PanelSlideListener l : mPanelSlideListeners) {
