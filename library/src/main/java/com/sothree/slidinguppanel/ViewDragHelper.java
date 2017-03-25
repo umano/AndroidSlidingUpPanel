@@ -111,6 +111,7 @@ public class ViewDragHelper {
 
     // Distance to travel before a drag may begin
     private int mTouchSlop;
+    private int mOriginalTouchSlop;
 
     // Last known position/pointer tracking
     private int mActivePointerId = INVALID_POINTER;
@@ -423,7 +424,7 @@ public class ViewDragHelper {
         final float density = context.getResources().getDisplayMetrics().density;
         mEdgeSize = (int) (EDGE_SIZE * density + 0.5f);
 
-        mTouchSlop = vc.getScaledTouchSlop();
+        mOriginalTouchSlop = mTouchSlop = vc.getScaledTouchSlop();
         mMaxVelocity = vc.getScaledMaximumFlingVelocity();
         mMinVelocity = vc.getScaledMinimumFlingVelocity();
         mScroller = ScrollerCompat.create(context, interpolator != null ? interpolator : sInterpolator);
@@ -1352,9 +1353,9 @@ public class ViewDragHelper {
         if (checkHorizontal && checkVertical) {
             return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
         } else if (checkHorizontal) {
-            return Math.abs(dx) > mTouchSlop;
+            return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mOriginalTouchSlop;
         } else if (checkVertical) {
-            return Math.abs(dy) > mTouchSlop;
+            return Math.abs(dy) > mTouchSlop && Math.abs(dx) < mOriginalTouchSlop;
         }
         return false;
     }
@@ -1412,9 +1413,9 @@ public class ViewDragHelper {
         if (checkHorizontal && checkVertical) {
             return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
         } else if (checkHorizontal) {
-            return Math.abs(dx) > mTouchSlop;
+            return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mOriginalTouchSlop;
         } else if (checkVertical) {
-            return Math.abs(dy) > mTouchSlop;
+            return Math.abs(dy) > mTouchSlop && Math.abs(dx) < mOriginalTouchSlop;
         }
         return false;
     }
