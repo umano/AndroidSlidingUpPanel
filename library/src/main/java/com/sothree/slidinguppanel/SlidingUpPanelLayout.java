@@ -1411,8 +1411,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     public void onRestoreInstanceState(Parcelable state) {
         if(state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            mSlideState = (PanelState) bundle.getSerializable(SLIDING_STATE);
-            mSlideState = mSlideState == null ? DEFAULT_SLIDE_STATE : mSlideState;
+            PanelState panelState = (PanelState) bundle.getSerializable(SLIDING_STATE);
+            setPanelStateInternal(panelState == null ? DEFAULT_SLIDE_STATE : panelState);
             state = bundle.getParcelable("superState");
         }
         super.onRestoreInstanceState(state);
