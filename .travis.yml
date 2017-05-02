@@ -7,7 +7,7 @@ android:
     - platform-tools
     - extra-android-m2repository
     - extra-google-m2repository
-    - build-tools-23.0.2
+    - build-tools-23.0.3
     - android-23
 
 # Enable travis container based infrastructure
