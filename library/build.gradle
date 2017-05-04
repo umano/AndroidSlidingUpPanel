@@ -13,7 +13,7 @@ dependencies {
 android {
 
 	compileSdkVersion 24
-	buildToolsVersion "25.0.2"
+	buildToolsVersion "25.0.3"
 
 	lintOptions {
 		abortOnError false
