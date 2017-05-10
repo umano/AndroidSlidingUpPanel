@@ -228,6 +228,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     private boolean mFirstLayout = true;
 
     private final Rect mTmpRect = new Rect();
+    
+    private boolean slideableViewIsHide = false;
 
     /**
      * Listener for monitoring events about sliding panes.
@@ -753,7 +755,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         }
 
         // If the sliding panel is not visible, then put the whole view in the hidden state
-        if (mSlideableView.getVisibility() != VISIBLE) {
+        if (!slideableViewIsHide && mSlideableView.getVisibility() != VISIBLE) {
             mSlideState = PanelState.HIDDEN;
         }
 
@@ -1201,6 +1203,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         PanelState oldState = mSlideState;
         mSlideState = state;
         dispatchOnPanelStateChanged(this, oldState, state);
+        
     }
 
     /**
@@ -1568,11 +1571,17 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             if ((mSlideState == PanelState.COLLAPSED || mSlideState == PanelState.HIDDEN) && !up){
                 return true;
             }
-
         }
 
         return false;
-
+    }
+    
+    public void setHideSlideableViewWhenCollapsed(boolean hide) {
+        slideableViewIsHide = hide;
+    }
+    
+    public boolean isHiddenSlideableViewWhenCollapsed() {
+        return slideableViewIsHide;
     }
 
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
