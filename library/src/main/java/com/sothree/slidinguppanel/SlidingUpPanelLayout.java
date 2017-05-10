@@ -1158,6 +1158,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
             switch (state) {
                 case ANCHORED:
+                    updateSlideableViewVisibility(state);
                     if (immediately){
                         slideTo(mAnchorPoint);
                     }
@@ -1172,8 +1173,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                     else {
                         smoothSlideTo(0, 0);
                     }
+                    updateSlideableViewVisibility(state);
                     break;
                 case EXPANDED:
+                    updateSlideableViewVisibility(state);
                     if (immediately){
                         slideTo(1.0f);
                     }
@@ -1202,8 +1205,21 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         if (mSlideState == state) return;
         PanelState oldState = mSlideState;
         mSlideState = state;
+        updateSlideableViewVisibility(state);
         dispatchOnPanelStateChanged(this, oldState, state);
         
+    }
+    
+    private void updateSlideableViewVisibility(PanelState state) {
+        if (!slideableViewIsHide || null == mSlideableView) {
+            return;
+        }
+        
+        final int visibility = PanelState.COLLAPSED == state ? View.GONE : View.VISIBLE;
+    
+        if (mSlideableView.getVisibility() != visibility) {
+            mSlideableView.setVisibility(visibility);
+        }
     }
 
     /**
@@ -1578,6 +1594,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     
     public void setHideSlideableViewWhenCollapsed(boolean hide) {
         slideableViewIsHide = hide;
+        updateSlideableViewVisibility(mSlideState);
     }
     
     public boolean isHiddenSlideableViewWhenCollapsed() {
