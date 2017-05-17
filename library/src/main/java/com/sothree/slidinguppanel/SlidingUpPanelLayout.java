@@ -42,12 +42,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final float DEFAULT_ANCHOR_POINT = 1.0f; // In relative %
 
     /**
+     * Default gravity
+     */
+    private static final int DEFAULT_GRAVITY = Gravity.BOTTOM;
+
+    /**
      * Default initial state for the component
      */
     private static PanelState DEFAULT_SLIDE_STATE = PanelState.COLLAPSED;
-
-    private static SlidingDirection DEFAULT_SLIDING_DIRECTION = SlidingDirection.UP;
-
 
 
     /**
@@ -178,16 +180,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private PanelState mSlideState = DEFAULT_SLIDE_STATE;
 
     /**
-     * Sliding direction, based on gravity
+     *
      */
-    public enum SlidingDirection {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
-    }
-
-    private SlidingDirection mSlidingDirection = DEFAULT_SLIDING_DIRECTION;
+    private int mGravity = DEFAULT_GRAVITY;
 
     /**
      * If the current slide state is DRAGGING, this will store the last non dragging state
@@ -343,17 +338,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         // If the shadow height is zero, don't show the shadow
         if (mShadowHeight > 0) {
-            switch (mSlidingDirection) {
-                case UP:
+            switch (mGravity) {
+                case Gravity.BOTTOM:
                     mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
                     break;
-                case DOWN:
+                case Gravity.TOP:
                     mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
                     break;
-                case LEFT:
+                case Gravity.RIGHT:
                     mShadowDrawable = getResources().getDrawable(R.drawable.left_shadow);
                     break;
-                case RIGHT:
+                case Gravity.LEFT:
                     mShadowDrawable = getResources().getDrawable(R.drawable.right_shadow);
                     break;
                 default:
@@ -390,21 +385,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 && gravity != Gravity.LEFT && gravity != Gravity.RIGHT) {
             throw new IllegalArgumentException("gravity must be set to either top, bottom, left or right");
         }
+
+        mGravity = gravity;
         switch (gravity) {
-            case Gravity.BOTTOM:
-                mSlidingDirection = SlidingDirection.UP;
+            case Gravity.BOTTOM: case Gravity.TOP:
                 mIsSlidingVertically = true;
                 break;
-            case Gravity.TOP:
-                mSlidingDirection = SlidingDirection.DOWN;
-                mIsSlidingVertically = true;
-                break;
-            case Gravity.LEFT:
-                mSlidingDirection = SlidingDirection.RIGHT;
-                mIsSlidingVertically = false;
-                break;
-            case Gravity.RIGHT:
-                mSlidingDirection = SlidingDirection.LEFT;
+            case Gravity.LEFT: case Gravity.RIGHT:
                 mIsSlidingVertically = false;
                 break;
         }
@@ -503,8 +490,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         // Clamp slide offset at zero for parallax computation;
         int offset = (int) (mParallaxOffset * Math.max(mSlideOffset, 0));
 
-        return mSlidingDirection == SlidingDirection.UP || mSlidingDirection == SlidingDirection.LEFT
-                ? -offset : offset;
+        return mGravity == Gravity.BOTTOM || mGravity == Gravity.RIGHT ? -offset : offset;
     }
 
     /**
@@ -909,10 +895,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     break;
                 case HIDDEN:
                     if(mIsSlidingVertically){
-                        int newTop = computePanelTopPosition(0.0f) + (mSlidingDirection == SlidingDirection.UP ? +mPaneSize : -mPaneSize);
+                        int newTop = computePanelTopPosition(0.0f) + (mGravity == Gravity.BOTTOM ? +mPaneSize : -mPaneSize);
                         mSlideOffset = computeSlideOffset(newTop);
                     } else {
-                        int newLeft = computePanelLeftPosition(0.0f) + (mSlidingDirection == SlidingDirection.LEFT ? +mPaneSize : -mPaneSize);
+                        int newLeft = computePanelLeftPosition(0.0f) + (mGravity == Gravity.RIGHT ? +mPaneSize : -mPaneSize);
                         mSlideOffset = computeSlideOffset(newLeft);
                     }
 
@@ -939,7 +925,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     childTop = computePanelTopPosition(mSlideOffset);
                 }
 
-                if (mSlidingDirection == SlidingDirection.DOWN) {
+                if (mGravity == Gravity.TOP) {
                     if (child == mMainView && !mOverlayContent) {
                         childTop = computePanelTopPosition(mSlideOffset) + mSlideableView.getMeasuredHeight();
                     }
@@ -958,7 +944,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     childLeft = computePanelLeftPosition(mSlideOffset);
                 }
 
-                if (mSlidingDirection == SlidingDirection.RIGHT) {
+                if (mGravity == Gravity.LEFT) {
                     if (child == mMainView && !mOverlayContent) {
                         childLeft = computePanelLeftPosition(mSlideOffset) + mSlideableView.getMeasuredWidth();
                     }
@@ -1096,7 +1082,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             // Which direction (up or down) is the drag moving?
             int factor = 0;
-            if(mSlidingDirection == SlidingDirection.UP || mSlidingDirection == SlidingDirection.LEFT){
+            if(mGravity == Gravity.BOTTOM || mGravity == Gravity.RIGHT){
                 factor = 1;
             } else {
                 factor = -1;
@@ -1105,7 +1091,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
                 // TODO: Does the ScrollableViewHandler need to know about horizontal sliding?
-                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mSlidingDirection == SlidingDirection.UP) > 0) {
+                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mGravity == Gravity.BOTTOM) > 0) {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -1177,7 +1163,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int slidingViewHeight = mSlideableView != null ? mSlideableView.getMeasuredHeight() : 0;
         int slidePixelOffset = (int) (slideOffset * mSlideRange);
         // Compute the top of the panel if its collapsed
-        return mSlidingDirection == SlidingDirection.UP
+        return mGravity == Gravity.BOTTOM
                 ? getMeasuredHeight() - getPaddingBottom() - mPaneSize - slidePixelOffset
                 : getPaddingTop() - slidingViewHeight + mPaneSize + slidePixelOffset;
     }
@@ -1189,7 +1175,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int slidingViewWidth = mSlideableView != null ? mSlideableView.getMeasuredWidth() : 0;
         int slidePixelOffset = (int) (slideOffset * mSlideRange);
         // Compute the top of the panel if its collapsed
-        return mSlidingDirection == SlidingDirection.LEFT
+        return mGravity == Gravity.RIGHT
                 ? getMeasuredWidth() - getPaddingRight() - mPaneSize - slidePixelOffset
                 : getPaddingLeft() - slidingViewWidth + mPaneSize + slidePixelOffset;
     }
@@ -1208,7 +1194,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         // Determine the new slide offset based on the collapsed top position and the new required
         // top position
-        return (mSlidingDirection == SlidingDirection.UP || mSlidingDirection == SlidingDirection.LEFT
+        return (mGravity == Gravity.BOTTOM || mGravity == Gravity.RIGHT
                 ? (float) (topOrLeftBoundCollapsed - topOrLeftPosition) / mSlideRange
                 : (float) (topOrLeftPosition - topOrLeftBoundCollapsed) / mSlideRange);
     }
@@ -1262,10 +1248,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     break;
                 case HIDDEN:
                     if (mIsSlidingVertically) {
-                        int newTop = computePanelTopPosition(0.0f) + (mSlidingDirection == SlidingDirection.UP ? +mPaneSize : -mPaneSize);
+                        int newTop = computePanelTopPosition(0.0f) + (mGravity == Gravity.BOTTOM ? +mPaneSize : -mPaneSize);
                         smoothSlideTo(computeSlideOffset(newTop), 0);
                     } else {
-                        int newTop = computePanelLeftPosition(0.0f) + (mSlidingDirection == SlidingDirection.LEFT ? +mPaneSize : -mPaneSize);
+                        int newTop = computePanelLeftPosition(0.0f) + (mGravity == Gravity.RIGHT ? +mPaneSize : -mPaneSize);
                         smoothSlideTo(computeSlideOffset(newTop), 0);
                     }
 
@@ -1315,12 +1301,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mSlideOffset <= 0 && !mOverlayContent) {
             // expand the main view
             if(mIsSlidingVertically){
-                lp.height = mSlidingDirection == SlidingDirection.UP ? (newTopOrLeft - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTopOrLeft);
+                lp.height = mGravity == Gravity.BOTTOM ? (newTopOrLeft - getPaddingBottom()) : (getHeight() - getPaddingBottom() - mSlideableView.getMeasuredHeight() - newTopOrLeft);
                 if (lp.height == defaultHeight) {
                     lp.height = LayoutParams.MATCH_PARENT;
                 }
             } else {
-                lp.width = mSlidingDirection == SlidingDirection.LEFT ? (newTopOrLeft - getPaddingRight()) : (getWidth() - getPaddingRight() - mSlideableView.getMeasuredWidth() - newTopOrLeft);
+                lp.width = mGravity == Gravity.RIGHT ? (newTopOrLeft - getPaddingRight()) : (getWidth() - getPaddingRight() - mSlideableView.getMeasuredWidth() - newTopOrLeft);
                 if (lp.width == defaultWidth) {
                     lp.width = LayoutParams.MATCH_PARENT;
                 }
@@ -1346,17 +1332,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // Unless the panel is set to overlay content
             canvas.getClipBounds(mTmpRect);
             if (!mOverlayContent) {
-                switch (mSlidingDirection){
-                    case UP:
+                switch (mGravity){
+                    case Gravity.BOTTOM:
                         mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
                         break;
-                    case DOWN:
+                    case Gravity.TOP:
                         mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getBottom());
                         break;
-                    case LEFT:
+                    case Gravity.RIGHT:
                         mTmpRect.right = Math.min(mTmpRect.right, mSlideableView.getLeft());
                         break;
-                    case RIGHT:
+                    case Gravity.LEFT:
                         mTmpRect.left = Math.max(mTmpRect.left, mSlideableView.getRight());
                 }
             }
@@ -1431,7 +1417,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mShadowDrawable != null && mSlideableView != null) {
             final int top, bottom, left, right;
             if(mIsSlidingVertically){
-                if (mSlidingDirection == SlidingDirection.UP) {
+                if (mGravity == Gravity.BOTTOM) {
                     top = mSlideableView.getTop() - mShadowHeight;
                     bottom = mSlideableView.getTop();
                 } else {
@@ -1442,7 +1428,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 right = mSlideableView.getRight();
                 left = mSlideableView.getLeft();
             } else {
-                if (mSlidingDirection == SlidingDirection.LEFT) {
+                if (mGravity == Gravity.RIGHT) {
                     left = mSlideableView.getLeft() - mShadowHeight;
                     right = mSlideableView.getLeft();
                 } else {
@@ -1590,9 +1576,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             // direction is always positive if we are sliding in the expanded direction
             float direction;
             if (mIsSlidingVertically){
-                direction = mSlidingDirection == SlidingDirection.UP ? -yvel : yvel;
+                direction = mGravity == Gravity.BOTTOM ? -yvel : yvel;
             } else {
-                direction = mSlidingDirection == SlidingDirection.LEFT ? -xvel : xvel;
+                direction = mGravity == Gravity.RIGHT ? -xvel : xvel;
             }
 
             if (direction > 0 && mSlideOffset <= mAnchorPoint) {
@@ -1658,7 +1644,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if(mIsSlidingVertically){
                 final int collapsedTop = computePanelTopPosition(0.f);
                 final int expandedTop = computePanelTopPosition(1.0f);
-                if (mSlidingDirection == SlidingDirection.UP) {
+                if (mGravity == Gravity.BOTTOM) {
                     return Math.min(Math.max(top, expandedTop), collapsedTop);
                 } else {
                     return Math.min(Math.max(top, collapsedTop), expandedTop);
@@ -1675,7 +1661,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if(!mIsSlidingVertically) {// Horizontally
                 final int collapsedLeft = computePanelLeftPosition(0.f);
                 final int expandedLeft = computePanelLeftPosition(1.0f);
-                if (mSlidingDirection == SlidingDirection.LEFT) {
+                if (mGravity == Gravity.RIGHT) {
                     return Math.min(Math.max(left, expandedLeft), collapsedLeft);
                 } else {
                     return Math.min(Math.max(left, collapsedLeft), expandedLeft);
