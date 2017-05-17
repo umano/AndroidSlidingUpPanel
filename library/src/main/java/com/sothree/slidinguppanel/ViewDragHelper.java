@@ -760,6 +760,12 @@ public class ViewDragHelper {
                 return true;
             }
 
+            if(!keepGoing && dx != 0) { //fix #525 (Copy for horizontal sliding
+                //Invalid drag state
+                mCapturedView.setLeft(0);
+                return true;
+            }
+
             if (dx != 0) {
                 mCapturedView.offsetLeftAndRight(dx);
             }
