@@ -142,6 +142,8 @@ public class ViewDragHelper {
     private final ViewGroup mParentView;
 
     private View slideableView;
+    
+    private float sensetivity;
 
     /**
      * A Callback is used as a communication channel with the ViewDragHelper back to the
@@ -379,6 +381,7 @@ public class ViewDragHelper {
      */
     public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Callback cb) {
         final ViewDragHelper helper = create(forParent, cb);
+        helper.sensetivity = sensitivity;
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
     }
@@ -395,6 +398,7 @@ public class ViewDragHelper {
      */
     public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Interpolator interpolator, Callback cb) {
         final ViewDragHelper helper = create(forParent, interpolator, cb);
+        helper.sensetivity = sensitivity;
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
     }
@@ -490,8 +494,12 @@ public class ViewDragHelper {
     public int getEdgeSize() {
         return mEdgeSize;
     }
+    
+    public float getSensetivity() {
+	    return sensetivity;
+    }
 
-    /**
+/**
      * Capture a specific child view for dragging within the parent. The callback will be notified
      * but {@link Callback#tryCaptureView(android.view.View, int,float)} will not be asked permission to
      * capture this view.

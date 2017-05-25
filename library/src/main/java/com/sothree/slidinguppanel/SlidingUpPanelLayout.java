@@ -59,7 +59,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     /**
      * Default Minimum velocity that will be detected as a fling
      */
-    private static final int DEFAULT_MIN_FLING_VELOCITY = 400; // dips per second
+    private static final int DEFAULT_MIN_FLING_VELOCITY = 300; // dips per second
     /**
      * Default is set to false because that is how it was written
      */
@@ -346,7 +346,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.5f, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 2, scrollerInterpolator, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -919,7 +919,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (ady > dragSlop && adx > ady) {
+                if (ady > dragSlop && adx / mDragHelper.getSensetivity() > ady) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
@@ -1519,7 +1519,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             } else if (mSlideOffset >= (1.f + mAnchorPoint) / 2) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
-            } else if (mSlideOffset >= mAnchorPoint / 2) {
+            } else if (mSlideOffset >= mAnchorPoint / 4) {
                 // zero velocity, and close enough to anchor point => go to anchor
                 target = computePanelTopPosition(mAnchorPoint);
             } else {
