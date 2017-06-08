@@ -1361,9 +1361,9 @@ public class ViewDragHelper {
         if (checkHorizontal && checkVertical) {
             return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
         } else if (checkHorizontal) {
-            return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mOriginalTouchSlop;
+            return Math.abs(dx) > mTouchSlop;
         } else if (checkVertical) {
-            return Math.abs(dy) > mTouchSlop && Math.abs(dx) < mOriginalTouchSlop;
+            return Math.abs(dy) > mTouchSlop;
         }
         return false;
     }

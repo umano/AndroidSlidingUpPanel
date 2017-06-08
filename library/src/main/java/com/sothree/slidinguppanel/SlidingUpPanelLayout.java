@@ -346,7 +346,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 2, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 2.5f, scrollerInterpolator, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
