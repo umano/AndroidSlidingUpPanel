@@ -346,7 +346,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 2.5f, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 0.3f,1.5f, scrollerInterpolator, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -919,10 +919,21 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (ady > dragSlop && adx / mDragHelper.getSensetivity() > ady) {
-                    mDragHelper.cancel();
-                    mIsUnableToDrag = true;
+                if (mIsUnableToDrag){
+                    
                     return false;
+                }
+                if (!mDragHelper.isDragging()) {
+                    if (adx > dragSlop && adx > ady * mDragHelper.getVersatility()) {
+                        mIsUnableToDrag = true;
+                         if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_DRAGGING){
+                            mDragHelper.abort();
+                        }
+                        else {
+                             mDragHelper.cancel();
+                        }
+                        return false;
+                    }
                 }
                 break;
             }
@@ -949,7 +960,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         }
         return mDragHelper.shouldInterceptTouchEvent(ev);
     }
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled() || !isTouchEnabled()) {
@@ -967,8 +978,8 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getActionMasked();
-
         if (mDragHelper.getPointersCount() > 1 && !isMultiTouchCanBeHandled()){
+            
             mDragHelper.abort();
             mIsUnableToDrag = true;
 
@@ -985,18 +996,27 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
            return true;
         }
 
-        if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
+        if (!isEnabled() || !isTouchEnabled() || ((mIsUnableToDrag || mIsScrollableViewHandlingTouch) && action != MotionEvent
+                .ACTION_DOWN)) {
+            mIsUnableToDrag = true;
+            mDragHelper.abort();
             return super.dispatchTouchEvent(ev);
         }
-
+        
         final float y = ev.getY();
         final float x = ev.getX();
 
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
+            mIsUnableToDrag = false;
             mPrevMotionY = y;
         } else if (action == MotionEvent.ACTION_MOVE) {
-            float dy = y - mInitialMotionY;
+           
+            if (mDragHelper.isDragging()) {
+                return this.onTouchEvent(ev);
+            }
+            
+             float dy = y - mInitialMotionY;
             mPrevMotionY = y;
 
             final float adx = Math.abs(x - mInitialMotionX);
@@ -1004,9 +1024,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             final int dragSlop = mDragHelper.getTouchSlop();
 
 
-            if (ady < dragSlop || adx > ady) {
+            if (ady < dragSlop || adx > ady * mDragHelper.getVersatility()) {
                 return super.dispatchTouchEvent(ev);
             }
+            
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
@@ -1014,9 +1035,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                 return super.dispatchTouchEvent(ev);
             }
 
-            if (mDragHelper.isDragging()) {
-                return this.onTouchEvent(ev);
-            }
+            
 
             if (mScrollableViewHelper.isVerticalScrollEnabled(mSlideableView, dy)) {
                 mIsScrollableViewHandlingTouch = true;
@@ -1051,6 +1070,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             if (mIsScrollableViewHandlingTouch) {
                 mDragHelper.setDragState(ViewDragHelper.STATE_IDLE);
             }
+            
         }
 
         // In all other cases, just let the default behavior take over.
@@ -1500,32 +1520,39 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             int target = 0;
-
             // direction is always positive if we are sliding in the expanded direction
             float direction = mIsSlidingUp ? -yvel : yvel;
-
-            if (direction > 0 && mSlideOffset <= mAnchorPoint) {
-                // swipe up -> expand and stop at anchor point
-                target = computePanelTopPosition(mAnchorPoint);
-            } else if (direction > 0 && mSlideOffset > mAnchorPoint) {
-                // swipe up past anchor -> expand
-                target = computePanelTopPosition(1.0f);
-            } else if (direction < 0 && mSlideOffset >= mAnchorPoint) {
-                // swipe down -> collapse and stop at anchor point
-                target = computePanelTopPosition(mAnchorPoint);
-            } else if (direction < 0 && mSlideOffset < mAnchorPoint) {
-                // swipe down past anchor -> collapse
-                target = computePanelTopPosition(0.0f);
-            } else if (mSlideOffset >= (1.f + mAnchorPoint) / 2) {
+            
+            boolean enoughVelocity = Math.abs(yvel) > 2000;
+            
+            if (enoughVelocity){
+                if (direction > 0 && mSlideOffset <= mAnchorPoint) {
+                    // swipe up -> expand and stop at anchor point
+                    target = computePanelTopPosition(mAnchorPoint);
+                } else if (direction > 0 && mSlideOffset > mAnchorPoint) {
+                    // swipe up past anchor -> expand
+                    target = computePanelTopPosition(1.0f);
+                } else if (direction < 0 && mSlideOffset >= mAnchorPoint) {
+                    // swipe down -> collapse and stop at anchor point
+                    target = computePanelTopPosition(mAnchorPoint);
+                } else if (direction < 0 && mSlideOffset < mAnchorPoint) {
+                    // swipe down past anchor -> collapse
+                    target = computePanelTopPosition(0.0f);
+                }
+            } else {
+                if (mSlideOffset >= (1.f + mAnchorPoint) / 3) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
-            } else if (mSlideOffset >= mAnchorPoint / 4) {
-                // zero velocity, and close enough to anchor point => go to anchor
-                target = computePanelTopPosition(mAnchorPoint);
-            } else {
-                // settle at the bottom
-                target = computePanelTopPosition(0.0f);
+                } else if (mSlideOffset >= mAnchorPoint / 3) {
+                    // zero velocity, and close enough to anchor point => go to anchor
+                    target = computePanelTopPosition(mAnchorPoint);
+                } else {
+                    // settle at the bottom
+                    target = computePanelTopPosition(0.0f);
+                }
+                mDragHelper.clearVelocity();
             }
+           
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
             invalidate();

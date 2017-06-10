@@ -144,6 +144,7 @@ public class ViewDragHelper {
     private View slideableView;
     
     private float sensetivity;
+    private float versatility;
 
     /**
      * A Callback is used as a communication channel with the ViewDragHelper back to the
@@ -382,6 +383,7 @@ public class ViewDragHelper {
     public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Callback cb) {
         final ViewDragHelper helper = create(forParent, cb);
         helper.sensetivity = sensitivity;
+        helper.versatility = 1;
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
     }
@@ -396,9 +398,10 @@ public class ViewDragHelper {
      * @param cb Callback to provide information and receive events
      * @return a new ViewDragHelper instance
      */
-    public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Interpolator interpolator, Callback cb) {
+    public static ViewDragHelper create(ViewGroup forParent, float sensitivity,float versatility, Interpolator interpolator, Callback cb) {
         final ViewDragHelper helper = create(forParent, interpolator, cb);
         helper.sensetivity = sensitivity;
+        helper.versatility = versatility;
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
     }
@@ -498,8 +501,16 @@ public class ViewDragHelper {
     public float getSensetivity() {
 	    return sensetivity;
     }
-
-/**
+    
+    public float getVersatility() {
+	    return versatility;
+    }
+    
+    public int getOriginalTouchSlop() {
+	    return mOriginalTouchSlop;
+    }
+    
+    /**
      * Capture a specific child view for dragging within the parent. The callback will be notified
      * but {@link Callback#tryCaptureView(android.view.View, int,float)} will not be asked permission to
      * capture this view.
@@ -548,7 +559,6 @@ public class ViewDragHelper {
     public void cancel() {
         mActivePointerId = INVALID_POINTER;
         clearMotionHistory();
-
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
@@ -628,12 +638,18 @@ public class ViewDragHelper {
             throw new IllegalStateException("Cannot settleCapturedViewAt outside of a call to " +
                     "Callback#onViewReleased");
         }
-
+        
         return forceSettleCapturedViewAt(finalLeft, finalTop,
                 (int) VelocityTrackerCompat.getXVelocity(mVelocityTracker, mActivePointerId),
                 (int) VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId));
     }
 
+    public void clearVelocity(){
+        if (mVelocityTracker != null){
+            mVelocityTracker.clear();
+        }
+    }
+    
     /**
      * Settle the captured view at the given (left, top) position.
      *
@@ -1183,6 +1199,7 @@ public class ViewDragHelper {
                 if ((edgesTouched & mTrackingEdges) != 0) {
                     mCallback.onEdgeTouched(edgesTouched & mTrackingEdges, pointerId);
                 }
+                
                 break;
             }
 
@@ -1241,7 +1258,6 @@ public class ViewDragHelper {
                             // Callback might have started an edge drag.
                             break;
                         }
-
 //                        final View toCapture = findTopChildUnder((int) mInitialMotionX[pointerId], (int) mInitialMotionY[pointerId]);
                         final View toCapture = slideableView;
                         if (checkTouchSlop(toCapture, dx, dy) &&
@@ -1361,9 +1377,9 @@ public class ViewDragHelper {
         if (checkHorizontal && checkVertical) {
             return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
         } else if (checkHorizontal) {
-            return Math.abs(dx) > mTouchSlop;
+             return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mTouchSlop * versatility;
         } else if (checkVertical) {
-            return Math.abs(dy) > mTouchSlop;
+            return Math.abs(dy) > mTouchSlop && Math.abs(dx) < mTouchSlop * versatility;
         }
         return false;
     }
@@ -1421,9 +1437,10 @@ public class ViewDragHelper {
         if (checkHorizontal && checkVertical) {
             return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
         } else if (checkHorizontal) {
-            return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mOriginalTouchSlop;
+            return Math.abs(dx) > mTouchSlop && Math.abs(dy) < mTouchSlop * versatility;
         } else if (checkVertical) {
-            return Math.abs(dy) > mTouchSlop && Math.abs(dx) < mOriginalTouchSlop;
+            boolean check = Math.abs(dy) > mTouchSlop && Math.abs(dx) < mTouchSlop * versatility;
+            return check;
         }
         return false;
     }
