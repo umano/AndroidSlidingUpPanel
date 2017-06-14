@@ -346,7 +346,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.3f,1.5f, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 0.3f,2f, scrollerInterpolator, new DragHelperCallback());
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -1103,12 +1103,13 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
         }
         return false;
     }
+    
+    private int[] viewLocation = new int[2];
+    private int[] parentLocation = new int[2];
 
     private boolean isViewUnder(View view, int x, int y) {
         if (view == null) return false;
-        int[] viewLocation = new int[2];
         view.getLocationOnScreen(viewLocation);
-        int[] parentLocation = new int[2];
         this.getLocationOnScreen(parentLocation);
         int screenX = parentLocation[0] + x;
         int screenY = parentLocation[1] + y;
@@ -1523,7 +1524,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
             // direction is always positive if we are sliding in the expanded direction
             float direction = mIsSlidingUp ? -yvel : yvel;
             
-            boolean enoughVelocity = Math.abs(yvel) > 2000;
+            boolean enoughVelocity = Math.abs(yvel) > 1500;
             
             if (enoughVelocity){
                 if (direction > 0 && mSlideOffset <= mAnchorPoint) {
@@ -1540,10 +1541,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
                     target = computePanelTopPosition(0.0f);
                 }
             } else {
-                if (mSlideOffset >= (1.f + mAnchorPoint) / 3) {
+                if (mSlideOffset >= (1.f + mAnchorPoint) / 4) {
                 // zero velocity, and far enough from anchor point => expand to the top
                 target = computePanelTopPosition(1.0f);
-                } else if (mSlideOffset >= mAnchorPoint / 3) {
+                } else if (mSlideOffset >= mAnchorPoint / 4) {
                     // zero velocity, and close enough to anchor point => go to anchor
                     target = computePanelTopPosition(mAnchorPoint);
                 } else {
