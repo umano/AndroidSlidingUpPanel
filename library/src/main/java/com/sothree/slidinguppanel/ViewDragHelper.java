@@ -105,6 +105,9 @@ public class ViewDragHelper {
 	private static final int BASE_SETTLE_DURATION = 256; // ms
 	private static final int MAX_SETTLE_DURATION = 600; // ms
 	
+	private int baseSettleDuration;
+	private int maxSettleDuration;
+	
 	// Current drag state; idle, dragging or settling
 	private int mDragState;
 	
@@ -401,7 +404,7 @@ public class ViewDragHelper {
 	 * @return a new ViewDragHelper instance
 	 */
 	public static ViewDragHelper create(ViewGroup forParent, float sensitivity, float versatility, Interpolator interpolator, Callback
-            cb) {
+			cb) {
 		final ViewDragHelper helper = create(forParent, interpolator, cb);
 		helper.sensetivity = sensitivity;
 		helper.versatility = versatility;
@@ -438,6 +441,17 @@ public class ViewDragHelper {
 		mMaxVelocity = vc.getScaledMaximumFlingVelocity();
 		mMinVelocity = vc.getScaledMinimumFlingVelocity();
 		mScroller = ScrollerCompat.create(context, interpolator != null ? interpolator : sInterpolator);
+		
+		baseSettleDuration = BASE_SETTLE_DURATION;
+		maxSettleDuration = MAX_SETTLE_DURATION;
+	}
+	
+	public void setBaseSettleDuration(int baseSettleDuration) {
+		this.baseSettleDuration = baseSettleDuration;
+	}
+	
+	public void setMaxSettleDuration(int maxSettleDuration) {
+		this.maxSettleDuration = maxSettleDuration;
 	}
 	
 	public void setSlideableView(View slideableView) {
@@ -721,9 +735,9 @@ public class ViewDragHelper {
 			duration = 4 * Math.round(1000 * Math.abs(distance / velocity));
 		} else {
 			final float range = (float) Math.abs(delta) / motionRange;
-			duration = (int) ((range + 1) * BASE_SETTLE_DURATION);
+			duration = (int) ((range + 1) * baseSettleDuration);
 		}
-		return Math.min(duration, MAX_SETTLE_DURATION);
+		return Math.min(duration, maxSettleDuration);
 	}
 	
 	/**
@@ -1595,7 +1609,9 @@ public class ViewDragHelper {
 		if (x > mParentView.getRight() - mEdgeSize) {
 			result |= EDGE_RIGHT;
 		}
-		if (y > mParentView.getBottom() - mEdgeSize) result |= EDGE_BOTTOM;
+		if (y > mParentView.getBottom() - mEdgeSize) {
+			result |= EDGE_BOTTOM;
+		}
 		
 		return result;
 	}
