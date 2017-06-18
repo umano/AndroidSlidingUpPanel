@@ -8,12 +8,8 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.BundleCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -216,7 +212,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionY;
     private boolean mIsScrollableViewHandlingTouch = false;
 
-    private List<PanelSlideListener> mPanelSlideListeners = new CopyOnWriteArrayList<>();
+    private final List<PanelSlideListener> mPanelSlideListeners = new CopyOnWriteArrayList<>();
     private View.OnClickListener mFadeOnClickListener;
 
     private final ViewDragHelper mDragHelper;
@@ -288,9 +284,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (defAttrs != null) {
                 int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
                 setGravity(gravity);
+                defAttrs.recycle();
             }
 
-            defAttrs.recycle();
 
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
@@ -316,9 +312,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (interpolatorResId != -1) {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
                 }
+                ta.recycle();
             }
-
-            ta.recycle();
         }
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -520,6 +515,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Provides an on click for the portion of the main view that is dimmed. The listener is not
      * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
      * not provided, the clicks on the dimmed area are passed through to the main layout.
+     *
      * @param listener
      */
     public void setFadeOnClickListener(View.OnClickListener listener) {
@@ -581,6 +577,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     /**
      * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     *
      * @param helper
      */
     public void setScrollableViewHelper(ScrollableViewHelper helper) {
@@ -1325,7 +1322,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-        if(state instanceof Bundle) {
+        if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
             mSlideState = (PanelState) bundle.getSerializable(SLIDING_STATE);
             mSlideState = mSlideState == null ? DEFAULT_SLIDE_STATE : mSlideState;
@@ -1338,16 +1335,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            if (mIsUnableToDrag) {
-                return false;
-            }
+            return !mIsUnableToDrag && child == mSlideableView;
 
-            return child == mSlideableView;
         }
 
         @Override
         public void onViewDragStateChanged(int state) {
-            if (mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
+            if (mDragHelper != null && mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) {
                 mSlideOffset = computeSlideOffset(mSlideableView.getTop());
                 applyParallaxForCurrentSlideOffset();
 
@@ -1407,7 +1401,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 target = computePanelTopPosition(0.0f);
             }
 
-            mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
+            if (mDragHelper != null) {
+                mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
+            }
             invalidate();
         }
 
@@ -1466,9 +1462,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
             final TypedArray ta = c.obtainStyledAttributes(attrs, ATTRS);
             if (ta != null) {
                 this.weight = ta.getFloat(0, 0);
+                ta.recycle();
             }
 
-            ta.recycle();
+
         }
     }
 }
