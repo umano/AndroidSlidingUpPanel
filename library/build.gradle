@@ -17,5 +17,3 @@ android {
         abortOnError false
     }
 }
-
-apply from: '../maven_push.gradle'

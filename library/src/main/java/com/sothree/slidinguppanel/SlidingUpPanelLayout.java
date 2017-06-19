@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
-    private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
+    public static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
 
     /**
      * Default peeking out panel height
@@ -161,6 +161,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * The main view
      */
     private View mMainView;
+    private View mAntiDragView;
 
     /**
      * Current state of the slideable view.
@@ -200,7 +201,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * A panel view is locked into internal scrolling or another condition that
      * is preventing a drag.
      */
-    private boolean mIsUnableToDrag;
+    private final boolean mIsUnableToDrag = false; // leave this to false for now
 
     /**
      * Flag indicating that sliding feature is enabled\disabled
@@ -787,6 +788,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             int childHeightSpec;
             if (lp.height == LayoutParams.WRAP_CONTENT) {
+                //noinspection Range
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
             } else {
                 // Modify the height based on the weight.
@@ -795,6 +797,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 } else if (lp.height != LayoutParams.MATCH_PARENT) {
                     height = lp.height;
                 }
+                //noinspection Range
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             }
 
@@ -894,8 +897,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int dragSlop = mDragHelper.getTouchSlop();
 
         switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-                mIsUnableToDrag = false;
+            case MotionEvent.ACTION_DOWN:
+//                mIsUnableToDrag = false;
                 mInitialMotionX = x;
                 mInitialMotionY = y;
                 if (!isViewUnder(mDragView, (int) x, (int) y)) {
@@ -905,10 +908,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
 
                 break;
-            }
 
             case MotionEvent.ACTION_MOVE: {
-                if (ady > dragSlop && adx > ady) {
+                if (!(isViewUnder(mDragView, (int) x, (int) y) || isViewUnder(mDragView, (int) mInitialMotionX, (int) mInitialMotionY))
+                        || isViewUnder(mAntiDragView, (int) x, (int) y) || isViewUnder(mAntiDragView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+                    mDragHelper.cancel();
+//                    mIsUnableToDrag = true;
+                    return false;
+                } else if ((ady > dragSlop && adx > ady)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
                     return false;
@@ -926,9 +933,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     return true;
                 }
                 // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
-                if (ady <= dragSlop
-                        && adx <= dragSlop
-                        && mSlideOffset > 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                if (mFadeOnClickListener != null
+                        && ady <= dragSlop && adx <= dragSlop && mSlideOffset > 0
+                        && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     mFadeOnClickListener.onClick(this);
                     return true;
@@ -961,6 +968,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return super.dispatchTouchEvent(ev);
         }
 
+        final float x = ev.getX();
         final float y = ev.getY();
 
         if (action == MotionEvent.ACTION_DOWN) {
@@ -972,7 +980,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
-            if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+            if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY) || isViewUnder(mAntiDragView, (int) x, (int) y)) {
                 return super.dispatchTouchEvent(ev);
             }
 
@@ -1043,6 +1051,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int screenY = parentLocation[1] + y;
         return screenX >= viewLocation[0] && screenX < viewLocation[0] + view.getWidth() &&
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
+    }
+
+    public void setAntiDragView(View antiDragView) {
+        mAntiDragView = antiDragView;
     }
 
     /*
