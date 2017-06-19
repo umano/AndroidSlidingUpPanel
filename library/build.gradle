@@ -5,14 +5,14 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:26.+'
-    compile 'com.android.support:support-annotations:26.+'
-    compile 'com.android.support:recyclerview-v7:26.+'
+   compile 'com.android.support:support-v4:26.0.0-alpha1'
+    compile 'com.android.support:support-annotations:26.0.0-alpha1'
+    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
 }
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.+"
+    buildToolsVersion "26.0.0"
     lintOptions {
         abortOnError false
     }
