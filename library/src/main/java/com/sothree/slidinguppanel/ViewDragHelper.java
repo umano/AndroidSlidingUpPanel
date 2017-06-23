@@ -862,6 +862,7 @@ public class ViewDragHelper {
 			if (!keepGoing) {
 				if (deferCallbacks) {
 					mParentView.post(mSetIdleRunnable);
+					return false;
 				} else {
 					setDragState(STATE_IDLE);
 				}
