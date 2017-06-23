@@ -1506,8 +1506,10 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 				} else if (mSlideOffset == 0) {
 					setPanelStateInternal(PanelState.COLLAPSED);
 				} else if (mSlideOffset < 0) {
-					setPanelStateInternal(PanelState.HIDDEN);
-					mSlideableView.setVisibility(View.INVISIBLE);
+					setPanelStateInternal(PanelState.COLLAPSED);
+// TODO: try fix panel freeze
+//					setPanelStateInternal(PanelState.HIDDEN);
+//					mSlideableView.setVisibility(View.INVISIBLE);
 				} else {
 					updateObscuredViewVisibility();
 					setPanelStateInternal(PanelState.ANCHORED);
