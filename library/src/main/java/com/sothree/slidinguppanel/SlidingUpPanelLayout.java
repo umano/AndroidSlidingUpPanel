@@ -207,6 +207,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsTouchEnabled;
 
+    private float mPrevMotionX;
     private float mPrevMotionY;
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -961,14 +962,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return super.dispatchTouchEvent(ev);
         }
 
+        final float x = ev.getX();
         final float y = ev.getY();
 
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
+            mPrevMotionX = x;
             mPrevMotionY = y;
         } else if (action == MotionEvent.ACTION_MOVE) {
+            float dx = x - mPrevMotionX;
             float dy = y - mPrevMotionY;
+            mPrevMotionX = x;
             mPrevMotionY = y;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Scrolling horizontally, so ignore
+                return super.dispatchTouchEvent(ev);
+            }
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
