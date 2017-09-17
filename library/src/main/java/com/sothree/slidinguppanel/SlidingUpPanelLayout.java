@@ -13,6 +13,7 @@ import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1096,6 +1097,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param state - new panel state
      */
     public void setPanelState(PanelState state) {
+
+        // Abort any running animation, to allow state change
+        if(mDragHelper.getViewDragState() == ViewDragHelper.STATE_SETTLING){
+            Log.d(TAG, "View is settling. Aborting animation.");
+            mDragHelper.abort();
+        }
+
         if (state == null || state == PanelState.DRAGGING) {
             throw new IllegalArgumentException("Panel state cannot be null or DRAGGING.");
         }
@@ -1226,6 +1234,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         int panelTop = computePanelTopPosition(slideOffset);
+
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop)) {
             setAllChildrenVisible();
             ViewCompat.postInvalidateOnAnimation(this);
