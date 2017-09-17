@@ -2,20 +2,20 @@ apply plugin: 'com.android.application'
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "26.0.0"
+  buildToolsVersion "26.0.1"
 
   lintOptions {
     abortOnError false
   }
 
   defaultConfig {
-    minSdkVersion 11
+    minSdkVersion 14
     targetSdkVersion 26
   }
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:26.0.0-alpha1'
-  compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+  compile 'com.android.support:support-v4:26.0.2'
+  compile 'com.android.support:appcompat-v7:26.0.2'
   compile project(':library')
 }

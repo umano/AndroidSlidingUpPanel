@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-   compile 'com.android.support:support-v4:26.0.0-alpha1'
-    compile 'com.android.support:support-annotations:26.0.0-alpha1'
-    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
+   compile 'com.android.support:support-v4:26.0.2'
+    compile 'com.android.support:support-annotations:26.0.2'
+    compile 'com.android.support:recyclerview-v7:26.0.2'
 }
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     lintOptions {
         abortOnError false
     }
