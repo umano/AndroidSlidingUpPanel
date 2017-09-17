@@ -29,7 +29,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.3.1'
+    compile 'com.sothree.slidinguppanel:library:3.4.0'
 }
 ```
 
@@ -141,6 +141,9 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.4.0
+  * Use the latest support library 26 and update the min version to 14.
+  * Bug fixes
 * 3.3.1
   * Lots of bug fixes from various pull requests.
   * Removed the nineoldandroids dependency. Use ViewCompat instead.
