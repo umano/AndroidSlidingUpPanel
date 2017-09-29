@@ -741,6 +741,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 		mFirstLayout = true;
 	}
 	
+	@SuppressWarnings("Range")
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -1041,6 +1042,12 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 			
 			// If the scroll view isn't under the touch, pass the
 			// event along to the dragView.
+//			if (!mScrollableViewHelper.isScrollAllowedHere(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
+//				mIsScrollableViewHandlingTouch = true;
+//				mIsUnableToDrag = true;
+//				return super.dispatchTouchEvent(ev);
+//			}
+			
 			if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
 				return super.dispatchTouchEvent(ev);
 			}
