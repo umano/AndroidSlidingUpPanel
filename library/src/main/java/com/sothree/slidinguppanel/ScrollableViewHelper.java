@@ -80,4 +80,8 @@ public class ScrollableViewHelper {
 		scrollableView.getGlobalVisibleRect(mVisibilityRect);
 		return mVisibilityRect.contains(x, y);
 	}
+	
+	public boolean isScrollUnconditionalHere(int x, int y) {
+		return false;
+	}
 }
