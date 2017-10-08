@@ -7,7 +7,7 @@ import android.widget.ScrollView;
 
 /**
  * Helper class for determining the current scroll positions for scrollable views. Currently works
- * for ListView, ScrollView and RecyclerView, but the library users can override it to add support
+ * for ListView, ScrollView, RecyclerView and GridView,  but the library users can override it to add support
  * for other views.
  */
 public class ScrollableViewHelper {
@@ -55,6 +55,18 @@ public class ScrollableViewHelper {
                 View lastChild = rv.getChildAt(rv.getChildCount() - 1);
                 // Approximate the scroll position based on the bottom child and the last visible item
                 return (rv.getAdapter().getItemCount() - 1) * lm.getDecoratedMeasuredHeight(lastChild) + lm.getDecoratedBottom(lastChild) - rv.getBottom();
+            }
+        } else if (scrollableView instanceof GridView && ((GridView) scrollableView).getChildCount() > 0) {
+            GridView gv = ((GridView) scrollableView);
+            if (gv.getAdapter() == null) return 0;
+            if (isSlidingUp) {
+                View firstChild = gv.getChildAt(0);
+                // Approximate the scroll position based on the top child and the first visible item
+                return gv.getFirstVisiblePosition() * firstChild.getHeight() / gv.getNumColumns() - firstChild.getTop();
+            } else {
+                View lastChild = gv.getChildAt(gv.getChildCount() - 1);
+                // Approximate the scroll position based on the bottom child and the last visible item
+                return (gv.getAdapter().getCount() - gv.getLastVisiblePosition() - 1) * lastChild.getHeight() / gv.getNumColumns() + lastChild.getBottom() - gv.getBottom();
             }
         } else {
             return 0;
