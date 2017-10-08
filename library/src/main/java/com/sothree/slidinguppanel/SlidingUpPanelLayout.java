@@ -151,7 +151,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private View mScrollableView;
     private int mScrollableViewResId;
-    private ScrollableViewHelper mScrollableViewHelper = new ScrollableViewHelper();
 
     /**
      * The child view that can slide, if any.
@@ -578,15 +577,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
-     *
-     * @param helper
-     */
-    public void setScrollableViewHelper(ScrollableViewHelper helper) {
-        mScrollableViewHelper = helper;
-    }
-
-    /**
      * Set an anchor point where the panel can stop during sliding
      *
      * @param anchorPoint A value between 0 and 1, determining the position of the anchor point
@@ -991,7 +981,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (dy * (mIsSlidingUp ? 1 : -1) > 0) { // Collapsing
                 // Is the child less than fully scrolled?
                 // Then let the child handle it.
-                if (mScrollableViewHelper.getScrollableViewScrollPosition(mScrollableView, mIsSlidingUp) > 0) {
+                if (canScrollScrollableView()) {
                     mIsScrollableViewHandlingTouch = true;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -1042,6 +1032,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         // In all other cases, just let the default behavior take over.
         return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean canScrollScrollableView() {
+        // no need create null check for mScrollableView. isViewUnder() call handles that already
+        return mIsSlidingUp ? mScrollableView.canScrollVertically(-1) : mScrollableView.canScrollVertically(1);
     }
 
     private boolean isViewUnder(View view, int x, int y) {
@@ -1488,3 +1483,4 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 }
+
