@@ -77,6 +77,9 @@ public class ScrollableViewHelper {
 	}
 	
 	public boolean isScrollAllowedHere(View scrollableView, int x, int y) {
+		if (scrollableView == null) {
+			return true;
+		}
 		scrollableView.getGlobalVisibleRect(mVisibilityRect);
 		return mVisibilityRect.contains(x, y);
 	}
