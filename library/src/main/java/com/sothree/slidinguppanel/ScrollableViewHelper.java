@@ -72,7 +72,7 @@ public class ScrollableViewHelper {
 		}
 	}
 	
-	public boolean isVerticalScrollEnabled(View scrollableView, float dy) {
+	public boolean isVerticalScrollEnabled(View scrollableView, int x, int y, int dy) {
 		return false;
 	}
 	
@@ -84,7 +84,4 @@ public class ScrollableViewHelper {
 		return mVisibilityRect.contains(x, y);
 	}
 	
-	public boolean isScrollUnconditionalHere(int x, int y) {
-		return false;
-	}
 }
