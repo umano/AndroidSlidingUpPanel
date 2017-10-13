@@ -5,8 +5,8 @@ package com.sothree.slidinguppanel;
  */
 
 public interface ScrollableChild {
-	boolean canScrollVertically(boolean up);
-
+	boolean canScrollVertically(int x, int y, boolean up);
+	
 	boolean canBePinched();
 }
 
