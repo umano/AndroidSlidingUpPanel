@@ -923,12 +923,6 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 				mIsUnableToDrag = false;
 				mInitialMotionX = x;
 				mInitialMotionY = y;
-//                if (!isViewUnder(mDragView, (int) x, (int) y)) {
-//                    mDragHelper.cancel();
-//                    mIsUnableToDrag = true;
-//                    return false;
-//                }
-				
 				break;
 			}
 			
@@ -1047,10 +1041,6 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 				mIsUnableToDrag = true;
 				return super.dispatchTouchEvent(ev);
 			}
-//
-//			if (!isViewUnder(mScrollableView, (int) mInitialMotionX, (int) mInitialMotionY)) {
-//				return super.dispatchTouchEvent(ev);
-//			}
 			
 			if (mScrollableViewHelper.isVerticalScrollEnabled(mSlideableView, (int) mInitialMotionX, (int)
 					mInitialMotionY, (int) dy)) {
@@ -1060,7 +1050,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 			}
 			
 			boolean up = dy < 0;
-			final int pointerId = MotionEventCompat.getPointerId(ev, 0);
+			final int pointerId = ev.getPointerId(0);
 			
 			if (mIsSlidingUp) {
 				if (mSlideState == PanelState.EXPANDED && !up) {
@@ -1073,12 +1063,6 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 					return super.dispatchTouchEvent(ev);
 				}
 			}
-
-//			if ((mIsSlidingUp == up) && mScrollableViewHelper.isScrollUnconditionalHere((int) mInitialMotionX, (int)
-//					mInitialMotionY)) {
-//				mDragHelper.captureChildView(mSlideableView, pointerId);
-//				return super.dispatchTouchEvent(ev);
-//			}
 			
 			if (mScrollableViewHelper.isVerticalScrollEnabled(mScrollableView, (int) mInitialMotionX, (int)
 					mInitialMotionY, (int) dy)) {
