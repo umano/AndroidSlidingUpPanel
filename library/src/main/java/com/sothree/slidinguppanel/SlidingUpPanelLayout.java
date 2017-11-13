@@ -1141,8 +1141,12 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 	 */
 	private float computeSlideOffset(int topPosition) {
 		// Compute the panel top position if the panel is collapsed (offset 0)
-		final int topBoundCollapsed = computePanelTopPosition(0);
-		
+		int topBoundCollapsed = computePanelTopPosition(0);
+		if (mIsSlidingUp) {
+			topBoundCollapsed = Math.max(topBoundCollapsed, 0);
+		} else {
+			topBoundCollapsed = Math.min(topBoundCollapsed, topPosition);
+		}
 		// Determine the new slide offset based on the collapsed top position and the new required
 		// top position
 		return (mIsSlidingUp
@@ -1227,7 +1231,7 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 		}
 	}
 	
-	private void setPanelStateInternal(PanelState state) {
+	public void setPanelStateInternal(PanelState state) {
 		if (mSlideState == state) {
 			return;
 		}
@@ -1503,16 +1507,11 @@ public class SlidingUpPanelLayout extends ViewGroup implements ScrollableChild {
 				mSlideOffset = computeSlideOffset(mSlideableView.getTop());
 				applyParallaxForCurrentSlideOffset();
 				
-				if (mSlideOffset == 1) {
+				if (mSlideOffset >= 1) {
 					updateObscuredViewVisibility();
 					setPanelStateInternal(PanelState.EXPANDED);
-				} else if (mSlideOffset == 0) {
+				} else if (mSlideOffset <= 0) {
 					setPanelStateInternal(PanelState.COLLAPSED);
-				} else if (mSlideOffset < 0) {
-					setPanelStateInternal(PanelState.COLLAPSED);
-// TODO: try fix panel freeze
-//					setPanelStateInternal(PanelState.HIDDEN);
-//					mSlideableView.setVisibility(View.INVISIBLE);
 				} else {
 					updateObscuredViewVisibility();
 					setPanelStateInternal(PanelState.ANCHORED);
