@@ -1227,7 +1227,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param slideOffset position to animate to
      * @param velocity    initial velocity in case of fling, or 0.
      */
-    boolean smoothSlideTo(float slideOffset, int velocity) {
+    public boolean smoothSlideTo(float slideOffset, int velocity) {
         if (!isEnabled() || mSlideableView == null) {
             // Nothing to do.
             return false;
