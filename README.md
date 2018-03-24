@@ -14,7 +14,6 @@ As seen in Umano Android App (now acquired by Dropbox):
 
 ### Known Uses in Popular Apps
 
-* [Soundcloud] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
 * [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
 * [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
 
