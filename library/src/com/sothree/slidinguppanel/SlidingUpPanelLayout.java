@@ -416,6 +416,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (mOtherHeight != -1 && mContenHeight != -1) {
                     mPanelHeight = mScreenHeight - mOtherHeight - mContenHeight - mVscreenHeight;
                 }
+                if(this.mContentView != null) {
+                    if(this.mOtherHeight != -1) {
+                        this.mPanelHeight = this.getMeasuredHeight() - this.mContentView.getMeasuredHeight();
+                    } else {
+                        this.mPanelHeight = this.getMeasuredHeight() - this.mContentView.getMeasuredHeight();
+                    }
+                }
+
             }
 
             ta.recycle();
@@ -956,7 +964,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         // Recalculate sliding panes and their details
         if (h != oldh) {
             mFirstLayout = true;
+            System.out.println("111111111111");
         }
+
         if (mContentView != null) {
             if (mOtherHeight != -1) {
                 //  mPanelHeight = mScreenHeight - mOtherHeight - mContentView.getMeasuredHeight() -mVscreenHeight;
@@ -967,6 +977,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mPanelHeight = getMeasuredHeight() - mContentView.getMeasuredHeight();
             }
         }
+        System.out.println("111111111111:22222222:"+mPanelHeight);
     }
 
 
@@ -1067,7 +1078,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     }
 
                     if (!(mSlideState == PanelState.EXPANDED) && (c == null
-                            || c != null && c.getTop() != 0) && ady1 > 0) {
+                            || c != null && c.getTop() != 0) && ady1 > 0) { //打开时
                         //   System.out.println("ddddddddddddddd");
                         return false;////交给子view处理        new 有头部 listView没在最顶端， 向下，这时交给子view处理
 
@@ -1562,6 +1573,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 target = computePanelTopPosition(0.0f);
             }
 
+            System.out.println("111111target::"+target);
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
             invalidate();
         }

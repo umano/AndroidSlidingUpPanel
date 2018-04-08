@@ -1,5 +1,9 @@
 package com.sothree.slidinguppanel.demo;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,10 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 public class DemoActivity extends ActionBarActivity {
     private static final String TAG = "DemoActivity";

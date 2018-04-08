@@ -20,7 +20,7 @@ dependencies {
 
 android {
   compileSdkVersion 21
-  buildToolsVersion "22.0.1"
+  buildToolsVersion "25.0.0"
   lintOptions {
     abortOnError false
   }
@@ -35,4 +35,9 @@ android {
   }
 }
 //
-apply from: '../maven_push.gradle'
+apply from: 'maven_push.gradle'
+task printProperties << {
+  println POM_DESCRIPTION        // Local extra property
+  println version        // Local extra property
+  println POM_NAME
+}
