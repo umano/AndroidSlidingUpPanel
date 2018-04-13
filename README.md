@@ -94,6 +94,7 @@ or `?attr/actionBarSize` to support older API versions.
 * You can provide a scroll interpolator for the panel movement by setting `umanoScrollInterpolator` attribute. For instance, if you want a bounce or overshoot effect for the panel.
 * By default, the panel pushes up the main content. You can make it overlay the main content by using `setOverlayed` method or `umanoOverlay` attribute. This is useful if you would like to make the sliding layout semi-transparent. You can also set `umanoClipPanel` to false to make the panel transparent in non-overlay mode.
 * By default, the main content is dimmed as the panel slides up. You can change the dim color by changing `umanoFadeColor`. Set it to `"@android:color/transparent"` to remove dimming completely.
+* You can have the content underneath the panel blur as you slide. To do this, use `setBlurOverlay` or set `umanoBlurOverlay` to true. This also enables `umanoOverlay`.
 
 ### Scrollable Sliding Views
 

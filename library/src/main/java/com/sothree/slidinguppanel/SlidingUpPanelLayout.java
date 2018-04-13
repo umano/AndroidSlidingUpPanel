@@ -3,13 +3,22 @@ package com.sothree.slidinguppanel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -64,6 +73,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Default is set to false because that is how it was written
      */
     private static final boolean DEFAULT_OVERLAY_FLAG = false;
+    /**
+     * Default is set to false because it is faster for performance
+     */
+    private static final boolean DEFAULT_BLUR_OVERLAY_FLAG = false;
     /**
      * Default is set to true for clip panel for performance reasons
      */
@@ -128,6 +141,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Panel overlays the windows instead of putting it underneath it.
      */
     private boolean mOverlayContent = DEFAULT_OVERLAY_FLAG;
+
+    /**
+     * Panel background is a blur of the content underneath it.
+     */
+    private boolean mBlurOverlay = DEFAULT_BLUR_OVERLAY_FLAG;
 
     /**
      * The main view is clipped to the main top border
@@ -229,6 +247,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private final Rect mTmpRect = new Rect();
 
     /**
+     * Used internally to blur the background and calculate clipping bounds
+     */
+    private final Rect mTmpRectClipping = new Rect();
+    private RenderScript rs = null;
+    private Bitmap mBlurredBitmap = null;
+    /**
      * Listener for monitoring events about sliding panes.
      */
     public interface PanelSlideListener {
@@ -305,6 +329,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay, DEFAULT_OVERLAY_FLAG);
                 mClipPanel = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoClipPanel, DEFAULT_CLIP_PANEL_FLAG);
+                mBlurOverlay = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoBlurOverlay, DEFAULT_BLUR_OVERLAY_FLAG);
+                if (mBlurOverlay) {
+                    // Must always be overlay content if blurring view underneath
+                    mOverlayContent = true;
+
+                    rs = RenderScript.create(context);
+                }
 
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
@@ -616,6 +647,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setOverlayed(boolean overlayed) {
         mOverlayContent = overlayed;
+        if (!overlayed) {
+            mBlurOverlay = false;
+        }
     }
 
     /**
@@ -641,6 +675,21 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return mClipPanel;
     }
 
+    /**
+     * Sets whether or not the panel blurs the content underneath
+     */
+    public void setBlurOverlay(boolean blurOverlay) {
+        mBlurOverlay = blurOverlay;
+        setOverlayed(true);
+        if (rs == null) {
+            rs = RenderScript.create(getContext());
+        }
+    }
+
+    /**
+     * Check if the panel is set to blur the content underneath
+     */
+    public boolean isBlurOverlay() { return mBlurOverlay; }
 
     void dispatchOnPanelSlide(View panel) {
         synchronized (mPanelSlideListeners) {
@@ -865,6 +914,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         if (mFirstLayout) {
             updateObscuredViewVisibility();
+
+            if (mBlurOverlay && mSlideableView != null && hasOpaqueBackground(mSlideableView)) {
+                Log.w(TAG, "Blur Overlay is set, but the slideable view background is opaque.");
+            }
         }
         applyParallaxForCurrentSlideOffset();
 
@@ -1212,6 +1265,32 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mCoveredFadePaint.setColor(color);
                 canvas.drawRect(mTmpRect, mCoveredFadePaint);
             }
+
+            if (mBlurOverlay) {
+                canvas.getClipBounds(mTmpRect);
+                if (mIsSlidingUp) {
+                    mTmpRect.top = Math.max(mTmpRect.top, mSlideableView.getTop());
+                } else {
+                    mTmpRect.bottom = Math.min(mTmpRect.bottom, mSlideableView.getTop());
+                }
+
+                mTmpRectClipping.set(mTmpRect);
+
+                if (mParallaxOffset > 0) {
+                    int offset = getCurrentParallaxOffset();
+
+                    if (mIsSlidingUp) {
+                        mTmpRectClipping.top -= offset;
+                        mTmpRectClipping.bottom -= offset;
+                    } else {
+                        mTmpRectClipping.top += offset;
+                        mTmpRectClipping.bottom += offset;
+                    }
+                }
+
+                Bitmap blurredBitmap = setupBackground(child);
+                canvas.drawBitmap(blurredBitmap, mTmpRectClipping, mTmpRect, null);
+            }
         } else {
             result = super.drawChild(canvas, child, drawingTime);
         }
@@ -1219,6 +1298,59 @@ public class SlidingUpPanelLayout extends ViewGroup {
         canvas.restoreToCount(save);
 
         return result;
+    }
+
+    /**
+     * Helper method that will do an initial blur of the view passed in.
+     *
+     * @param view - The view to be blurred.
+     *
+     * @return
+     */
+    public Bitmap setupBackground(View view) {
+        if (mBlurredBitmap != null) {
+            // Blurring is expensive, only do it once
+            return mBlurredBitmap;
+        }
+
+        int height = view.getMeasuredHeight();
+        if (mParallaxOffset > 0) {
+            // Make sure we account for the parallax effect, otherwise the image stretches
+            height += mParallaxOffset;
+        }
+
+        //Find the view we are after
+        //Create a Bitmap with the same dimensions
+        mBlurredBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), height, Bitmap.Config.ARGB_4444); //reduce quality and remove opacity
+        //Draw the view inside the Bitmap
+        Canvas canvas = new Canvas(mBlurredBitmap);
+        view.draw(canvas);
+
+        //blur it
+        blurBitmapWithRenderscript(rs, mBlurredBitmap);
+
+        //Make it frosty
+        Paint paint = new Paint();
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        ColorFilter filter = new LightingColorFilter(0xFFFFFFFF, 0x00222222); // lighten
+        //ColorFilter filter = new LightingColorFilter(0xFF7F7F7F, 0x00000000);    // darken
+        paint.setColorFilter(filter);
+        canvas.drawBitmap(mBlurredBitmap, 0, 0, paint);
+
+        return mBlurredBitmap;
+    }
+
+    private void blurBitmapWithRenderscript(RenderScript rs, Bitmap bitmap2) {
+        //this will blur the bitmapOriginal with a radius of 25 and save it in bitmapOriginal
+        final Allocation input = Allocation
+                .createFromBitmap(rs, bitmap2); //use this constructor for best performance, because it uses USAGE_SHARED mode which reuses memory
+        final Allocation output = Allocation.createTyped(rs, input.getType());
+        final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        // must be >0 and <= 25
+        script.setRadius(25f);
+        script.setInput(input);
+        script.forEach(output);
+        output.copyTo(bitmap2);
     }
 
     /**
