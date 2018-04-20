@@ -2,25 +2,26 @@ apply plugin: 'android-library'
 
 buildscript {
   repositories {
+    google()
     mavenCentral()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.9.+'
+    classpath 'com.android.tools.build:gradle:3.1.1'
   }
 }
 
 repositories {
+  google()
   mavenCentral()
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:+'
-  compile 'com.nineoldandroids:library:+'
+  implementation 'com.android.support:support-v4:+'
+  implementation 'com.nineoldandroids:library:+'
 }
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "19.0.3"
+  compileSdkVersion 27
   lintOptions {
     abortOnError false
   }
@@ -34,5 +35,3 @@ android {
     }
   }
 }
-
-apply from: '../maven_push.gradle'
