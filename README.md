@@ -17,6 +17,7 @@ As seen in Umano Android App (now acquired by Dropbox):
 * [Soundcloud] (https://play.google.com/store/apps/details?id=com.soundcloud.android)
 * [Dropbox Paper] (https://play.google.com/store/apps/details?id=com.dropbox.paper)
 * [Snaptee] (https://play.google.com/store/apps/details?id=co.snaptee.android)
+* [Claro Música] (https://play.google.com/store/apps/details?id=com.claro.claromusica.latam)
 
 If you are using the library and you would like to have your app listed, simply let us know.
 
