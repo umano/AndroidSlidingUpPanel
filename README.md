@@ -29,7 +29,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
 }
 ```
 
