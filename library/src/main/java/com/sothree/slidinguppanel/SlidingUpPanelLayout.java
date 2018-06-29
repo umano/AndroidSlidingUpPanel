@@ -1168,7 +1168,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         // If the slide offset is negative, and overlay is not on, we need to increase the
         // height of the main content
         LayoutParams lp = (LayoutParams) mMainView.getLayoutParams();
-        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - mPanelHeight;
+        int defaultHeight = getHeight() - getPaddingBottom() - getPaddingTop() - (mSlideOffset < 0 ? 0 : mPanelHeight);
 
         if (mSlideOffset <= 0 && !mOverlayContent) {
             // expand the main view
