@@ -22,6 +22,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import com.sothree.slidinguppanel.canvassaveproxy.CanvasSaveProxy;
+import com.sothree.slidinguppanel.canvassaveproxy.CanvasSaveProxyFactory;
 import com.sothree.slidinguppanel.library.R;
 
 import java.util.List;
@@ -218,6 +220,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private View.OnClickListener mFadeOnClickListener;
 
     private final ViewDragHelper mDragHelper;
+    private final CanvasSaveProxyFactory mCanvasSaveProxyFactory;
+    private CanvasSaveProxy mCanvasSaveProxy;
 
     /**
      * Stores whether or not the pane was expanded the last time it was slideable.
@@ -272,6 +276,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     public SlidingUpPanelLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mCanvasSaveProxyFactory = new CanvasSaveProxyFactory();
 
         if (isInEditMode()) {
             mShadowDrawable = null;
@@ -1186,7 +1192,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         boolean result;
-        final int save = canvas.save(Canvas.CLIP_SAVE_FLAG);
+
+        if (mCanvasSaveProxy == null || !mCanvasSaveProxy.isFor(canvas)) {
+            mCanvasSaveProxy = mCanvasSaveProxyFactory.create(canvas);
+        }
+
+        final int save = mCanvasSaveProxy.save();
 
         if (mSlideableView != null && mSlideableView != child) { // if main view
             // Clip against the slider; no sense drawing what will immediately be covered,
