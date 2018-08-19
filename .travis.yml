@@ -1,20 +1,32 @@
 language: android
-jdk: oraclejdk7
+
+sudo: true
+
+jdk:
+  - oraclejdk8
 
 android:
   components:
     - tools
     - platform-tools
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - build-tools-26.0.0
-    - android-26
+    - build-tools-28.0.1
+    - android-28
 
-# Enable travis container based infrastructure
-sudo: false
-
-before_script:
-    - chmod +x gradlew
+install:
+  - echo $ANDROID_HOME # We assume this is correctly set when setting path
+  - sdkmanager --list || true # Look at the packages
+  - echo yes | sdkmanager "tools" # Ensure tools is updated
 
 script:
-    - ./gradlew clean assemble
+  - set -o pipefail
+  - ./gradlew clean build
+  - set +o pipefail
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
