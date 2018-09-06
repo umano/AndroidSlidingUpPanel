@@ -5,9 +5,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:support-annotations:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
+    implementation 'androidx.annotation:annotation:1.0.0-rc02'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-rc02'
 }
 
 android {

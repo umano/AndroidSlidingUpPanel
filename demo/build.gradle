@@ -14,7 +14,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
+    implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
     implementation project(':library')
 }
