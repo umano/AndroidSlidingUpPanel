@@ -5,14 +5,17 @@ repositories {
 }
 
 dependencies {
-   compile 'com.android.support:support-v4:26.0.2'
-    compile 'com.android.support:support-annotations:26.0.2'
-    compile 'com.android.support:recyclerview-v7:26.0.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
+    implementation 'androidx.annotation:annotation:1.0.0-rc02'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-rc02'
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 28
+    defaultConfig {
+        versionName '3.4.1'
+    }
+
     lintOptions {
         abortOnError false
     }

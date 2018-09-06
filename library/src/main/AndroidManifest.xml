@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sothree.slidinguppanel.library"
-    android:versionCode="17"
-    android:versionName="3.4.0">
-
-    <uses-sdk
-        android:minSdkVersion="14" />
+<manifest package="com.sothree.slidinguppanel.library">
 
     <application />
 
