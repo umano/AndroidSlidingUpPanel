@@ -1,14 +1,12 @@
 language: android
-jdk: oraclejdk7
+jdk: oraclejdk8
 
 android:
   components:
     - tools
     - platform-tools
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - build-tools-26.0.0
-    - android-26
+    - build-tools-28.0.3
+    - android-28
 
 # Enable travis container based infrastructure
 sudo: false

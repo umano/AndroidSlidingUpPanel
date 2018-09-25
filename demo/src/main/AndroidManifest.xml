@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sothree.slidinguppanel.demo"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="17"
-    android:versionName="3.4.0">
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="17"
-        tools:overrideLibrary="android.support.v7.appcompat,android.support.graphics.drawavle"
-        />
+    package="com.sothree.slidinguppanel.demo">
 
     <application
         android:allowBackup="true"
