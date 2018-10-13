@@ -13,6 +13,7 @@ import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -207,6 +208,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsTouchEnabled;
 
+    private float mPrevMotionX;
     private float mPrevMotionY;
     private float mInitialMotionX;
     private float mInitialMotionY;
@@ -961,14 +963,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return super.dispatchTouchEvent(ev);
         }
 
+        final float x = ev.getX();
         final float y = ev.getY();
 
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
+            mPrevMotionX = x;
             mPrevMotionY = y;
         } else if (action == MotionEvent.ACTION_MOVE) {
+            float dx = x - mPrevMotionX;
             float dy = y - mPrevMotionY;
+            mPrevMotionX = x;
             mPrevMotionY = y;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Scrolling horizontally, so ignore
+                return super.dispatchTouchEvent(ev);
+            }
 
             // If the scroll view isn't under the touch, pass the
             // event along to the dragView.
@@ -1086,6 +1097,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param state - new panel state
      */
     public void setPanelState(PanelState state) {
+
+        // Abort any running animation, to allow state change
+        if(mDragHelper.getViewDragState() == ViewDragHelper.STATE_SETTLING){
+            Log.d(TAG, "View is settling. Aborting animation.");
+            mDragHelper.abort();
+        }
+
         if (state == null || state == PanelState.DRAGGING) {
             throw new IllegalArgumentException("Panel state cannot be null or DRAGGING.");
         }
@@ -1216,6 +1234,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
 
         int panelTop = computePanelTopPosition(slideOffset);
+
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop)) {
             setAllChildrenVisible();
             ViewCompat.postInvalidateOnAnimation(this);

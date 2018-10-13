@@ -1,6 +1,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library)
 [![Badge](http://www.libtastic.com/static/osbadges/30.png)](http://www.libtastic.com/technology/30/)
 
+**Note:** we are **not** actively responding to issues right now. If you find a bug, please submit a PR. 
+
 Android Sliding Up Panel
 =========================
 
@@ -27,7 +29,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.3.1'
+    compile 'com.sothree.slidinguppanel:library:3.4.0'
 }
 ```
 
@@ -139,6 +141,9 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.4.0
+  * Use the latest support library 26 and update the min version to 14.
+  * Bug fixes
 * 3.3.1
   * Lots of bug fixes from various pull requests.
   * Removed the nineoldandroids dependency. Use ViewCompat instead.
