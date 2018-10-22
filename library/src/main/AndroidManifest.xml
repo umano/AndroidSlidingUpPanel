@@ -4,9 +4,6 @@
     android:versionCode="17"
     android:versionName="3.4.0">
 
-    <uses-sdk
-        android:minSdkVersion="14" />
-
     <application />
 
 </manifest>
