@@ -88,7 +88,7 @@ or `?attr/actionBarSize` to support older API versions.
 * Use `getPanelState` to get the current panel state
 * Use `setPanelState` to set the current panel state
 * You can add parallax to the main view by setting `umanoParallaxOffset` attribute (see demo for the example).
-* You can set `umanoFlint` if you want the sliding panel to follow inertial movement after released.
+* You can set `umanoSlide` if you want the sliding panel to follow inertial movement after released.
 * You can set a anchor point in the middle of the screen using `setAnchorPoint` to allow an intermediate expanded state for the panel (similar to Google Maps).
 * You can set a `PanelSlideListener` to monitor events about sliding panes.
 * You can also make the panel slide from the top by changing the `layout_gravity` attribute of the layout to `top`.

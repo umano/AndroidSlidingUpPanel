@@ -10,7 +10,7 @@
         <attr name="umanoDragView" format="reference" />
         <attr name="umanoScrollableView" format="reference" />
         <attr name="umanoOverlay" format="boolean"/>
-        <attr name="umanoFlint" format="boolean"/>
+        <attr name="umanoSlide" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
         <attr name="umanoAnchorPoint" format="float" />
         <attr name="umanoInitialState" format="enum">
