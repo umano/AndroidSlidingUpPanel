@@ -135,6 +135,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private boolean mClipPanel = DEFAULT_CLIP_PANEL_FLAG;
 
     /**
+     * If the panel should flint instead of attaching after move
+     */
+    private boolean mFlint = false;
+
+    /**
      * If provided, the panel can be dragged by only this view. Otherwise, the entire panel can be
      * used for dragging.
      */
@@ -305,6 +310,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoOverlay, DEFAULT_OVERLAY_FLAG);
                 mClipPanel = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoClipPanel, DEFAULT_CLIP_PANEL_FLAG);
+
+                mFlint = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoFlint, false);
 
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
@@ -1421,8 +1428,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             if (mDragHelper != null) {
-//                mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
-                mDragHelper.flingCapturedView(0, 0, 0, getBottom() - mPanelHeight);
+                if (mFlint) {
+                    mDragHelper.flingCapturedView(0, 0, 0, getBottom() - mPanelHeight);
+                } else {
+                    mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
+                }
             }
             invalidate();
         }
