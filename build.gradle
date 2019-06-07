@@ -1,31 +1,30 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-  repositories {
-    jcenter()
-  }
+    repositories {
+        google()
+        jcenter()
+    }
 
-  dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.2'
-  }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0'
+    }
 }
 
 def isReleaseBuild() {
-  return version.contains("SNAPSHOT") == false
+    return version.contains("SNAPSHOT") == false
 }
 
 allprojects {
-  version = VERSION_NAME
+    version = VERSION_NAME
     group = GROUP
 
     repositories {
-      jcenter()
-      maven {
-        url "https://maven.google.com"
-      }
+        jcenter()
+        google()
     }
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '3.3'
-  distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+    gradleVersion = '4.10.2'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }

@@ -837,6 +837,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
+
+            child.setLayerType(LAYER_TYPE_HARDWARE, null);
+
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
             // Always layout the sliding view on the first layout
@@ -1186,7 +1189,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         boolean result;
-        final int save = canvas.save(Canvas.CLIP_SAVE_FLAG);
 
         if (mSlideableView != null && mSlideableView != child) { // if main view
             // Clip against the slider; no sense drawing what will immediately be covered,
@@ -1216,7 +1218,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             result = super.drawChild(canvas, child, drawingTime);
         }
 
-        canvas.restoreToCount(save);
 
         return result;
     }
