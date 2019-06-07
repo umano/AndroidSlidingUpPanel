@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<lint>
+    <issue id="PrivateApi" severity="fatal" />
+
+    <issue id="PrivateResource" severity="error" />
+    <issue id="NewApi" severity="error" />
+    <issue id="Recycle" severity="error" />
+    <issue id="Deprecated" severity="error" />
+    <issue id="GradleCompatible" severity="error" />
+    <issue id="GradlePluginVersion" severity="error" />
+    <issue id="IconDuplicates" severity="error" />
+    <issue id="IconDensities" severity="error" />
+    <issue id="IconDipSize" severity="error" />
+    <issue id="DrawAllocation" severity="error" />
+    <issue id="ProguardSplit" severity="error" />
+    <issue id="Proguard" severity="error" />
+    <issue id="Registered" severity="error" />
+    <issue id="StaticFieldLeak" severity="error"/>
+
+    <issue id="MissingSuperCall" severity="warning" />
+    <issue id="EasterEgg" severity="warning" />
+    <issue id="DuplicateIncludedIds" severity="warning" />
+    <issue id="DuplicateIds" severity="warning" />
+    <issue id="DuplicateDefinition" severity="warning" />
+    <issue id="GradleDependency" severity="warning" />
+    <issue id="GradleDeprecated" severity="warning" />
+    <issue id="RecyclerView" severity="warning" />
+    <issue id="AaptCrash" severity="warning" />
+
+</lint>
+
