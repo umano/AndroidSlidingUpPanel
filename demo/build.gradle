@@ -1,21 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 26
-  buildToolsVersion "26.0.1"
+    compileSdkVersion 28
 
-  lintOptions {
-    abortOnError false
-  }
+    lintOptions {
+        abortOnError false
+    }
 
-  defaultConfig {
-    minSdkVersion 14
-    targetSdkVersion 26
-  }
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "android"
+            keyAlias "release"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:26.0.2'
-  compile 'com.android.support:appcompat-v7:26.0.2'
-  compile project(':library')
+    def supportVersion = "28.0.0"
+    implementation "com.android.support:support-v4:" + supportVersion
+    implementation "com.android.support:appcompat-v7:" + supportVersion
+    implementation project(':library')
 }
