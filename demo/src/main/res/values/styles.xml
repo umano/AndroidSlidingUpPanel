@@ -22,6 +22,7 @@
 
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:displayOptions">homeAsUp</item>
+        <item name="colorControlNormal">@android:color/white</item>
     </style>
 
 </resources>
