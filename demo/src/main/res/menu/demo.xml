@@ -2,15 +2,24 @@
     xmlns:sothree="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_toggle"
-        android:orderInCategory="100"
-        sothree:showAsAction="never"
-        android:title="@string/action_hide"/>
-    
-    <item
-        android:id="@+id/action_anchor"
-        android:orderInCategory="200"
-        sothree:showAsAction="never"
-        android:title="@string/action_anchor_enable"/>    
+        android:icon="@drawable/ic_more_vert"
+        android:title="@string/hello"
+        sothree:showAsAction="ifRoom">
+        <menu>
 
+            <item
+                android:id="@+id/action_toggle"
+                android:icon="@drawable/ic_check_box_checked"
+                android:orderInCategory="100"
+                android:title="@string/action_menu_panel"
+                sothree:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_anchor"
+                android:orderInCategory="200"
+                android:icon="@drawable/ic_vertical_align"
+                android:title="@string/action_menu_anchor_point"
+                sothree:showAsAction="never" />
+        </menu>
+    </item>
 </menu>

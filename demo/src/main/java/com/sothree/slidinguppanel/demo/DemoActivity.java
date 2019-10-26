@@ -79,7 +79,7 @@ public class DemoActivity extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                your_array_list );
+                your_array_list);
 
         lv.setAdapter(arrayAdapter);
 
@@ -119,50 +119,38 @@ public class DemoActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.demo, menu);
-        MenuItem item = menu.findItem(R.id.action_toggle);
-        if (mLayout != null) {
-            if (mLayout.getPanelState() == PanelState.HIDDEN) {
-                item.setTitle(R.string.action_show);
-            } else {
-                item.setTitle(R.string.action_hide);
-            }
-        }
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_toggle)
+                .setChecked(true)
+                .setIcon(R.drawable.ic_check_box_checked);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_toggle: {
                 if (mLayout != null) {
                     if (mLayout.getPanelState() != PanelState.HIDDEN) {
                         mLayout.setPanelState(PanelState.HIDDEN);
-                        item.setTitle(R.string.action_show);
+                        item.setIcon(R.drawable.ic_check_box_unchecked);
                     } else {
                         mLayout.setPanelState(PanelState.COLLAPSED);
-                        item.setTitle(R.string.action_hide);
+                        item.setIcon(R.drawable.ic_check_box_checked);
                     }
                 }
                 return true;
             }
             case R.id.action_anchor: {
                 if (mLayout != null) {
-                    if (mLayout.getAnchorPoint() == 1.0f) {
-                        mLayout.setAnchorPoint(0.7f);
-                        mLayout.setPanelState(PanelState.ANCHORED);
-                        item.setTitle(R.string.action_anchor_disable);
-                    } else {
-                        mLayout.setAnchorPoint(1.0f);
-                        mLayout.setPanelState(PanelState.COLLAPSED);
-                        item.setTitle(R.string.action_anchor_enable);
-                    }
+                    mLayout.setAnchorPoint(0.7f);
+                    mLayout.setPanelState(PanelState.ANCHORED);
                 }
                 return true;
             }
