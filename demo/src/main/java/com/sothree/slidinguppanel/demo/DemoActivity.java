@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +38,7 @@ public class DemoActivity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.main_toolbar));
 
-        ListView lv = (ListView) findViewById(R.id.list);
+        ListView lv = findViewById(R.id.list);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -78,12 +78,13 @@ public class DemoActivity extends AppCompatActivity {
         // array as a third parameter.
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
-                android.R.layout.simple_list_item_1,
-                your_array_list );
+                R.layout.listview_item,
+                R.id.textitem,
+                your_array_list);
 
         lv.setAdapter(arrayAdapter);
 
-        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout = findViewById(R.id.sliding_layout);
         mLayout.addPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -102,12 +103,8 @@ public class DemoActivity extends AppCompatActivity {
             }
         });
 
-        TextView t = (TextView) findViewById(R.id.name);
-        t.setText(Html.fromHtml(getString(R.string.hello)));
-        Button f = (Button) findViewById(R.id.follow);
-        f.setText(Html.fromHtml(getString(R.string.follow)));
-        f.setMovementMethod(LinkMovementMethod.getInstance());
-        f.setOnClickListener(new OnClickListener() {
+        ImageButton button = findViewById(R.id.follow);
+        button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -115,6 +112,9 @@ public class DemoActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        TextView t = findViewById(R.id.url);
+        t.setText(Html.fromHtml(getString(R.string.hello_subtitle)));
+        t.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
